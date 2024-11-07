@@ -12,6 +12,11 @@ import { moyennes, MoyenneItem } from "@/components/MoyennesCardList";
 import Image from "next/image";
 
 const IndividualMoyenneCard = () => {
+
+  if (!moyennes) {
+    return null;
+  }
+
   const param = useParams().moyenneId;
   const decodedParam = decodeURIComponent(param as string);
   const item = moyennes.filter((x) => x.name === decodedParam)[0];

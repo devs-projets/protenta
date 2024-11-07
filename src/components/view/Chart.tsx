@@ -16,6 +16,35 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
+// const exampleMinute = {
+//   id: 15,
+//   minute: 45,
+//   data: {
+//     Temperature: "27.37",
+//     Humidité: "65.79",
+//     Lumière: "51567.88",
+//     "Pression atmosphérique": "1015.83",
+//     "Humidite du sol": "53.92",
+//     Co2: "838.21",
+//   },
+// };
+
+// 'http...../mesure/:minute=1/:houre/:day/:week/:month'
+// 'http...../mesure/null/null/14/null/4'
+
+// const exampleHoure = {
+//   id: 1996,
+//   houre: 8,
+//   data: {
+//     Temperature: "27.37",
+//     Humidité: "65.79",
+//     Lumière: "51567.88",
+//     "Pression atmosphérique": "1015.83",
+//     "Humidite du sol": "53.92",
+//     Co2: "838.21",
+//   },
+// };
+
 // Vos données
 const dataWithDates: any = {
   "01/10": {

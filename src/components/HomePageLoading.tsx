@@ -10,7 +10,7 @@ const HomePageLoading = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      router.push("/dashboard/experts");
+      router.push("/login");
     }, 1500);
   }, []);
   return (

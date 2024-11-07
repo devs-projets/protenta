@@ -1,73 +1,20 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
-  TableCell,
   TableHeader,
+  TableCell,
   TableHead,
   TableRow,
 } from "@/components/ui/table";
+import { simulateAverageData } from "@/mockData/simulateAverageData";
+import Spinner from "../Spinner"; // Assurez-vous que ce chemin correspond bien à votre composant Spinner
+import { Average } from "@/types/average";
 
-const dataWithDates: any = {
-  "01/10": {
-    Température: "27.37",
-    Humidité: "65.79",
-    Lumière: "51567.88",
-    "Pression atmosphérique": "1015.83",
-    "Humidite du sol": "53.92",
-    Co2: "838.21",
-  },
-  "02/10": {
-    Température: "19.97",
-    Humidité: "42.52",
-    Lumière: "46020.9",
-    "Pression atmosphérique": "992.08",
-    "Humidite du sol": "36.97",
-    Co2: "889.09",
-  },
-  "03/10": {
-    Température: "27.38",
-    Humidité: "51.27",
-    Lumière: "30625.82",
-    "Pression atmosphérique": "997.38",
-    "Humidite du sol": "63.18",
-    Co2: "769.06",
-  },
-  "04/10": {
-    Température: "18.75",
-    Humidité: "67.48",
-    Lumière: "37878.83",
-    "Pression atmosphérique": "997.41",
-    "Humidite du sol": "57.03",
-    Co2: "784.39",
-  },
-  "05/10": {
-    Température: "20.75",
-    Humidité: "62.47",
-    Lumière: "57135.16",
-    "Pression atmosphérique": "1011.7",
-    "Humidite du sol": "31.23",
-    Co2: "701.37",
-  },
-  "06/10": {
-    Température: "19.08",
-    Humidité: "48.88",
-    Lumière: "34195.65",
-    "Pression atmosphérique": "1018.28",
-    "Humidite du sol": "64.29",
-    Co2: "927.52",
-  },
-  "07/10": {
-    Température: "23.65",
-    Humidité: "69.16",
-    Lumière: "46487.67",
-    "Pression atmosphérique": "1003.84",
-    "Humidite du sol": "36.13",
-    Co2: "740.52",
-  },
-};
-
-const units: any = {
+// Unités de mesure
+const units: Record<string, string> = {
   Température: "°C",
   Humidité: "%",
   Lumière: "lux",
@@ -76,9 +23,45 @@ const units: any = {
   Co2: "ohm",
 };
 
+// Générer des données pour une semaine à partir de `simulateAverageData`
+const generateDataWithDates = () => {
+  const dates = ["01/10", "02/10", "03/10", "04/10", "05/10", "06/10", "07/10"];
+  const data: Record<string, Record<string, string>> = {};
+
+  dates.forEach((date) => {
+    const simulatedData: Average = simulateAverageData();
+    data[date] = {
+      Température: simulatedData.MeanTemp.toFixed(2),
+      Humidité: simulatedData.MeanHumidity.toFixed(2),
+      Lumière: simulatedData.MeanLum.toFixed(2),
+      "Pression atmosphérique": (simulatedData.MeanPress).toFixed(3), // Converti en Bar
+      "Humidite du sol": simulatedData.MeanHumSol.toFixed(2),
+      Co2: simulatedData.MeanCo2.toFixed(2), // Valeur en ohm
+    };
+  });
+
+  return data;
+};
+
 export function TableComponent() {
+  // Initialiser dataWithDates à null
+  const [dataWithDates, setDataWithDates] = useState<Record<string, Record<string, string>> | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const data = generateDataWithDates();
+    setDataWithDates(data);
+    setLoading(false);
+  }, []); // Les données ne sont générées qu'une seule fois après le premier rendu
+
+  // Vérifiez si dataWithDates est null
+  if (loading || dataWithDates === null) {
+    return <Spinner w={12} h={12} />; // Afficher le spinner pendant le chargement
+  }
+
   const dates = Object.keys(dataWithDates); // Liste des dates
   const mainEntries = Object.keys(units); // Liste des entrées principales (Température, Humidité, etc.)
+
   return (
     <Table>
       <TableHeader>
@@ -97,13 +80,12 @@ export function TableComponent() {
             <TableCell className="font-medium">{entry}</TableCell>
 
             {/* Colonne avec les unités de mesure */}
-            
             <TableCell className="font-medium">{units[entry]}</TableCell>
 
             {/* Colonnes avec les valeurs */}
             {dates.map((date) => (
               <TableCell key={`${date}-${entry}`}>
-                {dataWithDates[date][entry]}
+                {dataWithDates[date]?.[entry] || "N/A"}
               </TableCell>
             ))}
           </TableRow>

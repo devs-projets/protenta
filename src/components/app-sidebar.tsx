@@ -5,6 +5,7 @@ import {
   Cable,
   CircleGauge,
   Settings,
+  Unplug
 } from "lucide-react";
 
 import {
@@ -28,50 +29,50 @@ const data = {
   expertNav: [
     {
       title: "Dashboard",
-      url: "/dashboard/experts",
+      url: "/dashboard",
       items: [],
     },
     {
       title: "Données",
-      url: "/dashboard/experts",
+      url: "/dashboard",
       items: [
         {
           title: "Température",
-          url: "/dashboard/experts/moyenne/Température",
+          url: "/dashboard/moyenne/Température",
         },
         {
           title: "Humidité",
-          url: "/dashboard/experts/moyenne/Humidité",
+          url: "/dashboard/moyenne/Humidité",
         },
         {
           title: "Lumière",
-          url: "/dashboard/experts/moyenne/Lumière",
+          url: "/dashboard/moyenne/Lumière",
         },
         {
           title: "Pression atmosphérique",
-          url: "/dashboard/experts/moyenne/Pression atmosphérique",
+          url: "/dashboard/moyenne/Pression atmosphérique",
         },
         {
           title: "Humidite du sol",
-          url: "/dashboard/experts/moyenne/Humidite du sol",
+          url: "/dashboard/moyenne/Humidite du sol",
         },
         {
           title: "Co2",
-          url: "/dashboard/experts/moyenne/Co2",
+          url: "/dashboard/moyenne/Co2",
         },
       ],
     },
     {
       title: "Capteurs",
-      url: "/dashboard/experts/capteur",
+      url: "/dashboard/capteur",
       items: [
         {
           title: "Capteur l1",
-          url: "/dashboard/experts/capteur/Capteur l1",
+          url: "/dashboard/capteur/Capteur l1",
         },
         {
           title: "Capteur l2",
-          url: "/dashboard/experts/capteur/Capteur l2",
+          url: "/dashboard/capteur/Capteur l2",
           isActive: true,
         },
       ],
@@ -86,8 +87,8 @@ const capteursMenu = data.expertNav.find(
 if (capteursMenu) {
   for (let i = 3; i <= 15; i++) {
     capteursMenu.items.push({
-      title: `Capteur l${i}`,
-      url: `/dashboard/experts/capteur/Capteur l${i}`,
+      title: `Capteur I${i}`,
+      url: `/dashboard/capteur/I${i}`,
     });
   }
 }
@@ -144,7 +145,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           asChild
                           isActive={subItem.isActive}
                         >
-                          <Link href={subItem.url}>{subItem.title}</Link>
+                          <Link href={subItem.url}>{subItem.title} {subItem.title === "Capteur l1" && <Unplug />}</Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}

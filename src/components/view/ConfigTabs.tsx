@@ -28,6 +28,9 @@ const LimiteListItem = ({
   onMinChange,
   onMaxChange,
 }: any) => {
+  const userRole = localStorage.getItem('userRole');
+  const isDisabled = userRole === "simple";
+  console.log(isDisabled)
   return (
     <li className="grid grid-cols-4 gap-4 p-2 my-2 items-center">
       <h3>{title}</h3>
@@ -38,6 +41,7 @@ const LimiteListItem = ({
         onChange={onMinChange}
         placeholder="Min"
         className="border rounded px-2 py-1"
+        disabled={isDisabled}
       />
       <input
         type="number"
@@ -45,6 +49,7 @@ const LimiteListItem = ({
         onChange={onMaxChange}
         placeholder="Max"
         className="border rounded px-2 py-1"
+        disabled={isDisabled}
       />
     </li>
   );
@@ -63,7 +68,7 @@ const ConfigTabs = () => {
       maxValue: 1050,
     },
     { name: "Humidité du Sol", unit: "%", minValue: 0, maxValue: 100 },
-    { name: "CO2", unit: "ohm", minValue: 0, maxValue: 2000 },
+    { name: "CO₂", unit: "ohm", minValue: 0, maxValue: 2000 },
   ];
 
   const initialActionnaires = [
@@ -120,6 +125,13 @@ const ConfigTabs = () => {
         {/* Onglet Limites */}
         <TabsContent value="limites">
           <ul>
+            <li className="grid grid-cols-4 gap-4 p-2 my-2 items-center">
+              <h3>Data</h3>
+              <p>Unité</p>
+              <p>Minimum</p>
+              <p>Maximum</p>
+            </li>
+            <hr />
             {limites.map((limite, index) => (
               <LimiteListItem
                 key={limite.name}
@@ -135,6 +147,13 @@ const ConfigTabs = () => {
                 }
               />
             ))}
+            <hr />
+            <li className="grid grid-cols-4 gap-4 p-2 my-2 items-center bg-green-100 rounded">
+              <h3>Floraison</h3>
+              <p>Début --/--/--</p>
+              <p>Fin --/--/--</p>
+              <Switch className="mx-5" />
+            </li>
           </ul>
         </TabsContent>
 
