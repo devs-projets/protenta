@@ -7,7 +7,6 @@ export async function getStoredSensorData(period: string): Promise<SensorLog[] |
     );
     if (response.ok) {
       const data: SensorLog[] = await response.json();
-      console.log(data)
       return data; // Retourne les données correctement
     } else {
       console.error("Failed to fetch data:", response.statusText);

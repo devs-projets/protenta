@@ -57,6 +57,7 @@ const IndividualCapteurLogs = ({
   capteurID: string;
 }) => {
   const [logs, setLogs] = useState<SensorLog[]>([]);
+  const [filterEtat, setFilterEtat] = useState<string | null>(null); // État pour le filtre
 
   useEffect(() => {
     if (!sensorData || sensorData.localName !== capteurID) return;
@@ -65,65 +66,78 @@ const IndividualCapteurLogs = ({
     setLogs((prevLogs) => [newLog, ...prevLogs.slice(0, 99)]); // Limite les logs à 100 pour éviter une surcharge
   }, [sensorData, capteurID]);
 
+  const filteredLogs = filterEtat
+    ? logs.filter((log) => log.etat === filterEtat)
+    : logs;
+
   return (
     <div className="border rounded-lg overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Date et Heure</TableHead>
-            <TableHead>Température</TableHead>
-            <TableHead>Humidité</TableHead>
-            <TableHead>Pression Atmosphérique</TableHead>
-            <TableHead>Lumière</TableHead>
-            <TableHead>État</TableHead>
+            <TableHead className="w-1/5">Date et Heure</TableHead>
+            <TableHead className="w-1/5">Température</TableHead>
+            <TableHead className="w-1/5">Humidité</TableHead>
+            <TableHead className="w-1/5">Pression Atmosphérique</TableHead>
+            <TableHead className="w-1/5">Lumière</TableHead>
+            <TableHead className="w-1/5 flex items-center gap-2">
+              État{" "}
+              <select
+                id="etat-filter"
+                value={filterEtat || ""}
+                onChange={(e) => setFilterEtat(e.target.value || null)}
+                className="border border-gray-300 rounded-md px-2 py-1"
+              >
+                <option value="">Tous</option>
+                <option value="Normal">Normal</option>
+                <option value="Attention">Attention</option>
+                <option value="Alerte">Alerte</option>
+              </select>
+            </TableHead>
           </TableRow>
         </TableHeader>
+        <TableBody>
+          {filteredLogs.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center text-gray-500">
+                Aucune donnée à afficher.
+              </TableCell>
+            </TableRow>
+          ) : (
+            filteredLogs.map((log, index) => (
+              <AlertDialog key={index}>
+                <AlertDialogTrigger asChild>
+                  <TableRow className={getRowColor(log.etat)}>
+                    <TableCell className="font-medium">{log.latest}</TableCell>
+                    <TableCell>{log.temperature}°C</TableCell>
+                    <TableCell>{log.humidity}%</TableCell>
+                    <TableCell>{log.pressure} hPa</TableCell>
+                    <TableCell>{log.light_A} lux</TableCell>
+                    <TableCell>{log.etat}</TableCell>
+                  </TableRow>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Détails du log</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      <p>Date et Heure : {log.latest}</p>
+                      <p>Température : {log.temperature}°C</p>
+                      <p>Humidité : {log.humidity}%</p>
+                      <p>Pression Atmosphérique : {log.pressure} hPa</p>
+                      <p>Lumière : {log.light_A} lux</p>
+                      <p>État : {log.etat}</p>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Fermer</AlertDialogCancel>
+                    <AlertDialogAction>OK</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            ))
+          )}
+        </TableBody>
       </Table>
-      <div className="overflow-auto max-h-[calc(100vh-20rem)]">
-        <Table>
-          <TableBody>
-            {logs.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center text-gray-500">
-                  Aucune donnée à afficher.
-                </TableCell>
-              </TableRow>
-            ) : (
-              logs.map((log, index) => (
-                <AlertDialog key={index}>
-                  <AlertDialogTrigger asChild>
-                    <TableRow className={getRowColor(log.etat)}>
-                      <TableCell className="font-medium">{log.latest}</TableCell>
-                      <TableCell>{log.temperature}°C</TableCell>
-                      <TableCell>{log.humidity}%</TableCell>
-                      <TableCell>{log.pressure} hPa</TableCell>
-                      <TableCell>{log.light_A} lux</TableCell>
-                      <TableCell>{log.etat}</TableCell>
-                    </TableRow>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Détails du log</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        <p>Date et Heure : {log.latest}</p>
-                        <p>Température : {log.temperature}°C</p>
-                        <p>Humidité : {log.humidity}%</p>
-                        <p>Pression Atmosphérique : {log.pressure} hPa</p>
-                        <p>Lumière : {log.light_A} lux</p>
-                        <p>État : {log.etat}</p>
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Fermer</AlertDialogCancel>
-                      <AlertDialogAction>OK</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
     </div>
   );
 };

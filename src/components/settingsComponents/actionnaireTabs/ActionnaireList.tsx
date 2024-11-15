@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { Actionnaire } from "./ConfigTabs";
+import { Actionnaire } from "../ConfigTabs";
 import ActionnaireListItem from "./ActionnaireListItem";
 
 const ActionnaireList = ({ actionnaires }: { actionnaires: Actionnaire[] }) => {

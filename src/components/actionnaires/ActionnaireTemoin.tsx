@@ -1,6 +1,26 @@
-import React from "react";
+import { useSocket } from "@/context/SocketContext";
+import React, { useEffect, useState } from "react";
 
 const ActionnaireTemoin = () => {
+
+  const [actionnaires, setActionnaires] = useState<{ [key: string]: number }>({});
+  const { sensorData } = useSocket();
+
+  useEffect(() => {
+    if (sensorData) {
+      const actionnairesList = Object.keys(sensorData)
+        .filter((key) => key.startsWith('S'))
+        .reduce<{ [key: string]: number }>((obj, key) => {
+          obj[key] = sensorData[key];
+          return obj;
+        }, {});
+
+      setActionnaires(actionnairesList);
+    }
+  }, [sensorData]);
+
+  console.log(actionnaires);
+
   return (
     <div className="border py-5 rounded-lg shadow-lg">
       <h1 className="text-center text-2xl font-bold mb-5">Actionnaires</h1>
