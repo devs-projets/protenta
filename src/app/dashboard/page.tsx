@@ -2,23 +2,23 @@
 
 import ActionnaireTemoin from "@/components/actionnaires/ActionnaireTemoin";
 import MoyennesCardList from "@/components/MoyennesCardList";
-import { SensorLog } from "@/components/view/IndividualCapteurLogs";
+import { IHourData } from "@/types/hourDara";
 import { MoyenneTabs } from "@/components/view/MoyenneTab";
 import React, { useEffect, useState } from "react";
 import { getStoredSensorData } from "@/lib/fetchData/getMonitorData";
 
 const Experts = () => {
-  const [fetchedData, setFetchedData] = useState<SensorLog[] | undefined>([]);
+  const [houreData, setHoureData] = useState<IHourData[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await getStoredSensorData("minute");
-        console.log(data)
-        setFetchedData(data || []);
+        const data = await getStoredSensorData("hour");
+        // console.log(data)
+        setHoureData(data || []);
       } catch (error) {
         console.error("Error in fetching data:", error);
-        setFetchedData([]);
+        setHoureData([]);
       }
     }
   
@@ -30,14 +30,14 @@ const Experts = () => {
       <h1 className="text-center text-2xl font-bold">Moyennes</h1>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
         {/* TODO: Fait que l'autre ait son propre MoyennesCardsList */}
-        <MoyennesCardList sensorData={undefined} capteurID="N/A" />
+        <MoyennesCardList sensorData={houreData} />
       </div>
 
       <ActionnaireTemoin />
 
       <div className="flex-1 rounded-xl bg-muted/50 p-5 mb-10">
         <div className="h-full overflow-y-auto">
-          <MoyenneTabs />
+          <MoyenneTabs sensorData={houreData} />
         </div>
       </div>
     </div>

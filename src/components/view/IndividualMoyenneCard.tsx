@@ -14,6 +14,8 @@ import { MoyenneItem } from "../MoyennesCardList";
 
 const IndividualMoyenneCard = () => {
 
+  const dataId = useParams().moyenneId;
+
   const moyennes: MoyenneItem[] = [];
 
   if (!moyennes) {
@@ -35,7 +37,7 @@ const IndividualMoyenneCard = () => {
         <div className="text-center rounded-xl bg-muted/50">
           <div className="rounded-full flex justify-center items-center">
             <Image
-              src={item?.icon}
+              src={item?.icon as string}
               width={100}
               height={100}
               alt={item?.name as string}

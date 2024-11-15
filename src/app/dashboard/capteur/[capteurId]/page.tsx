@@ -11,7 +11,7 @@ const CapteurId = () => {
   const localName = useParams().capteurId as string;
   const { sensorData, disconnect } = useSocket();
 
-  console.log("From capteur id : ", sensorData)
+  // console.log("From capteur id : ", sensorData)
 
   useEffect(() => {
     return () => {
