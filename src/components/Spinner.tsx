@@ -1,6 +1,6 @@
 import React from "react";
 
-const Spinner = ({ w, h }: { w: number; h: number }) => {
+const Spinner = () => {
   return (
     <div role="status">
       <svg

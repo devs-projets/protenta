@@ -26,10 +26,6 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-
-  const pathName = usePathname();
-
-
   return (
     <SocketProvider>
       <SocketManager>

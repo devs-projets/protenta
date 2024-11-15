@@ -38,9 +38,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
       newSocket.on("connect", () => setIsConnected(true));
       newSocket.on("disconnect", () => setIsConnected(false));
-      // newSocket.on("monitorDataOnLive", (data) => {setSensorData(data)});
+      newSocket.on("monitorDataOnLive", (data) => {
+        setSensorData(data);
+        // console.log(data);
+      });
       newSocket.on("notifications", (data) => {
-        console.log(data);
+        // console.log(data);
       });
     }
   }, [socket]);

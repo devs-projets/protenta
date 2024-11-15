@@ -9,15 +9,13 @@ import PressionAtmoIcon from "@/assets/icons/pressionAtmo.png";
 import TemperatureIcon from "@/assets/icons/temperature.png";
 import MoyenneCard from "./view/MoyenneCard";
 import Link from "next/link";
-import { Average } from "@/types/average";
-import { simulateAverageData } from "@/mockData/simulateAverageData";
 import { SensorLog } from "./view/IndividualCapteurLogs";
-import { useParams } from "next/navigation";
+import { StaticImageData } from "next/image";
 // import { useSocket } from "@/context/SocketContext";
 
 export interface MoyenneItem {
   name: string;
-  icon: any;
+  icon: JSX.Element | StaticImageData | string;
   value: number | 'N/A';
 }
 
@@ -68,7 +66,7 @@ const MoyennesCardList = ({sensorData,  capteurID}:{sensorData: SensorLog | unde
     }
 
     fetchAverages();
-  }, [sensorData]);
+  }, [sensorData, capteurID]);
 
   return (
     <>

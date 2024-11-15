@@ -12,7 +12,8 @@ const HomePageLoading = () => {
     setTimeout(() => {
       router.push("/login");
     }, 1500);
-  }, []);
+  }, [router]);
+
   return (
     <section>
       <div className="flex justify-center items-center rounded-lg">
@@ -22,7 +23,7 @@ const HomePageLoading = () => {
         </div>
       </div>
       <div className="flex justify-center my-5">
-        <Spinner w={8} h={12} />
+        <Spinner />
       </div>
     </section>
   );

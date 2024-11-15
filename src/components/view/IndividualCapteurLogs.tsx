@@ -89,7 +89,7 @@ const IndividualCapteurLogs = ({ sensorData, capteurID }: { sensorData: SensorLo
 
   useEffect(() => {
     const newLog = { ...sensorData, etat: getRandomState() };
-    console.log(newLog)
+    // console.log(newLog)
     if (newLog.localName === capteurID) setLogs((prevLogs) => [newLog, ...prevLogs]);
   }, [sensorData]);
 

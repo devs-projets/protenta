@@ -56,7 +56,7 @@ export function TableComponent() {
 
   // Vérifiez si dataWithDates est null
   if (loading || dataWithDates === null) {
-    return <Spinner w={12} h={12} />; // Afficher le spinner pendant le chargement
+    return <Spinner />; // Afficher le spinner pendant le chargement
   }
 
   const dates = Object.keys(dataWithDates); // Liste des dates

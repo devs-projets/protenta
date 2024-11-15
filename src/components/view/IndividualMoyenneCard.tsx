@@ -8,10 +8,13 @@ import SolHumiditeIcon from "@/assets/icons/solHumidite.png";
 import LumiereIcon from "@/assets/icons/lumiere.png";
 import PressionAtmoIcon from "@/assets/icons/pressionAtmo.png";
 import TemperatureIcon from "@/assets/icons/temperature.png";
-import { moyennes, MoyenneItem } from "@/components/MoyennesCardList";
+// import { moyennes, MoyenneItem } from "@/components/MoyennesCardList";
 import Image from "next/image";
+import { MoyenneItem } from "../MoyennesCardList";
 
 const IndividualMoyenneCard = () => {
+
+  const moyennes: MoyenneItem[] = [];
 
   if (!moyennes) {
     return null;
@@ -21,8 +24,8 @@ const IndividualMoyenneCard = () => {
   const decodedParam = decodeURIComponent(param as string);
   const item = moyennes.filter((x) => x.name === decodedParam)[0];
   console.log(moyennes);
-  console.log(param)
-  console.log(item)
+  console.log(param);
+  console.log(item);
   return (
     <div>
       <h1 className="text-2xl font-bold text-center my-5">

@@ -1,6 +1,7 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import TemperatureLiveChart from "./TemperatureLiveChart";
+import RealTimeHumiditéChart from "./HumiditeLiveChart";
 
 const LiveDataCharts = () => {
   return (
@@ -17,7 +18,7 @@ const LiveDataCharts = () => {
         <TemperatureLiveChart />
       </TabsContent>
       <TabsContent value="Humidité" className="bg-red-300 m-0">
-        Humidité
+        <RealTimeHumiditéChart />
       </TabsContent>
       <TabsContent value="Lumière" className="bg-red-300 m-0">
         Lumière

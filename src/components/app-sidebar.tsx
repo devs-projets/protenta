@@ -74,11 +74,11 @@ const data = {
       items: [
         {
           title: "Capteur l1",
-          url: "/dashboard/capteur/Capteur l1",
+          url: "/dashboard/capteur/I1",
         },
         {
           title: "Capteur l2",
-          url: "/dashboard/capteur/Capteur l2",
+          url: "/dashboard/capteur/I2",
           isActive: true,
         },
       ],

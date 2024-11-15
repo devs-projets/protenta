@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -57,10 +57,10 @@ const capteurLogs: SensorLog[] = [
   },
 ];
 
-const getRandomState = () => {
-  const states = ["Normal", "Attention", "Alerte"];
-  return states[Math.floor(Math.random() * states.length)];
-};
+// const getRandomState = () => {
+//   const states = ["Normal", "Attention", "Alerte"];
+//   return states[Math.floor(Math.random() * states.length)];
+// };
 
 const getRowColor = (etat: string) => {
   switch (etat) {
@@ -76,7 +76,7 @@ const getRowColor = (etat: string) => {
 };
 
 const ActivitiesPage = () => {
-  const [logs, setLogs] = useState<SensorLog[]>(capteurLogs);
+  const [logs] = useState<SensorLog[]>(capteurLogs);
 
 //   useEffect(() => {
 //     const newLog = { ...sensorData, etat: getRandomState() };
