@@ -31,41 +31,6 @@ export type SensorLog = {
   localName?: string;
 };
 
-// const capteurLogs: SensorLog[] = [
-//   {
-//     latest: "2024-10-01 14:30:00",
-//     temperature: 25,
-//     humidity: 45,
-//     pressure: 1013,
-//     light_A: 300,
-//     etat: "Normal",
-//   },
-//   {
-//     latest: "2024-10-01 14:45:00",
-//     temperature: 28,
-//     humidity: 50,
-//     pressure: 1011,
-//     light_A: 320,
-//     etat: "Alerte",
-//   },
-//   {
-//     latest: "2024-10-01 15:00:00",
-//     temperature: 26,
-//     humidity: 47,
-//     pressure: 1012,
-//     light_A: 310,
-//     etat: "Normal",
-//   },
-//   {
-//     latest: "2024-10-01 15:15:00",
-//     temperature: 27,
-//     humidity: 49,
-//     pressure: 1010,
-//     light_A: 315,
-//     etat: "Attention",
-//   },
-// ];
-
 const getRandomState = () => {
   const states = ["Normal", "Attention", "Alerte"];
   return states[Math.floor(Math.random() * states.length)];
@@ -84,26 +49,33 @@ const getRowColor = (etat: string) => {
   }
 };
 
-const IndividualCapteurLogs = ({ sensorData, capteurID }: { sensorData: SensorLog, capteurID: string }) => {
+const IndividualCapteurLogs = ({
+  sensorData,
+  capteurID,
+}: {
+  sensorData: SensorLog;
+  capteurID: string;
+}) => {
   const [logs, setLogs] = useState<SensorLog[]>([]);
 
   useEffect(() => {
+    if (!sensorData || sensorData.localName !== capteurID) return;
+
     const newLog = { ...sensorData, etat: getRandomState() };
-    // console.log(newLog)
-    if (newLog.localName === capteurID) setLogs((prevLogs) => [newLog, ...prevLogs]);
-  }, [sensorData]);
+    setLogs((prevLogs) => [newLog, ...prevLogs.slice(0, 99)]); // Limite les logs à 100 pour éviter une surcharge
+  }, [sensorData, capteurID]);
 
   return (
     <div className="border rounded-lg overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="bg-background">Date et Heure</TableHead>
-            <TableHead className="bg-background">Température</TableHead>
-            <TableHead className="bg-background">Humidité</TableHead>
-            <TableHead className="bg-background">Pression Atmosphérique</TableHead>
-            <TableHead className="bg-background">Lumière</TableHead>
-            <TableHead className="bg-background">État</TableHead>
+            <TableHead>Date et Heure</TableHead>
+            <TableHead>Température</TableHead>
+            <TableHead>Humidité</TableHead>
+            <TableHead>Pression Atmosphérique</TableHead>
+            <TableHead>Lumière</TableHead>
+            <TableHead>État</TableHead>
           </TableRow>
         </TableHeader>
       </Table>
