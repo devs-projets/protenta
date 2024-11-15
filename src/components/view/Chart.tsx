@@ -132,14 +132,14 @@ const Chart = ({
 
   return (
     <Card className="my-2">
-      <CardHeader>
+      <CardHeader className="space-y-0 pb-0">
         <CardTitle>{title}</CardTitle>
         <CardDescription>
           {title} enregistrée pour les 7 derniers jours
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="max-h-80 w-full">
+        <ChartContainer config={chartConfig} className="max-h-60 w-full">
           <AreaChart data={data} margin={{ left: 12, right: 12 }}>
             <CartesianGrid vertical={false} />
             <XAxis
@@ -186,7 +186,7 @@ export function ChartComponent() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="flex flex-col">
+        <div className="flex flex-col px-5">
           <Chart
             title="Graphe de Température"
             dataKey="Temperature"

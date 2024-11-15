@@ -7,7 +7,7 @@ const MoyenneCard = ({ item }: { item: MoyenneItem }) => {
     <article className="text-center rounded-xl bg-muted/50">
       <h2 className="">{item.name}</h2>
       <div className="rounded-full flex justify-center items-center">
-        <Image src={item.icon} width={100} height={100} alt={item.name} />
+        <Image src={item.icon} width={50} height={50} alt={item.name} />
       </div>
       <p>{item.value === 0 ? "0.0" : item.value}</p>
     </article>

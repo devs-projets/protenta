@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ConfigTabs from "./view/ConfigTabs";
+import ConfigTabs from "./ConfigTabs";
 
 export function Config() {
   return (

@@ -9,7 +9,7 @@ import { DatePickerWithRange } from "./DatePiker";
 export function MoyenneTabs() {
   return (
     <Tabs defaultValue="Tableau">
-      <TabsList className="flex justify-end w-full sticky top-0 bg-gray-300 z-10 p-2">
+      <TabsList className="flex justify-end w-full sticky top-0 bg-gray-300 z-10 py-6">
         <TabsTrigger value="Tableau">
           <TableProperties />
           Tableau

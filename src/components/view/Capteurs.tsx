@@ -19,15 +19,14 @@ export interface CapteurItem {
 }
 
 const Capteurs = () => {
-  const { sensorData, connect, disconnect } = useSocket();
+  const { sensorData, disconnect } = useSocket();
 
   console.log("From capteur : ", sensorData)
 
   useEffect(() => {
-    // connect(); // Connecter lors du montage
-
     return () => {
-      disconnect(); // Déconnecter lors du démontage
+      // Déconnecter le socket lors du démontage
+      disconnect();
     };
   }, []);
 

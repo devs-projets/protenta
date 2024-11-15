@@ -10,11 +10,9 @@ export const SocketManager: React.FC<{ children: React.ReactNode }> = ({ childre
   const pathname = usePathname();
 
   useEffect(() => {
-    const shouldConnect = pathname.startsWith("/dashboard/capteur");
-
-    if (shouldConnect && !isConnected && !wantStopSocket) {
+    if (!isConnected && !wantStopSocket) {
       connect();
-    } else if (!shouldConnect && isConnected && wantStopSocket) {
+    } else if (isConnected && wantStopSocket) {
       disconnect();
     }
 

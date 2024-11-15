@@ -1,49 +1,47 @@
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-  } from "@/components/ui/alert-dialog";
-  import { Button } from "@/components/ui/button";
-  
-  export function ConfirmActionnaireModal({
-    title,
-    mode,
-    onConfirmMode,
-  }: any) {
-    const handleConfirm = () => {
-      const newMode = mode === "on" ? "off" : "on"; // Inverser le mode actuel
-      onConfirmMode(title, newMode); // Envoyer le nouveau mode après confirmation
-    };
-  
-    return (
-      <AlertDialog>
-        <AlertDialogTrigger>
-          <Button variant={mode === "on" ? "outline" : "default"}>
-            {mode === "on" ? "Désactiver" : "Activer"}
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirmation requise</AlertDialogTitle>
-            <AlertDialogDescription>
-              Voulez-vous vraiment {mode === "on" ? "désactiver" : "activer"}{" "}
-              {title} ?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirm}>
-              Confirmer
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    );
-  }
-  
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Dispatch, SetStateAction } from "react";
+
+export function ConfirmActionnaireModal({
+  title,
+  modeAuto,
+  setModeAuto,
+}: {
+  title: string;
+  modeAuto: boolean;
+  setModeAuto: Dispatch<SetStateAction<boolean>>;
+}) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger>
+        <Button variant={modeAuto ? "default" : "outline"}>
+          {modeAuto ? "Activer" : "Désactiver"}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent className="w-96">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Confirmation requise</AlertDialogTitle>
+          <AlertDialogDescription>
+            Voulez-vous vraiment {modeAuto ? "activer" : "désactiver"} {title} ?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogAction onClick={() => setModeAuto(false)}>
+            Confirmer
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}

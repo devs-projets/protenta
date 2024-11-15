@@ -73,7 +73,7 @@ const MoyennesCardList = ({sensorData,  capteurID}:{sensorData: SensorLog | unde
   return (
     <>
       {moyennes.map((item, index) => (
-        <Link key={item.name} href={`/dashboard/moyenne/${item.name}`}>
+        <Link key={item.name} href={`/dashboard/moyenne/${item.name}`} className="shadow-lg rounded-lg border">
           <MoyenneCard key={`moyenne_item_${index}`} item={item} />
         </Link>
       ))}
