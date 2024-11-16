@@ -38,9 +38,6 @@ export interface ISensorData {
   MeanPress: number; // Mean pressure over a period
   MeanCo2: number; // Mean CO2 levels over a period
 
-      // propriété ajouter
-  MeanHumSol: number;
-
   // Output states
   S1: number; // Output state for S1 (0 = off, 1 = on)
   S2: number;
