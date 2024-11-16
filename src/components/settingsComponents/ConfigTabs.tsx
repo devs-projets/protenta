@@ -30,7 +30,7 @@ const ConfigTabs = () => {
   const getLastData = async () => {
     try {
       const response = await fetch(
-        "http://192.168.1.199:3000/monitor?period=minute"
+        "http://localhost:4000/monitor?period=minute"
       );
       if (response.ok) {
         const data: SensorLog[] = await response.json();

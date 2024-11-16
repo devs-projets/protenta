@@ -22,7 +22,9 @@ export function Config() {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-3xl font-bold">Configuration</AlertDialogTitle>
+          <AlertDialogTitle className="text-3xl font-bold">
+            Configuration
+          </AlertDialogTitle>
         </AlertDialogHeader>
         <ConfigTabs />
         <AlertDialogCancel>Fermer</AlertDialogCancel>

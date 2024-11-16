@@ -4,7 +4,7 @@ import ActionnaireListItem from "./ActionnaireListItem";
 
 const ActionnaireList = ({ actionnaires }: { actionnaires: Actionnaire[] }) => {
   return (
-    <ul>
+    <ul className="max-h-[300px] overflow-y-auto">
       {actionnaires.map((actionnaire) => (
         <ActionnaireListItem
           key={actionnaire.name}

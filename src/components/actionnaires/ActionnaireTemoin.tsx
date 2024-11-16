@@ -1,4 +1,5 @@
 import { useSocket } from "@/context/SocketContext";
+import { ActionnaireDefautlDesctiption } from "@/types/actionnaireState";
 import React, { useEffect, useState } from "react";
 
 const ActionnaireTemoin = () => {
@@ -29,8 +30,9 @@ const ActionnaireTemoin = () => {
             className="flex justify-center items-center gap-5 flex-wrap"
             key={key}
           >
-            <div className="bg-slate-200 w-24 shadow-lg rounded-lg flex flex-col justify-center items-center py-2 px-4">
-              <h2>{key}</h2>
+            <div className="bg-slate-200 w-60 h-32 shadow-lg rounded-lg flex flex-col justify-center items-center py-2 px-4">
+              <h2 className="font-bold">{key}</h2>
+              <p>{ActionnaireDefautlDesctiption[parseInt(key.slice(1))]}</p>
               <div>
                 <div className={`h-10 w-10 ${value === 0 ? "bg-red-500" : "bg-green-500"} rounded-full mt-2`}></div>
               </div>

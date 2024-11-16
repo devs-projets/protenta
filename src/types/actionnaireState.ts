@@ -18,3 +18,28 @@ export interface ActionaireState {
   S15: ActionaireStateType;
   S16: ActionaireStateType;
 }
+
+export const ActionnaireDefautlDesctiption = [
+  'Pollinisateur',
+  "Electrovanne 1",
+  "Electrovanne 2",
+  "Led UV",
+  "Mag Lock 1",
+  "Mag Lock 2",
+  "Pad cooling",
+  "Extracteur d’humidité",
+  "Générateur",
+  "Pompe à eau",
+  "Moteur de déploiement",
+  "Moteur de repliement",
+  "Bipeur",
+  "Non définie",
+  "Non définie",
+  "Non définie",
+  "Non définie",
+  "Non définie",
+  "Non définie",
+  "Non définie",
+  "Non définie",
+  "Non définie",
+]
