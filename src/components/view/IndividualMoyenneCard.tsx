@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import Co2Icon from "@/assets/icons/co2.png";
 import HumiditeIcon from "@/assets/icons/humidite.png";
 import SolHumiditeIcon from "@/assets/icons/solHumidite.png";
@@ -13,10 +13,14 @@ import Image from "next/image";
 import { MoyenneItem } from "../MoyennesCardList";
 
 const IndividualMoyenneCard = () => {
-
-  const dataId = useParams().moyenneId;
-
-  const moyennes: MoyenneItem[] = [];
+  const [moyennes, setMoyennes] = useState<MoyenneItem[]>([
+    { accessParam: "temperature", name: "Température", icon: TemperatureIcon, value: 0.0 },
+    { accessParam: "humidite", name: "Humidité", icon: HumiditeIcon, value: 0.0 },
+    { accessParam: "lumiere", name: "Lumière", icon: LumiereIcon, value: 0.0 },
+    { accessParam: "pressionatm", name: "Pression atmosphérique", icon: PressionAtmoIcon, value: 0.0 },
+    { accessParam: "humditesol", name: "Humidite du sol", icon: SolHumiditeIcon, value: 0.0 },
+    { accessParam: "co2", name: "CO₂", icon: Co2Icon, value: 0.0 },
+  ]);
 
   if (!moyennes) {
     return null;
@@ -24,10 +28,7 @@ const IndividualMoyenneCard = () => {
 
   const param = useParams().moyenneId;
   const decodedParam = decodeURIComponent(param as string);
-  const item = moyennes.filter((x) => x.name === decodedParam)[0];
-  console.log(moyennes);
-  console.log(param);
-  console.log(item);
+  const item = moyennes.filter((x) => x.accessParam === param)[0];
   return (
     <div>
       <h1 className="text-2xl font-bold text-center my-5">

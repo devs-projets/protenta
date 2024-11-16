@@ -34,7 +34,7 @@ const data = {
       items: [],
     },
     {
-      title: "Activités",
+      title: "Journal",
       url: "/dashboard/activities",
       items: [],
     },
@@ -44,27 +44,27 @@ const data = {
       items: [
         {
           title: "Température",
-          url: "/dashboard/moyenne/Température",
+          url: "/dashboard/moyenne/temperature",
         },
         {
           title: "Humidité",
-          url: "/dashboard/moyenne/Humidité",
+          url: "/dashboard/moyenne/humidite",
         },
         {
           title: "Lumière",
-          url: "/dashboard/moyenne/Lumière",
+          url: "/dashboard/moyenne/lumiere",
         },
         {
           title: "Pression atmosphérique",
-          url: "/dashboard/moyenne/Pression atmosphérique",
+          url: "/dashboard/moyenne/pressionatm",
         },
         {
           title: "Humidite du sol",
-          url: "/dashboard/moyenne/Humidite du sol",
+          url: "/dashboard/moyenne/humditesol",
         },
         {
-          title: "Co2",
-          url: "/dashboard/moyenne/Co2",
+          title: "CO₂",
+          url: "/dashboard/moyenne/co2",
         },
       ],
     },

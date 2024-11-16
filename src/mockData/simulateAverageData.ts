@@ -1,6 +1,5 @@
-import { Average } from "@/types/average";
-
-export function simulateAverageData(): Average {
+import { ISensorAverageData } from "@/types/monitor";
+export function simulateAverageData(): ISensorAverageData {
   return {
     MeanTemp: parseFloat((Math.random() * (35 - 15) + 15).toFixed(2)), // Température entre 15°C et 35°C
     MeanHumidity: parseFloat((Math.random() * (100 - 20) + 20).toFixed(2)), // Humidité entre 20% et 100%

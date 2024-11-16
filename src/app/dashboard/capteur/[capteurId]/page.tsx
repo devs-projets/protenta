@@ -1,5 +1,6 @@
 "use client";
 
+import CapteurDataCardList from "@/components/capteurs/CapteurDataCardList";
 import MoyennesCardList from "@/components/MoyennesCardList";
 import CapteurTab from "@/components/view/CapteurTab";
 import IndividualCapteurCard from "@/components/view/IndividualCapteurCard";
@@ -22,8 +23,9 @@ const CapteurId = () => {
   return (
     <div>
       <IndividualCapteurCard sensorData={sensorData} localName={localName} />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
-        <MoyennesCardList sensorData={sensorData} capteurID={localName as string} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6 px-3">
+        <CapteurDataCardList sensorData={sensorData} />
+        {/* <MoyennesCardList sensorData={sensorData} capteurID={localName as string} /> */}
       </div>
       <div className="flex-1 overflow-hidden">
         <div className="bg-muted/50 rounded-xl p-5 mb-5">

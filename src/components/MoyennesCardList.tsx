@@ -14,6 +14,7 @@ import { StaticImageData } from "next/image";
 // import { useSocket } from "@/context/SocketContext";
 
 export interface MoyenneItem {
+  accessParam: string;
   name: string;
   icon: JSX.Element | StaticImageData | string;
   value: number | "N/A";
@@ -25,12 +26,12 @@ const MoyennesCardList = ({
   sensorData: IHourData[]
 }) => {
   const [moyennes, setMoyennes] = useState<MoyenneItem[]>([
-    { name: "Température", icon: TemperatureIcon, value: 0.0 },
-    { name: "Humidité", icon: HumiditeIcon, value: 0.0 },
-    { name: "Lumière", icon: LumiereIcon, value: 0.0 },
-    { name: "Pression atm", icon: PressionAtmoIcon, value: 0.0 },
-    { name: "Humidité sol", icon: SolHumiditeIcon, value: 0.0 },
-    { name: "CO₂", icon: Co2Icon, value: 0.0 },
+    { accessParam: "temperature", name: "Température", icon: TemperatureIcon, value: 0.0 },
+    { accessParam: "humidite", name: "Humidité", icon: HumiditeIcon, value: 0.0 },
+    { accessParam: "lumiere", name: "Lumière", icon: LumiereIcon, value: 0.0 },
+    { accessParam: "Pressionatm", name: "Pression atm", icon: PressionAtmoIcon, value: 0.0 },
+    { accessParam: "humditesol", name: "Humidité sol", icon: SolHumiditeIcon, value: 0.0 },
+    { accessParam: "co2", name: "CO₂", icon: Co2Icon, value: 0.0 },
   ]);
 
   // const { socket, sensorData } = useSocket();
@@ -43,7 +44,7 @@ const MoyennesCardList = ({
 
         if (sensorData[0]) {
           const last = sensorData[0];
-          console.log("=> ", last);
+          console.log("=> ", last.averageIaq);
             setMoyennes((prevMoyennes) =>
               prevMoyennes.map((item) => {
                 switch (item.name) {
@@ -56,9 +57,9 @@ const MoyennesCardList = ({
                   case "Pression atm":
                     return { ...item, value: last.averagePressure };
                   case "Humidité sol":
-                    return { ...item, value: "N/A" };
-                  case "Co2":
-                    return { ...item, value: "N/A" };
+                    return { ...item, value: last.averageSol };
+                  case "CO₂":
+                    return { ...item, value: last.averageIaq };
                   default:
                     return item;
                 }

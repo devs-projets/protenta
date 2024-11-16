@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { CapteurItem } from "./Capteurs";
 import { SensorLog } from "./IndividualCapteurLogs";
+import { ISensorData } from "@/types/monitor";
 
 const CardCapteur = ({
   item,
   capteurIndex,
   sensorData,
 }: {
-  item: CapteurItem;
+  item: ISensorData;
   capteurIndex: number;
-  sensorData: SensorLog;
+  sensorData: ISensorData;
 }) => {
-  const [currentSensorData, setCurrentSensorData] = useState<SensorLog | null>(null);
+  const [currentSensorData, setCurrentSensorData] =
+    useState<ISensorData | null>(null);
   const [indicator, setIndicator] = useState<boolean>(false);
 
   useEffect(() => {
@@ -30,30 +32,39 @@ const CardCapteur = ({
           indicator ? "bg-green-500" : "bg-[#d4d3d3]"
         } rounded-tl-lg rounded-tr-lg p-2 text-center font-bold transition-colors duration-300`}
       >
-        <h2>Capteur l{capteurIndex} {currentSensorData?.latest}</h2>
+        <h2>
+          Capteur l{capteurIndex} {currentSensorData?.latest}
+        </h2>
       </div>
       <div>
         <ul className="p-2">
           <li className="flex justify-between my-1">
             <span className="block">Température : </span>
             <span className="block">
-              {currentSensorData?.temperature ? currentSensorData.temperature : "---"} °C
+              {currentSensorData?.temperature
+                ? currentSensorData.temperature
+                : "---"}{" "}
+              °C
             </span>
           </li>
           <li className="flex justify-between my-1">
             <span className="block">Humidité : </span>
             <span className="block">
-              {currentSensorData?.humidity ? currentSensorData.humidity : "---"} %
+              {currentSensorData?.humidity ? currentSensorData.humidity : "---"}{" "}
+              %
             </span>
           </li>
           <li className="flex justify-between my-1">
             <span className="block">Hum Sol : </span>
-            <span className="block">--- %</span>
+            <span className="block">
+              {currentSensorData?.sol ? currentSensorData.sol : "---"} %
+            </span>
           </li>
           <li className="flex justify-between my-1">
             <span className="block">Press. Atm : </span>
             <span className="block">
-              {currentSensorData?.pressure ? currentSensorData.pressure : "---"} hPa
+              {currentSensorData?.pressure ? currentSensorData.pressure : "---"}{" "}
+              hPa
             </span>
           </li>
           <li className="flex justify-between my-1">
@@ -63,16 +74,25 @@ const CardCapteur = ({
           <li className="flex justify-between my-1">
             <span className="block">Lumière : </span>
             <span className="block">
-              {currentSensorData?.light_A ? currentSensorData.light_A : "---"} Lux
+              {currentSensorData?.light_A ? currentSensorData.light_A : "---"}{" "}
+              Lux
             </span>
           </li>
           <li className="flex justify-between my-1">
             <span className="block">Acc. : </span>
-            <span className="block">---</span>
+            <span className="block">
+              x : {currentSensorData?.acc_x ? currentSensorData.acc_x : "---"} y :{" "}
+              {currentSensorData?.acc_y ? currentSensorData.acc_y : "---"} z :{" "}
+              {currentSensorData?.acc_z ? currentSensorData.acc_z : "---"}
+            </span>
           </li>
           <li className="flex justify-between my-1">
             <span className="block">Gyro. : </span>
-            <span className="block">---</span>
+            <span className="block">
+              x : {currentSensorData?.gyro_x ? currentSensorData.gyro_x : "---"} y :{" "}
+              {currentSensorData?.gyro_y ? currentSensorData.gyro_y : "---"} z :{" "}
+              {currentSensorData?.gyro_z ? currentSensorData.gyro_z : "---"}
+            </span>
           </li>
         </ul>
       </div>

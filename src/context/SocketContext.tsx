@@ -12,6 +12,7 @@ import { io, Socket } from "socket.io-client";
 interface SocketContextType {
   socket: Socket | null;
   sensorData: any;
+  sensorNotification: any;
   isConnected: boolean;
   wantStopSocket: boolean;
   connect: () => void;
@@ -28,6 +29,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [sensorData, setSensorData] = useState<any>(null);
+  const [sensorNotification, setSensorNotification] = useState<any>(null)
   const [isConnected, setIsConnected] = useState(false);
   const [wantStopSocket, setWantStopSocket] = useState<boolean>(false);
 
@@ -43,7 +45,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
         // console.log(data);
       });
       newSocket.on("notifications", (data) => {
-        // console.log(data);
+        setSensorNotification(data)
+        console.log(data);
       });
     }
   }, [socket]);
@@ -55,6 +58,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       setSocket(null);
       setIsConnected(false);
       setSensorData(null);
+      setSensorNotification(null)
 
       // Vérification supplémentaire après la déconnexion
       setTimeout(() => {
@@ -82,6 +86,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         socket,
         sensorData,
+        sensorNotification,
         isConnected,
         wantStopSocket,
         setWantStopSocket,

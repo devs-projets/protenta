@@ -1,6 +1,6 @@
 import { IHourData } from "@/types/hourDara";
 
-export async function getStoredSensorData(
+export async function getStoredNotification(
   period: string
 ): Promise<IHourData[] | undefined> {
   try {

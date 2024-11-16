@@ -21,8 +21,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { SensorLog } from "@/components/view/IndividualCapteurLogs";
+import { ISensorAverageData } from "@/types/monitor";
 
-const capteurLogs: SensorLog[] = [
+interface IJoural extends ISensorAverageData {
+  etat: string;
+}
+
+const capteurLogs: IJoural[] = [
   {
     latest: "2024-10-01 14:30:00",
     temperature: 25,
@@ -76,7 +81,8 @@ const getRowColor = (etat: string) => {
 };
 
 const ActivitiesPage = () => {
-  const [logs] = useState<SensorLog[]>(capteurLogs);
+  const [logs] = useState<IJoural[]>(capteurLogs);
+  const [filterEtat, setFilterEtat] = useState<string | null>(null);
 
 //   useEffect(() => {
 //     const newLog = { ...sensorData, etat: getRandomState() };
@@ -84,74 +90,83 @@ const ActivitiesPage = () => {
 //     if (newLog.localName === capteurID)
 //       setLogs((prevLogs) => [newLog, ...prevLogs]);
 //   }, [sensorData]);
+
+const filteredLogs = filterEtat
+    ? logs.filter((log) => log.etat === filterEtat)
+    : logs;
   return (
     <div>
       <h1 className="text-4xl font-bold shadow-lg text-center rounded-lg py-5">
-        Capteurs
+        Journal
       </h1>
-      <div className="border rounded-lg overflow-hidden">
-        <Table>
-          <TableHeader>
+      <div className="border rounded-lg overflow-hidden mt-5">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-1/5">Date et Heure</TableHead>
+            <TableHead className="w-1/5">Température</TableHead>
+            <TableHead className="w-1/5">Humidité</TableHead>
+            <TableHead className="w-1/5">Pression Atmosphérique</TableHead>
+            <TableHead className="w-1/5">Lumière</TableHead>
+            <TableHead className="w-1/5 flex items-center gap-2">
+              État{" "}
+              <select
+                id="etat-filter"
+                value={filterEtat || ""}
+                onChange={(e) => setFilterEtat(e.target.value || null)}
+                className="border border-gray-300 rounded-md px-2 py-1"
+              >
+                <option value="">Tous</option>
+                <option value="Normal">Normal</option>
+                <option value="Attention">Attention</option>
+                <option value="Alerte">Alerte</option>
+              </select>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredLogs.length === 0 ? (
             <TableRow>
-              <TableHead className="bg-background">Date et Heure</TableHead>
-              <TableHead className="bg-background">Température</TableHead>
-              <TableHead className="bg-background">Humidité</TableHead>
-              <TableHead className="bg-background">
-                Pression Atmosphérique
-              </TableHead>
-              <TableHead className="bg-background">Lumière</TableHead>
-              <TableHead className="bg-background">État</TableHead>
+              <TableCell colSpan={6} className="text-center text-gray-500">
+                Aucune donnée à afficher.
+              </TableCell>
             </TableRow>
-          </TableHeader>
-        </Table>
-        <div className="overflow-auto max-h-[calc(100vh-20rem)]">
-          <Table>
-            <TableBody>
-              {logs.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-gray-500">
-                    Aucune donnée à afficher.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                logs.map((log, index) => (
-                  <AlertDialog key={index}>
-                    <AlertDialogTrigger asChild>
-                      <TableRow className={getRowColor(log.etat)}>
-                        <TableCell className="font-medium">
-                          {log.latest}
-                        </TableCell>
-                        <TableCell>{log.temperature}°C</TableCell>
-                        <TableCell>{log.humidity}%</TableCell>
-                        <TableCell>{log.pressure} hPa</TableCell>
-                        <TableCell>{log.light_A} lux</TableCell>
-                        <TableCell>{log.etat}</TableCell>
-                      </TableRow>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Détails du log</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          <p>Date et Heure : {log.latest}</p>
-                          <p>Température : {log.temperature}°C</p>
-                          <p>Humidité : {log.humidity}%</p>
-                          <p>Pression Atmosphérique : {log.pressure} hPa</p>
-                          <p>Lumière : {log.light_A} lux</p>
-                          <p>État : {log.etat}</p>
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Fermer</AlertDialogCancel>
-                        <AlertDialogAction>OK</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
+          ) : (
+            filteredLogs.map((log, index) => (
+              <AlertDialog key={index}>
+                <AlertDialogTrigger asChild>
+                  <TableRow className={getRowColor(log.etat)}>
+                    <TableCell className="font-medium">{log.latest}</TableCell>
+                    <TableCell>{log.temperature}°C</TableCell>
+                    <TableCell>{log.humidity}%</TableCell>
+                    <TableCell>{log.pressure} hPa</TableCell>
+                    <TableCell>{log.light_A} lux</TableCell>
+                    <TableCell>{log.etat}</TableCell>
+                  </TableRow>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Détails du log</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      <p>Date et Heure : {log.latest}</p>
+                      <p>Température : {log.temperature}°C</p>
+                      <p>Humidité : {log.humidity}%</p>
+                      <p>Pression Atmosphérique : {log.pressure} hPa</p>
+                      <p>Lumière : {log.light_A} lux</p>
+                      <p>État : {log.etat}</p>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Fermer</AlertDialogCancel>
+                    <AlertDialogAction>OK</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
     </div>
   );
 };

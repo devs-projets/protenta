@@ -25,6 +25,7 @@ export type SensorLog = {
   latest: string;
   temperature: number;
   humidity: number;
+  sol: number;
   pressure: number;
   light_A: number;
   etat: string;
@@ -57,7 +58,7 @@ const IndividualCapteurLogs = ({
   capteurID: string;
 }) => {
   const [logs, setLogs] = useState<SensorLog[]>([]);
-  const [filterEtat, setFilterEtat] = useState<string | null>(null); // État pour le filtre
+  const [filterEtat, setFilterEtat] = useState<string | null>(null);
 
   useEffect(() => {
     if (!sensorData || sensorData.localName !== capteurID) return;
