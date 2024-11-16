@@ -29,13 +29,15 @@ const IndividualMoyenneCard = () => {
   const param = useParams().moyenneId;
   const decodedParam = decodeURIComponent(param as string);
   const item = moyennes.filter((x) => x.accessParam === param)[0];
+  const currentDate = new Date().toLocaleDateString();
+  const currentHeure = new Date().toLocaleTimeString();
   return (
     <div>
       <h1 className="text-2xl font-bold text-center my-5">
         Moyenne | {item?.name}
       </h1>
       <div className="grid md:grid-cols-3 gap-5 md:mx-5">
-        <div className="text-center rounded-xl bg-muted/50">
+        <div className="text-center rounded-xl bg-gray-200 shadow">
           <div className="rounded-full flex justify-center items-center">
             <Image
               src={item?.icon as string}
@@ -46,13 +48,13 @@ const IndividualMoyenneCard = () => {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center">
-          <h2 className="font-bold">Info 1</h2>
-          <p>Data de l'info 1</p>
+        <div className="flex flex-col justify-center bg-gray-100 p-2 rounded-lg shadow">
+          <h2 className="font-bold">Donnée :</h2>
+          <p>{item?.name}</p>
         </div>
-        <div className="flex flex-col justify-center">
-          <h2 className="font-bold">Info 2</h2>
-          <p>Data de l'info 2</p>
+        <div className="flex flex-col justify-center bg-gray-100 p-2 rounded-lg shadow">
+          <h2 className="font-bold">Calculé le :</h2>
+          <p>{currentDate} à {currentHeure}</p>
         </div>
       </div>
     </div>

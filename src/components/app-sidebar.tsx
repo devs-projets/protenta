@@ -150,7 +150,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         if (item.title === "Capteurs") toggleSubMenu("capteurs");
                       }}>
                       {item.title === "Dashboard" && <LayoutDashboard />}
-                      {item.title === "Activités" && <ArrowDownUp />}
+                      {item.title === "Journal" && <ArrowDownUp />}
                       {item.title === "Données" && <CircleGauge />}
                       {item.title === "Capteurs" && <Cable />}
                       {item.title}
