@@ -4,19 +4,51 @@ import LimiteListItem from "../LimiteTabs/LimiteListItem";
 import { Switch } from "@radix-ui/react-switch";
 import { Save, X } from "lucide-react";
 
-const LimiteList = () => {
+const LimiteList = ({ newLimites }: { newLimites: any }) => {
   const initialLimites: Limite[] = [
-    { name: "Température", unit: "°C", minValue: 0, maxValue: 100 },
-    { name: "Humidité", unit: "%", minValue: 0, maxValue: 100 },
-    { name: "Lumière", unit: "lux", minValue: 0, maxValue: 1000 },
     {
+      code: "SeuilHumidity",
+      name: "Température",
+      unit: "°C",
+      minValue: newLimites ? newLimites.SeuilHumidity_min : 0,
+      maxValue: newLimites ? newLimites.SeuilHumidity_max : 0,
+    },
+    {
+      code: "SeuilTemp",
+      name: "Humidité",
+      unit: "%",
+      minValue: newLimites ? newLimites.SeuilHumidity_min : 0,
+      maxValue: newLimites ? newLimites.SeuilHumidity_max : 0,
+    },
+    {
+      code: "SeuilLum",
+      name: "Lumière",
+      unit: "lux",
+      minValue: newLimites ? newLimites.SeuilLum_min : 0,
+      maxValue: newLimites ? newLimites.SeuilLum_max : 0,
+    },
+    {
+      code: "SeuilPression",
       name: "Pression Atmosphérique",
       unit: "Bae",
-      minValue: 950,
-      maxValue: 1050,
+      minValue: newLimites ? newLimites.SeuilPression_min : 0,
+      maxValue: newLimites ? newLimites.SeuilPression_max : 0,
     },
-    { name: "Humidité du Sol", unit: "%", minValue: 0, maxValue: 100 },
-    { name: "CO₂", unit: "ppm", minValue: 0, maxValue: 2000 },
+    {
+      // TODO: Code de l'humidité sol (La valeur n'est même pas renvoyé !!!)
+      code: "",
+      name: "Humidité du Sol",
+      unit: "%",
+      minValue: 0,
+      maxValue: 100,
+    },
+    {
+      code: "SeuilCo2",
+      name: "CO₂",
+      unit: "ppm",
+      minValue: newLimites ? newLimites.SeuilCo2_min : 0,
+      maxValue: newLimites ? newLimites.SeuilCo2_max : 0,
+    },
   ];
 
   const [limites, setLimites] = useState<Limite[]>(initialLimites);
@@ -40,7 +72,33 @@ const LimiteList = () => {
     setOnLimitesChange(true);
   };
 
-  console.log(limites);
+  const submitNewLimites = async () => {
+    const data: any = {} 
+    limites.map(x => {
+      if(x.code === "SeuilHumidity") {
+        data["SeuilHumidity_min"] = x.minValue;
+        data["SeuilHumidity_max"] = x.maxValue;
+      }
+      if(x.code === "SeuilTemp") {
+        data["SeuilTemp_min"] = x.minValue;
+        data["SeuilTemp_max"] = x.maxValue;
+      }
+      if(x.code === "SeuilLum") {
+        data["SeuilLum_min"] = x.minValue;
+        data["SeuilLum_max"] = x.maxValue;
+      }
+      if(x.code === "SeuilPression") {
+        data["SeuilPression_min"] = x.minValue;
+        data["SeuilPression_max"] = x.maxValue;
+      }
+      if(x.code === "SeuilCo2") {
+        data["SeuilCo2_min"] = x.minValue;
+        data["SeuilCo2_max"] = x.maxValue;
+      }
+    })
+
+    console.log(data)
+  };
 
   return (
     <ul>
@@ -77,7 +135,7 @@ const LimiteList = () => {
               Annuler
             </button>
             <button
-              type="submit"
+              onClick={submitNewLimites}
               className="flex gap-1 justify-center items-center bg-primary w-full p-2 text-white rounded-lg"
             >
               <Save />

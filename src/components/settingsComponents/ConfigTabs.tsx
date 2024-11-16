@@ -13,6 +13,7 @@ export interface Actionnaire {
 }
 
 export interface Limite {
+  code: string;
   name: string;
   unit: string;
   minValue: number;
@@ -25,6 +26,7 @@ interface SensorLog {
 
 const ConfigTabs = () => {
   const [actionnaires, setActionnaires] = useState<Actionnaire[]>([]);
+  const [limitesFetched, setLimitesFetched] = useState();
   const [lastData, setLastData] = useState<SensorLog | null>(null);
 
   const getLastData = async () => {
@@ -72,6 +74,13 @@ const ConfigTabs = () => {
           status: lastData[key] === 1,
         }));
       setActionnaires(newActionnaires);
+      const newLimites: any = Object.keys(lastData)
+        .filter((key) => key.startsWith("Seuil"))
+        .map((key) => ({
+          name: key,
+          value: lastData[key]
+        }));
+        setLimitesFetched(newLimites);
     } else if (actionnaires.length === 0) {
       // Si lastData est null et actionnaires est vide, on génère des données fictives
       generateRandomActionnaires();
@@ -88,7 +97,7 @@ const ConfigTabs = () => {
         </TabsList>
 
         <TabsContent value="limites">
-          <LimiteList />
+          <LimiteList newLimites={limitesFetched} />
         </TabsContent>
 
         <TabsContent value="actionnaires">

@@ -4,14 +4,21 @@ import { Pencil, Save, X } from "lucide-react";
 
 const FloraisonComponent = () => {
   const [disableEditMode, setDisableEditMode] = useState<boolean>(true);
-  const [start, setStart] = useState<string>("");
-  const [end, setEnd] = useState<string>("");
-  const [pollinisation, setPollinisation] = useState<number>(0);
+  const [start, setStart] = useState<string>("2024-05-15");
+  const [end, setEnd] = useState<string>("2024-05-15");
+  const [pollinisation, setPollinisation] = useState<string>('35');
   const [floraison, setFloraison] = useState<boolean>(false);
 
   const handleChangeFloraison = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     alert("Floraison changed ...");
+    const data = {
+      start,
+      end,
+      pollinisation,
+      floraison
+    }
+    console.log(data)
     setDisableEditMode(true);
   };
 
@@ -23,7 +30,7 @@ const FloraisonComponent = () => {
             handleChangeFloraison(e);
           }
         }}
-        className="flex flex-col gap-8"
+        className="flex flex-col gap-5"
       >
         <div className="flex justify-between items-center">
           <label>Début :</label>
@@ -35,6 +42,7 @@ const FloraisonComponent = () => {
             <input
               type="date"
               value={start}
+              onChange={(e) => setStart(e.target.value)}
               className="border p-1 rounded-lg border-primary text-center"
               disabled={disableEditMode}
             />
@@ -50,6 +58,7 @@ const FloraisonComponent = () => {
             <input
               type="date"
               value={end}
+              onChange={(e) => setEnd(e.target.value)}
               className="border p-1 rounded-lg border-primary text-center"
               disabled={disableEditMode}
             />
@@ -66,6 +75,7 @@ const FloraisonComponent = () => {
               type="number"
               className="border p-1 rounded-lg border-primary max-w-24"
               value={pollinisation}
+              onChange={(e) => setPollinisation(e.target.value)}
               disabled={disableEditMode}
             />
           )}

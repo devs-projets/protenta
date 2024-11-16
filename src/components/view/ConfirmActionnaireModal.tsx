@@ -12,6 +12,25 @@ import {
 import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction } from "react";
 
+const modeSwitchCodes = {
+  300: "Désactiver manuelAuto S1",
+  301: "Désactiver manuelAuto S2",
+  302: "Désactiver manuelAuto S3",
+  303: "Désactiver manuelAuto S4",
+  304: "Désactiver manuelAuto S5",
+  305: "Désactiver manuelAuto S6",
+  306: "Désactiver manuelAuto S7",
+  307: "Désactiver manuelAuto S8",
+  308: "Désactiver manuelAuto S9",
+  309: "Désactiver manuelAuto S10",
+  310: "Désactiver manuelAuto S11",
+  311: "Désactiver manuelAuto S12",
+  313: "Désactiver manuelAuto S13",
+  314: "Désactiver manuelAuto S14",
+  315: "Désactiver manuelAuto S15",
+  316: "Désactiver manuelAuto S16",
+};
+
 export function ConfirmActionnaireModal({
   title,
   modeAuto,
@@ -21,11 +40,16 @@ export function ConfirmActionnaireModal({
   modeAuto: boolean;
   setModeAuto: Dispatch<SetStateAction<boolean>>;
 }) {
+  const askManuelHandling = async () => {};
+
   return (
     <AlertDialog>
       <AlertDialogTrigger>
-        <Button variant={modeAuto ? "default" : "outline"}>
-          {modeAuto ? "Activer" : "Désactiver"}
+        <Button
+          variant={modeAuto ? "default" : "outline"}
+          className={`shadow w-full ${!modeAuto && "bg-gray-200"}`}
+        >
+          {modeAuto ? "Manuel" : "Auto"}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="w-96">
@@ -37,7 +61,20 @@ export function ConfirmActionnaireModal({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annuler</AlertDialogCancel>
-          <AlertDialogAction onClick={() => setModeAuto(false)}>
+          <AlertDialogAction
+            onClick={() => {
+              if (!modeAuto) {
+                Object.entries(modeSwitchCodes).forEach(([key, value]) => {
+                  const splitedValue = value.split(' ');
+                  const actionnaire = splitedValue[splitedValue.length - 1];
+                  if (actionnaire == title) {
+                    alert(key)
+                  };
+                })
+                setModeAuto(true);
+              } else setModeAuto(false);
+            }}
+          >
             Confirmer
           </AlertDialogAction>
         </AlertDialogFooter>
