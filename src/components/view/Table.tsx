@@ -9,7 +9,7 @@ import {
   TableHead,
   TableRow,
 } from "@/components/ui/table";
-import { simulateAverageData } from "@/mockData/simulateAverageData";
+import { ISimulateAverageData, simulateAverageData } from "@/mockData/simulateAverageData";
 import Spinner from "../Spinner";
 import { ISensorAverageData } from "@/types/monitor";
 import { IHourData } from "@/types/hourDara";
@@ -30,7 +30,7 @@ const generateDataWithDates = () => {
   const data: Record<string, Record<string, string>> = {};
 
   dates.forEach((date) => {
-    const simulatedData: ISensorAverageData = simulateAverageData();
+    const simulatedData: ISimulateAverageData = simulateAverageData();
     data[date] = {
       Température: simulatedData.MeanTemp!.toFixed(2),
       Humidité: simulatedData.MeanHumidity!.toFixed(2),
