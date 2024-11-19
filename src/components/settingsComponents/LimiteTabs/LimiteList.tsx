@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Limite } from "../ConfigTabs";
 import LimiteListItem from "../LimiteTabs/LimiteListItem";
 import { Switch } from "@radix-ui/react-switch";
@@ -7,52 +7,60 @@ import { Save, X } from "lucide-react";
 const LimiteList = ({ newLimites }: { newLimites: any }) => {
   const initialLimites: Limite[] = [
     {
-      code: "SeuilHumidity",
+      code: "lastSeuilTemp",
       name: "Température",
       unit: "°C",
-      minValue: newLimites ? newLimites.SeuilHumidity_min : 0,
-      maxValue: newLimites ? newLimites.SeuilHumidity_max : 0,
+      minValue: 0,
+      maxValue: 0,
     },
     {
-      code: "SeuilTemp",
+      code: "lastSeuilHumidity",
       name: "Humidité",
       unit: "%",
-      minValue: newLimites ? newLimites.SeuilHumidity_min : 0,
-      maxValue: newLimites ? newLimites.SeuilHumidity_max : 0,
+      minValue: 0,
+      maxValue: 0,
     },
     {
-      code: "SeuilLum",
+      code: "lastSeuilLum",
       name: "Lumière",
       unit: "lux",
-      minValue: newLimites ? newLimites.SeuilLum_min : 0,
-      maxValue: newLimites ? newLimites.SeuilLum_max : 0,
+      minValue: 0,
+      maxValue: 0,
     },
     {
-      code: "SeuilPression",
+      code: "lastSeuilPression",
       name: "Pression Atmosphérique",
       unit: "Bae",
-      minValue: newLimites ? newLimites.SeuilPression_min : 0,
-      maxValue: newLimites ? newLimites.SeuilPression_max : 0,
-    },
-    {
-      // TODO: Code de l'humidité sol (La valeur n'est même pas renvoyé !!!)
-      code: "",
-      name: "Humidité du Sol",
-      unit: "%",
       minValue: 0,
-      maxValue: 100,
+      maxValue: 0,
     },
     {
-      code: "SeuilCo2",
+      code: "lastSeuilCo2",
       name: "CO₂",
       unit: "ppm",
-      minValue: newLimites ? newLimites.SeuilCo2_min : 0,
-      maxValue: newLimites ? newLimites.SeuilCo2_max : 0,
+      minValue: 0,
+      maxValue: 0,
     },
   ];
 
   const [limites, setLimites] = useState<Limite[]>(initialLimites);
   const [onLimitesChange, setOnLimitesChange] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (newLimites) {
+      const updatedLimites = limites.map((limite) => {
+        const code = limite.code;
+        const minKey = `${code}Min`;
+        const maxKey = `${code}Max`;
+        return {
+          ...limite,
+          minValue: newLimites[minKey],
+          maxValue: newLimites[maxKey],
+        };
+      });
+      setLimites(updatedLimites);
+    }
+  }, [newLimites]);
 
   const handleMinChange = (index: number, value: number) => {
     setLimites((prev) => {
@@ -73,31 +81,55 @@ const LimiteList = ({ newLimites }: { newLimites: any }) => {
   };
 
   const submitNewLimites = async () => {
-    const data: any = {} 
-    limites.map(x => {
-      if(x.code === "SeuilHumidity") {
-        data["SeuilHumidity_min"] = x.minValue;
-        data["SeuilHumidity_max"] = x.maxValue;
+    const data: any = {};
+    limites.map((x) => {
+      if (x.code === "lastSeuilHumidity") {
+        data["HumMin"] = x.minValue;
+        data["HumMax"] = x.maxValue;
       }
-      if(x.code === "SeuilTemp") {
-        data["SeuilTemp_min"] = x.minValue;
-        data["SeuilTemp_max"] = x.maxValue;
+      if (x.code === "lastSeuilTemp") {
+        data["TemMin"] = x.minValue;
+        data["TemMax"] = x.maxValue;
       }
-      if(x.code === "SeuilLum") {
-        data["SeuilLum_min"] = x.minValue;
-        data["SeuilLum_max"] = x.maxValue;
+      if (x.code === "lastSeuilLum") {
+        data["LumMin"] = x.minValue;
+        data["LumMax"] = x.maxValue;
       }
-      if(x.code === "SeuilPression") {
-        data["SeuilPression_min"] = x.minValue;
-        data["SeuilPression_max"] = x.maxValue;
+      if (x.code === "lastSeuilPression") {
+        data["PressMin"] = x.minValue;
+        data["PressMax"] = x.maxValue;
       }
-      if(x.code === "SeuilCo2") {
-        data["SeuilCo2_min"] = x.minValue;
-        data["SeuilCo2_max"] = x.maxValue;
+      if (x.code === "lastSeuilCo2") {
+        data["Co2Min"] = x.minValue;
+        data["Co2Max"] = x.maxValue;
       }
-    })
+    });
 
-    console.log(data)
+    try {
+      const response = await fetch("http://localhost:4000/send-commande", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+    
+      if (response.ok) {
+        setOnLimitesChange(false);
+        alert("Les limites ont été mises à jour avec succès !");
+      } else {
+        const errorMessage = await response.json();
+        alert(
+          `Une erreur s'est produite : \nStatus Code = ${errorMessage && errorMessage.statusCode}\nVeuillez réessayer...`
+        );
+      }
+    } catch (error) {
+      console.error("Erreur réseau ou serveur :", error);
+      alert(
+        "Une erreur s'est produite lors de la communication avec le serveur. Vérifiez votre connexion."
+      );
+    }
+    
   };
 
   return (
@@ -109,17 +141,20 @@ const LimiteList = ({ newLimites }: { newLimites: any }) => {
         <p>Maximum</p>
       </li>
       <hr />
-      {limites.map((limite, index) => (
-        <LimiteListItem
-          key={limite.name}
-          title={limite.name}
-          unit={limite.unit}
-          minValue={limite.minValue}
-          maxValue={limite.maxValue}
-          onMinChange={(e) => handleMinChange(index, +e.target.value)}
-          onMaxChange={(e) => handleMaxChange(index, +e.target.value)}
-        />
-      ))}
+      <ul>
+        {limites &&
+          limites.map((limite, index) => (
+            <LimiteListItem
+              key={limite.code}
+              title={limite.name}
+              unit={limite.unit}
+              minValue={limite.minValue}
+              maxValue={limite.maxValue}
+              onMinChange={(e) => handleMinChange(index, +e.target.value)}
+              onMaxChange={(e) => handleMaxChange(index, +e.target.value)}
+            />
+          ))}
+      </ul>
       {onLimitesChange && (
         <li>
           <div className="flex justify-center items-center gap-5">

@@ -34,13 +34,55 @@ const modeSwitchCodes = {
 export function ConfirmActionnaireModal({
   title,
   modeAuto,
+  description,
   setModeAuto,
 }: {
   title: string;
   modeAuto: boolean;
+  description: string;
   setModeAuto: Dispatch<SetStateAction<boolean>>;
 }) {
-  const askManuelHandling = async () => {};
+  const setAutoHandling = async () => {
+    let code = "";
+    Object.entries(modeSwitchCodes).forEach(([key, value]) => {
+      const splitedValue = value.split(" ");
+      const actionnaire = splitedValue[splitedValue.length - 1];
+      if (actionnaire == title) code = key;
+    });
+    try {
+      const response = await fetch("http://localhost:4000/send-commande", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ [`param${code}`]: true }),
+      });
+
+      if (response.ok) {
+        alert(
+          `L'actionnaire "${description}" est passé en mode Automatique avec succès !`
+        );
+      } else {
+        const errorMessage = await response.json();
+        alert(
+          `Une erreur s'est produite : \nStatus Code = ${
+            errorMessage && errorMessage.statusCode
+          }\nVeuillez réessayer...`
+        );
+      }
+    } catch (error) {
+      console.error("Erreur réseau ou serveur :", error);
+      alert(
+        "Une erreur s'est produite lors de la communication avec le serveur. Vérifiez votre connexion."
+      );
+    }
+    setModeAuto(true);
+  };
+
+  const handleActionnaireMode = () => {
+    if (!modeAuto) setAutoHandling();
+    else setModeAuto(false);
+  };
 
   return (
     <AlertDialog>
@@ -62,18 +104,7 @@ export function ConfirmActionnaireModal({
         <AlertDialogFooter>
           <AlertDialogCancel>Annuler</AlertDialogCancel>
           <AlertDialogAction
-            onClick={() => {
-              if (!modeAuto) {
-                Object.entries(modeSwitchCodes).forEach(([key, value]) => {
-                  const splitedValue = value.split(' ');
-                  const actionnaire = splitedValue[splitedValue.length - 1];
-                  if (actionnaire == title) {
-                    alert(key)
-                  };
-                })
-                setModeAuto(true);
-              } else setModeAuto(false);
-            }}
+            onClick={handleActionnaireMode}
           >
             Confirmer
           </AlertDialogAction>

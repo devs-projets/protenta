@@ -44,7 +44,6 @@ const MoyennesCardList = ({
 
         if (sensorData[0]) {
           const last = sensorData[0];
-          console.log("=> ", last.averageIaq);
             setMoyennes((prevMoyennes) =>
               prevMoyennes.map((item) => {
                 switch (item.name) {

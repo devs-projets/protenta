@@ -1,24 +1,63 @@
 import { Switch } from "@/components/ui/switch";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pencil, Save, X } from "lucide-react";
+import { ISensorStoredData } from "@/types/storedData";
 
-const FloraisonComponent = () => {
+const FloraisonComponent = ({
+  floraisonFeteched,
+}: {
+  floraisonFeteched: Partial<ISensorStoredData> | undefined;
+}) => {
   const [disableEditMode, setDisableEditMode] = useState<boolean>(true);
-  const [start, setStart] = useState<string>("2024-05-15");
-  const [end, setEnd] = useState<string>("2024-05-15");
-  const [pollinisation, setPollinisation] = useState<string>('35');
-  const [floraison, setFloraison] = useState<boolean>(false);
+  const [start, setStart] = useState<string | null>(null);
+  const [end, setEnd] = useState<string | null>(null);
+  const [pollinisation, setPollinisation] = useState<number | null>(null);
+  const [floraison, setFloraison] = useState<boolean | undefined>(false);
+
+  useEffect(() => {
+    setStart(floraisonFeteched?.PolStartTime ?? null);
+    setEnd(floraisonFeteched?.PolEndTime ?? null);
+    setPollinisation(
+      floraisonFeteched?.PolStartTime
+        ? parseInt(floraisonFeteched.PolStartTime)
+        : null
+    );
+    setFloraison(floraisonFeteched?.MomentFloraison);
+  }, [floraisonFeteched]);
 
   const handleChangeFloraison = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert("Floraison changed ...");
     const data = {
-      start,
-      end,
-      pollinisation,
-      floraison
+      PolStartTime: start,
+      PolEndTime: end,
+      Periode: pollinisation,
+      MomentFloraison: floraison ? 1 : 0,
+    };
+    try {
+      const response = await fetch("http://localhost:4000/send-commande", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        alert(`La floraison a été mis à jour avec succès !`);
+      } else {
+        const errorMessage = await response.json();
+        alert(
+          `Une erreur s'est produite : \nStatus Code = ${
+            errorMessage && errorMessage.statusCode
+          }\nVeuillez réessayer...`
+        );
+      }
+    } catch (error) {
+      console.error("Erreur réseau ou serveur :", error);
+      alert(
+        "Une erreur s'est produite lors de la communication avec le serveur. Vérifiez votre connexion."
+      );
     }
-    console.log(data)
     setDisableEditMode(true);
   };
 
@@ -36,14 +75,14 @@ const FloraisonComponent = () => {
           <label>Début :</label>
           {disableEditMode ? (
             <p className="border p-2 rounded-lg border-primary text-center">
-              15/05/2024
+              {start ?? "Date non définie"}
             </p>
           ) : (
             <input
               type="date"
-              value={start}
+              value={start as string}
               onChange={(e) => setStart(e.target.value)}
-              className="border p-1 rounded-lg border-primary text-center"
+              className="border p-2 rounded-lg border-primary text-center"
               disabled={disableEditMode}
             />
           )}
@@ -52,14 +91,14 @@ const FloraisonComponent = () => {
           <label>Fin :</label>
           {disableEditMode ? (
             <p className="border p-2 rounded-lg border-primary text-center">
-              15/05/2024
+              {end ?? "Date non définie"}
             </p>
           ) : (
             <input
               type="date"
-              value={end}
+              value={end as string}
               onChange={(e) => setEnd(e.target.value)}
-              className="border p-1 rounded-lg border-primary text-center"
+              className="border p-2 rounded-lg border-primary text-center"
               disabled={disableEditMode}
             />
           )}
@@ -68,21 +107,25 @@ const FloraisonComponent = () => {
           <label>Pollinisation :</label>
           {disableEditMode ? (
             <p className="border min-w-16 p-2 rounded-lg border-primary text-center">
-              35
+              {pollinisation ?? "Date non définie"}
             </p>
           ) : (
             <input
               type="number"
-              className="border p-1 rounded-lg border-primary max-w-24"
-              value={pollinisation}
-              onChange={(e) => setPollinisation(e.target.value)}
+              className="border p-2 rounded-lg border-primary max-w-24"
+              value={pollinisation as number}
+              onChange={(e) => setPollinisation(parseInt(e.target.value))}
               disabled={disableEditMode}
             />
           )}
         </div>
         <div className="flex justify-between items-center">
           <label>Floraison :</label>
-          <Switch checked={floraison} onClick={() => setFloraison(!floraison)} disabled={disableEditMode} />
+          <Switch
+            checked={floraison}
+            onClick={() => setFloraison(!floraison)}
+            disabled={disableEditMode}
+          />
         </div>
         <div>
           {!disableEditMode && (

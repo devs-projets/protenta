@@ -19,9 +19,7 @@ export default function Notifications() {
   const toggleDrawer = (open: boolean) => () => {
     setOpen(open);
   };
-
-  console.log(sensorNotification);
-
+  
   // Fonction pour simuler l'ajout de notifications toutes les 3 secondes
   useEffect(() => {
     if (sensorNotification) {

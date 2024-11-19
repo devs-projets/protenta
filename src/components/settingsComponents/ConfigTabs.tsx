@@ -5,12 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LimiteList from "./LimiteTabs/LimiteList";
 import ActionnaireList from "./actionnaireTabs/ActionnaireList";
 import FloraisonComponent from "./floraison/FloraisonComponent";
-
-// Définition des interfaces
-export interface Actionnaire {
-  name: string;
-  status: boolean;
-}
+import { ISensorStoredData } from "@/types/storedData";
 
 export interface Limite {
   code: string;
@@ -25,9 +20,14 @@ interface SensorLog {
 }
 
 const ConfigTabs = () => {
-  const [actionnaires, setActionnaires] = useState<Actionnaire[]>([]);
-  const [limitesFetched, setLimitesFetched] = useState();
-  const [lastData, setLastData] = useState<SensorLog | null>(null);
+  const [actionnairesFetched, setActionnairesFetched] =
+    useState<Partial<ISensorStoredData>>();
+  const [limitesFetched, setLimitesFetched] =
+    useState<Partial<ISensorStoredData>>();
+    const [floraisonFeteched, setFloraisonFeteched] = useState<Partial<ISensorStoredData>>();
+  const [lastData, setLastData] = useState<ISensorStoredData | null>(null);
+
+  console.log(lastData);
 
   const getLastData = async () => {
     try {
@@ -35,7 +35,7 @@ const ConfigTabs = () => {
         "http://localhost:4000/monitor?period=minute"
       );
       if (response.ok) {
-        const data: SensorLog[] = await response.json();
+        const data: ISensorStoredData[] = await response.json();
         setLastData(data[0]);
       } else {
         console.error("Failed to fetch data:", response.statusText);
@@ -45,47 +45,39 @@ const ConfigTabs = () => {
     }
   };
 
-  // Fonction pour générer des actionnaires fictifs aléatoires
-  const generateRandomActionnaires = () => {
-    const randomActionnaires: Actionnaire[] = Array.from(
-      { length: 5 },
-      (_, index) => {
-        const randomEtat = Math.random() > 0.5; // Génère true ou false aléatoirement
-        return {
-          name: `S${index + 1}`,
-          status: randomEtat,
-        };
-      }
-    );
-    setActionnaires(randomActionnaires);
-  };
-
   useEffect(() => {
     getLastData();
   }, []);
 
   useEffect(() => {
     if (lastData) {
-      const newActionnaires: Actionnaire[] = Object.keys(lastData)
-        .filter((key) => key.startsWith("S"))
-        .map((key) => ({
-          name: key,
-          modeAuto: false,
-          status: lastData[key] === 1,
-        }));
-      setActionnaires(newActionnaires);
-      const newLimites: any = Object.keys(lastData)
-        .filter((key) => key.startsWith("Seuil"))
-        .map((key) => ({
-          name: key,
-          value: lastData[key]
-        }));
-        setLimitesFetched(newLimites);
-    } else if (actionnaires.length === 0) {
-      // Si lastData est null et actionnaires est vide, on génère des données fictives
-      generateRandomActionnaires();
+      const newActionnaires = Object.keys(lastData)
+        .filter((key): key is keyof ISensorStoredData => key.startsWith("S"))
+        .reduce((acc, key) => {
+          (acc as any)[key] = lastData[key];
+          return acc;
+        }, {} as Partial<ISensorStoredData>);
+      setActionnairesFetched(newActionnaires);
+      const newLimites = Object.keys(lastData)
+        .filter((key): key is keyof ISensorStoredData =>
+          key.startsWith("lastSeuil")
+        )
+        .reduce((acc, key) => {
+          (acc as any)[key] = lastData[key];
+          return acc;
+        }, {} as Partial<ISensorStoredData>);
+      setLimitesFetched(newLimites);
+      const newFloraison = {
+        MomentFloraison: lastData.MomentFloraison,
+        Periode: lastData.Periode,
+        PolEndTime: lastData.PolEndTime,
+        PolStartTime: lastData.PolStartTime,
+      };
+      setFloraisonFeteched(newFloraison);
     }
   }, [lastData]);
+
+  console.log(actionnairesFetched);
 
   return (
     <div>
@@ -101,11 +93,11 @@ const ConfigTabs = () => {
         </TabsContent>
 
         <TabsContent value="actionnaires">
-          <ActionnaireList actionnaires={actionnaires} />
+          <ActionnaireList actionnairesFetched={actionnairesFetched} />
         </TabsContent>
 
         <TabsContent value="floraison">
-          <FloraisonComponent />
+          <FloraisonComponent floraisonFeteched={floraisonFeteched} />
         </TabsContent>
       </Tabs>
     </div>
