@@ -50,5 +50,5 @@ export interface ISensorStoredData {
   PolEndTime: string | null; // ISO 8601 timestamp or null
   Periode: string | null;
   MomentFloraison: boolean;
-  originalDataId: string | null;
+  originalDataId?: string | null;
 }

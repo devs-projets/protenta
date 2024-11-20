@@ -11,8 +11,7 @@ import {
 } from "@/components/ui/table";
 import { ISimulateAverageData, simulateAverageData } from "@/mockData/simulateAverageData";
 import Spinner from "../Spinner";
-import { ISensorAverageData } from "@/types/monitor";
-import { IHourData } from "@/types/hourDara";
+import { ISensorStoredData } from "@/types/storedData";
 
 // Unités de mesure
 const units: Record<string, string> = {
@@ -44,7 +43,7 @@ const generateDataWithDates = () => {
   return data;
 };
 
-export function TableComponent({sensorData}: {sensorData: IHourData[]}) {
+export function TableComponent({sensorData}: {sensorData: ISensorStoredData[]}) {
   const [dataWithDates, setDataWithDates] = useState<Record<string, Record<string, string>> | null>(null);
   const [loading, setLoading] = useState(true);
 
