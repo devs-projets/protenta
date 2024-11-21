@@ -47,13 +47,16 @@ const ActionnaireListItem = ({
       if (switchStatus) thisActionCodes = "inactive";
       else thisActionCodes = "active";
       try {
-        const response = await fetch("http://localhost:4000/send-commande", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ [title]: thisActionCodes }),
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/send-commande`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ [title]: thisActionCodes }),
+          }
+        );
 
         if (response.ok) {
           alert(

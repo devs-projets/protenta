@@ -50,13 +50,16 @@ export function ConfirmActionnaireModal({
       if (actionnaire == title) code = key;
     });
     try {
-      const response = await fetch("http://localhost:4000/send-commande", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ [`param${code}`]: true }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/send-commande`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ [`param${code}`]: true }),
+        }
+      );
 
       if (response.ok) {
         alert(
@@ -103,9 +106,7 @@ export function ConfirmActionnaireModal({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annuler</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleActionnaireMode}
-          >
+          <AlertDialogAction onClick={handleActionnaireMode}>
             Confirmer
           </AlertDialogAction>
         </AlertDialogFooter>

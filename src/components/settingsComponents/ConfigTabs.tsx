@@ -32,7 +32,7 @@ const ConfigTabs = () => {
   const getLastData = async () => {
     try {
       const response = await fetch(
-        "http://localhost:4000/monitor?period=minute"
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor?period=minute`
       );
       if (response.ok) {
         const data: ISensorStoredData[] = await response.json();

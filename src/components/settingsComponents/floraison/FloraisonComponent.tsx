@@ -34,13 +34,16 @@ const FloraisonComponent = ({
       MomentFloraison: floraison ? 1 : 0,
     };
     try {
-      const response = await fetch("http://localhost:4000/send-commande", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/send-commande`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (response.ok) {
         alert(`La floraison a été mis à jour avec succès !`);
