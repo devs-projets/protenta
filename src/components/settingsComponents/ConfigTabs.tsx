@@ -6,6 +6,8 @@ import LimiteList from "./LimiteTabs/LimiteList";
 import ActionnaireList from "./actionnaireTabs/ActionnaireList";
 import FloraisonComponent from "./floraison/FloraisonComponent";
 import { ISensorStoredData } from "@/types/storedData";
+import { getStoredSensorData } from "@/lib/fetchData/getMonitorData";
+import Spinner from "../Spinner";
 
 export interface Limite {
   code: string;
@@ -24,29 +26,24 @@ const ConfigTabs = () => {
     useState<Partial<ISensorStoredData>>();
   const [limitesFetched, setLimitesFetched] =
     useState<Partial<ISensorStoredData>>();
-    const [floraisonFeteched, setFloraisonFeteched] = useState<Partial<ISensorStoredData>>();
+  const [floraisonFeteched, setFloraisonFeteched] =
+    useState<Partial<ISensorStoredData>>();
   const [lastData, setLastData] = useState<ISensorStoredData | null>(null);
-
-  console.log(lastData);
-
-  const getLastData = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor?period=minute`
-      );
-      if (response.ok) {
-        const data: ISensorStoredData[] = await response.json();
-        setLastData(data[0]);
-      } else {
-        console.error("Failed to fetch data:", response.statusText);
-      }
-    } catch (error) {
-      console.error("An error occurred while fetching data:", error);
-    }
-  };
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    getLastData();
+    const fetchSensorData = async () => {
+      try {
+        const data = await getStoredSensorData("minute");
+        if (data) setLastData(data[0]);
+      } catch (error) {
+        console.error("An error occurred while fetching sensor data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSensorData();
   }, []);
 
   useEffect(() => {
@@ -77,10 +74,13 @@ const ConfigTabs = () => {
     }
   }, [lastData]);
 
-  console.log(actionnairesFetched);
-
   return (
     <div>
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75">
+          <Spinner />
+        </div>
+      )}
       <Tabs defaultValue="limites" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="limites">Limites</TabsTrigger>

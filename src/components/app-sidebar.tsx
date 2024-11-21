@@ -4,9 +4,10 @@ import {
   LayoutDashboard,
   Cable,
   CircleGauge,
-  Settings,
   Unplug,
-  ArrowDownUp
+  ArrowDownUp,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 
 import {
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { Config } from "./settingsComponents/Config";
+import { usePathname } from "next/navigation";
 
 // This is sample data.
 const data = {
@@ -101,22 +103,22 @@ if (capteursMenu) {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   // Créer un état pour déterminer si les sous-menus "Données" et "Capteurs" sont ouverts
-  const [activeSubMenu, setActiveSubMenu] = React.useState<"données" | "capteurs" | null>(null);
+  const [activeSubMenu, setActiveSubMenu] = React.useState<
+    "données" | "capteurs" | null
+  >(null);
+  const pathname = usePathname();
 
   const toggleSubMenu = (menu: "données" | "capteurs") => {
-    // Si le sous-menu est déjà ouvert, le fermer, sinon l'ouvrir
-    if (activeSubMenu === menu) {
-      setActiveSubMenu(null); // Ferme le sous-menu si déjà ouvert
-    } else {
-      setActiveSubMenu(menu); // Ouvre le sous-menu
-    }
+    // Alterne entre ouvrir et fermer le sous-menu
+    setActiveSubMenu((prev) => (prev === menu ? null : menu));
   };
 
   return (
     <Sidebar
       variant="floating"
       {...props}
-      className="bg-[hsl(var(--sidebar-background))]">
+      className="bg-[hsl(var(--sidebar-background))]"
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -143,37 +145,82 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenuButton asChild>
                     <Link
                       href={item.url}
-                      className="font-medium hover:bg-primary"
-                      onClick={() => {
-                        // Toggle submenus for "Données" and "Capteurs"
-                        if (item.title === "Données") toggleSubMenu("données");
-                        if (item.title === "Capteurs") toggleSubMenu("capteurs");
-                      }}>
-                      {item.title === "Dashboard" && <LayoutDashboard />}
-                      {item.title === "Journal" && <ArrowDownUp />}
-                      {item.title === "Données" && <CircleGauge />}
-                      {item.title === "Capteurs" && <Cable />}
-                      {item.title}
+                      className="font-medium flex items-center justify-between hover:bg-green-600"
+                    >
+                      <div className="flex items-center gap-2">
+                        {item.title === "Dashboard" && <LayoutDashboard />}
+                        {item.title === "Journal" && <ArrowDownUp />}
+                        {item.title === "Données" && <CircleGauge />}
+                        {item.title === "Capteurs" && <Cable />}
+                        {item.title}
+                      </div>
+
+                      {/* Affichage conditionnel des chevrons */}
+                      {item.items?.length > 0 && (
+                        <div
+                          className="ml-auto flex items-center"
+                          onClick={(e) => {
+                            // Empêche le lien d'être suivi pour "Données" et "Capteurs"
+                            if (
+                              item.title === "Données" ||
+                              item.title === "Capteurs"
+                            ) {
+                              e.preventDefault();
+                              toggleSubMenu(
+                                item.title === "Données"
+                                  ? "données"
+                                  : "capteurs"
+                              );
+                            }
+                          }}
+                        >
+                          {activeSubMenu ===
+                          (item.title === "Données"
+                            ? "données"
+                            : "capteurs") ? (
+                            <ChevronUp />
+                          ) : (
+                            <ChevronDown />
+                          )}
+                        </div>
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </div>
 
-                {item.items?.length > 0 && (item.title === "Données" || item.title === "Capteurs") && activeSubMenu && (
-                  <SidebarMenuSub
-                    className={`ml-0 border-l-0 px-1.5 max-h-[200px] overflow-y-auto transition-all duration-300 ${
-                      activeSubMenu === (item.title === "Données" ? "données" : "capteurs") ? "block" : "hidden"
-                    }`}>
-                    {item.items.map((subItem) => (
-                      <SidebarMenuSubItem key={subItem.title} className="border-l-2 ml-5">
-                        <SidebarMenuSubButton asChild isActive={subItem.isActive}>
-                          <Link href={subItem.url}>
-                            {subItem.title} {subItem.title === "Capteur l1" && <Unplug />}
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                )}
+                {item.items?.length > 0 &&
+                  (item.title === "Données" || item.title === "Capteurs") &&
+                  activeSubMenu && (
+                    <SidebarMenuSub
+                      className={`ml-0 border-l-0 px-1.5 max-h-[200px] overflow-y-auto transition-all duration-300 ${
+                        activeSubMenu ===
+                        (item.title === "Données" ? "données" : "capteurs")
+                          ? "block"
+                          : "hidden"
+                      }`}
+                    >
+                      {item.items.map((subItem) => (
+                        <SidebarMenuSubItem
+                          key={subItem.title}
+                          className="border-l-2 ml-5"
+                        >
+                          <SidebarMenuSubButton
+                            asChild
+                            className={`${
+                              pathname === subItem.url
+                                ? "bg-primary text-white"
+                                : ""
+                            }`}
+                          >
+                            <Link href={subItem.url}>
+                              {subItem.title}{" "}
+                              {subItem.title === "Capteur l1" && <Unplug />}
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  )}
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
@@ -198,4 +245,3 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
-

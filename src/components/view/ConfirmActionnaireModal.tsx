@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction } from "react";
+import { sendCommand } from "@/lib/postData/sendCommands";
 
 const modeSwitchCodes = {
   300: "Désactiver manuelAuto S1",
@@ -49,36 +50,8 @@ export function ConfirmActionnaireModal({
       const actionnaire = splitedValue[splitedValue.length - 1];
       if (actionnaire == title) code = key;
     });
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/send-commande`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ [`param${code}`]: true }),
-        }
-      );
-
-      if (response.ok) {
-        alert(
-          `L'actionnaire "${description}" est passé en mode Automatique avec succès !`
-        );
-      } else {
-        const errorMessage = await response.json();
-        alert(
-          `Une erreur s'est produite : \nStatus Code = ${
-            errorMessage && errorMessage.statusCode
-          }\nVeuillez réessayer...`
-        );
-      }
-    } catch (error) {
-      console.error("Erreur réseau ou serveur :", error);
-      alert(
-        "Une erreur s'est produite lors de la communication avec le serveur. Vérifiez votre connexion."
-      );
-    }
+    const message = `L'actionnaire "${description}" est passé en mode Automatique avec succès !`;
+    sendCommand({ [`param${code}`]: true }, message);
     setModeAuto(true);
   };
 

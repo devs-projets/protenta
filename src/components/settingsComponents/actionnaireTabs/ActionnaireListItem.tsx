@@ -2,6 +2,7 @@ import { Switch } from "../../ui/switch";
 import { useEffect, useState } from "react";
 import { ConfirmActionnaireModal } from "../../view/ConfirmActionnaireModal";
 import { ActionnaireDefautlDesctiption } from "@/types/actionnaireState";
+import { sendCommand } from "@/lib/postData/sendCommands";
 
 const codes = {
   S1: { active: "101", inactive: "100" },
@@ -46,38 +47,10 @@ const ActionnaireListItem = ({
     if (title != "S12") {
       if (switchStatus) thisActionCodes = "inactive";
       else thisActionCodes = "active";
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/send-commande`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ [title]: thisActionCodes }),
-          }
-        );
-
-        if (response.ok) {
-          alert(
-            `L'actionnaire "${description}" été ${
-              thisActionCodes === "active" ? "Activé" : "Désactivé"
-            } avec succès !`
-          );
-        } else {
-          const errorMessage = await response.json();
-          alert(
-            `Une erreur s'est produite : \nStatus Code = ${
-              errorMessage && errorMessage.statusCode
-            }\nVeuillez réessayer...`
-          );
-        }
-      } catch (error) {
-        console.error("Erreur réseau ou serveur :", error);
-        alert(
-          "Une erreur s'est produite lors de la communication avec le serveur. Vérifiez votre connexion."
-        );
-      }
+      const message = `L'actionnaire "${description}" été ${
+        thisActionCodes === "active" ? "Activé" : "Désactivé"
+      } avec succès !`;
+      sendCommand({ [title]: thisActionCodes }, message)
     } else {
       alert("Action sur l'ombrière");
     }

@@ -2,6 +2,7 @@ import { Switch } from "@/components/ui/switch";
 import React, { useEffect, useState } from "react";
 import { Pencil, Save, X } from "lucide-react";
 import { ISensorStoredData } from "@/types/storedData";
+import { sendCommand } from "@/lib/postData/sendCommands";
 
 const FloraisonComponent = ({
   floraisonFeteched,
@@ -33,34 +34,9 @@ const FloraisonComponent = ({
       Periode: pollinisation,
       MomentFloraison: floraison ? 1 : 0,
     };
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/send-commande`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (response.ok) {
-        alert(`La floraison a été mis à jour avec succès !`);
-      } else {
-        const errorMessage = await response.json();
-        alert(
-          `Une erreur s'est produite : \nStatus Code = ${
-            errorMessage && errorMessage.statusCode
-          }\nVeuillez réessayer...`
-        );
-      }
-    } catch (error) {
-      console.error("Erreur réseau ou serveur :", error);
-      alert(
-        "Une erreur s'est produite lors de la communication avec le serveur. Vérifiez votre connexion."
-      );
-    }
+    const message = "La floraison a été mis à jour avec succès !";
+    sendCommand(data, message);
+    
     setDisableEditMode(true);
   };
 
