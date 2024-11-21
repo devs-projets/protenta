@@ -25,7 +25,7 @@ export function MoyenneTabs({sensorData}: {sensorData: ISensorStoredData[]}) {
         <TableComponent sensorData={sensorData} />
       </TabsContent>
       <TabsContent value="Graphique">
-        <ChartComponent />
+        <ChartComponent sensorData={sensorData} />
       </TabsContent>
     </Tabs>
   );
