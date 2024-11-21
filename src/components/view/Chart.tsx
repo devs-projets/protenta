@@ -30,8 +30,12 @@ const transformSensorData = (sensorData: ISensorStoredData[], key: string) => {
           return entry.averageTemp ? entry.averageTemp / 100 : 0; // Conversion en °C
         case "Humidité":
           return entry.averageHumidity ? entry.averageHumidity / 100 : 0; // En pourcentage
+          case "Lumière":
+            return entry.averageLightA ? entry.averageLightA / 1000 : 0
         case "Pression atmosphérique":
           return entry.averagePressure ? entry.averagePressure / 1000 : 0; // Conversion en Bar
+          case "Humidite du sol":
+            return entry.averageSol ? entry.averageSol : 0;
         case "Co2":
           return entry.averageIaq || 0; // ppm
         default:
@@ -121,6 +125,8 @@ export function ChartComponent({
     "Pression atmosphérique"
   );
   const co2Data = transformSensorData(sensorData, "Co2");
+  const lumiere = transformSensorData(sensorData, "Lumière");
+  const HumSol = transformSensorData(sensorData, "Humidite du sol");
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -137,10 +143,16 @@ export function ChartComponent({
             data={humiditeData}
           />
           <Chart
+            title="Graphe de la Lumière"
+            dataKey="Humidité"
+            data={lumiere}
+          />
+          <Chart
             title="Graphe de Pression Atmosphérique"
             dataKey="Pression atmosphérique"
             data={pressAtmData}
           />
+          <Chart title="Graphe de l'Humidité du Sol" dataKey="Co2" data={HumSol} />
           <Chart title="Graphe de CO2" dataKey="Co2" data={co2Data} />
         </div>
       </div>

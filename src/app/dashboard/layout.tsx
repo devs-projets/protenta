@@ -4,12 +4,6 @@ import { AppSidebar } from "@/components/app-sidebar";
 import CurrentDate from "@/components/CurrentDate";
 import Notifications from "@/components/notifications/Notifications";
 import SocketControl from "@/components/SocketControl";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-} from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -18,7 +12,6 @@ import {
 } from "@/components/ui/sidebar";
 import { SocketProvider } from "@/context/SocketContext";
 import { SocketManager } from "@/context/SocketManager";
-import { usePathname } from "next/navigation";
 import { Toaster } from "@/components/ui/sonner";
 import { Provider } from "react-redux";
 import store from "@/store/store";
@@ -44,17 +37,10 @@ export default function DashboardLayout({
               <AppSidebar />
               <Toaster />
               <SidebarInset className="h-screen">
-                <header className="flex items-center justify-between gap-2 p-4 sticky top-0 bg-white z-10">
+                <header className="flex items-center justify-between gap-2 p-4 sticky top-0 bg-white z-100">
                   <div className="flex items-center">
                     <SidebarTrigger className="-ml-1" />
                     <Separator orientation="vertical" className="mr-2 h-4" />
-                    <Breadcrumb>
-                      <BreadcrumbList>
-                        <BreadcrumbItem className="hidden md:flex">
-                          <BreadcrumbLink href="#">Header</BreadcrumbLink>
-                        </BreadcrumbItem>
-                      </BreadcrumbList>
-                    </Breadcrumb>
                   </div>
                   <div className="flex items-center space-x-4">
                     <SocketControl />
