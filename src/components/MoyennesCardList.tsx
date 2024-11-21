@@ -5,7 +5,8 @@ import MoyenneCard from "./view/MoyenneCard";
 import Link from "next/link";
 import { ISensorStoredData } from "@/types/storedData";
 import { defaulMoyenneCardData } from "@/mockData/defaultMoyenneCardData";
-import { MoyenneItem } from "./capteurs/CapteurDataCardList";
+import { MoyenneItem } from "@/types/moyenneItem";
+
 
 const MoyennesCardList = ({
   sensorData,
@@ -47,7 +48,7 @@ const MoyennesCardList = ({
       {moyennes.map((item, index) => (
         <Link
           key={item.name}
-          href={`/dashboard/moyenne/${item.name}`}
+          href={`/dashboard/moyenne/${item.accessParam}`}
           className="shadow-lg rounded-lg border"
         >
           <MoyenneCard key={`moyenne_item_${index}`} item={item} />

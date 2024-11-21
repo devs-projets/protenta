@@ -8,29 +8,22 @@ import SolHumiditeIcon from "@/assets/icons/solHumidite.png";
 import LumiereIcon from "@/assets/icons/lumiere.png";
 import PressionAtmoIcon from "@/assets/icons/pressionAtmo.png";
 import TemperatureIcon from "@/assets/icons/temperature.png";
-// import { moyennes, MoyenneItem } from "@/components/MoyennesCardList";
 import Image from "next/image";
-import { MoyenneItem } from "../MoyennesCardList";
+import { MoyenneItem } from "@/types/moyenneItem";
+import { defaulMoyenneCardData } from "@/mockData/defaultMoyenneCardData";
+import { ISensorStoredData } from "@/types/storedData";
 
-const IndividualMoyenneCard = () => {
-  const [moyennes, setMoyennes] = useState<MoyenneItem[]>([
-    { accessParam: "temperature", name: "Température", icon: TemperatureIcon, value: 0.0 },
-    { accessParam: "humidite", name: "Humidité", icon: HumiditeIcon, value: 0.0 },
-    { accessParam: "lumiere", name: "Lumière", icon: LumiereIcon, value: 0.0 },
-    { accessParam: "pressionatm", name: "Pression atmosphérique", icon: PressionAtmoIcon, value: 0.0 },
-    { accessParam: "humditesol", name: "Humidite du sol", icon: SolHumiditeIcon, value: 0.0 },
-    { accessParam: "co2", name: "CO₂", icon: Co2Icon, value: 0.0 },
-  ]);
-
-  if (!moyennes) {
-    return null;
-  }
-
+const IndividualMoyenneCard = ({ data }: { data: ISensorStoredData[] }) => {
   const param = useParams().moyenneId;
-  const decodedParam = decodeURIComponent(param as string);
-  const item = moyennes.filter((x) => x.accessParam === param)[0];
-  const currentDate = new Date().toLocaleDateString();
-  const currentHeure = new Date().toLocaleTimeString();
+  const item = defaulMoyenneCardData.filter((x) => x.accessParam === param)[0];
+  const lastAverageData = data[0] || {};
+  const currentDate = lastAverageData.timestamp
+    ? new Date(lastAverageData.timestamp).toLocaleDateString()
+    : "Date non disponible";
+  const currentHeure = lastAverageData.timestamp
+    ? new Date(lastAverageData.timestamp).toLocaleTimeString()
+    : "Heure non disponible";
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-center my-5">
@@ -40,7 +33,7 @@ const IndividualMoyenneCard = () => {
         <div className="text-center rounded-xl bg-gray-200 shadow">
           <div className="rounded-full flex justify-center items-center">
             <Image
-              src={item?.icon as string}
+              src={item?.icon}
               width={100}
               height={100}
               alt={item?.name as string}
@@ -54,7 +47,9 @@ const IndividualMoyenneCard = () => {
         </div>
         <div className="flex flex-col justify-center bg-gray-100 p-2 rounded-lg shadow">
           <h2 className="font-bold">Calculé le :</h2>
-          <p>{currentDate} à {currentHeure}</p>
+          <p>
+            {currentDate} à {currentHeure}
+          </p>
         </div>
       </div>
     </div>

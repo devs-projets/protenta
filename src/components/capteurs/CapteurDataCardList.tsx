@@ -8,17 +8,9 @@ import LumiereIcon from "@/assets/icons/lumiere.png";
 import PressionAtmoIcon from "@/assets/icons/pressionAtmo.png";
 import TemperatureIcon from "@/assets/icons/temperature.png";
 import Image from "next/image";
-// import MoyenneCard from "./view/MoyenneCard";
 import Link from "next/link";
 import { IHourData } from "@/types/hourDara";
 import { StaticImageData } from "next/image";
-// import { useSocket } from "@/context/SocketContext";
-
-export interface MoyenneItem {
-  name: string;
-  icon: JSX.Element | StaticImageData | string;
-  value: number | "N/A";
-}
 
 const CapteurDataCardList = ({ sensorData }: { sensorData: IHourData[] }) => {
   const [moyennes, setMoyennes] = useState<MoyenneItem[]>([
