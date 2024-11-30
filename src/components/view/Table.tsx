@@ -13,7 +13,7 @@ import Spinner from "../Spinner";
 import { ISensorStoredData } from "@/types/storedData";
 
 // Unités de mesure
-const units: Record<string, string> = {
+export const units: Record<string, string> = {
   Température: "°C",
   Humidité: "%",
   Lumière: "lux",

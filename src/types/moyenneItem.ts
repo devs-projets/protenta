@@ -5,4 +5,5 @@ export interface MoyenneItem {
   name: string;
   icon: JSX.Element | StaticImageData | string;
   value: number;
+  unit: string;
 }

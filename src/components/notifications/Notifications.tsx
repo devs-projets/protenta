@@ -5,9 +5,17 @@ import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import { BellRing, X } from "lucide-react";
 import { toast } from "sonner";
-import { Info } from "lucide-react";
+import {
+  Info,
+  SquareActivity,
+  FlaskConical,
+  Spline,
+  DoorOpen,
+  Volume2,
+} from "lucide-react";
 import { useSocket } from "@/context/SocketContext";
 import { INotification } from "@/types/notification";
+import { getNotifications } from "@/lib/fetchData/getNotifications";
 
 export default function Notifications() {
   const [open, setOpen] = useState(false);
@@ -19,56 +27,76 @@ export default function Notifications() {
   const toggleDrawer = (open: boolean) => () => {
     setOpen(open);
   };
-  
+
   // Fonction pour simuler l'ajout de notifications toutes les 3 secondes
   useEffect(() => {
+    // const fetchNotif = async () => {
+    //   try {
+    //     const data = await getNotifications(2, 50);
+    //     console.log(data);
+    //   } catch (error) {
+    //     console.error("An error occurred while fetching sensor data:", error);
+    //   }
+    // };
+    // fetchNotif();
     if (sensorNotification) {
       setNotifications((prevNotifications) => {
         const newNotification = sensorNotification;
-        const updatedNotifications = [newNotification, ...prevNotifications];
 
-        // Si le drawer est fermé, afficher un toast
-        if (!open) {
-          toast("Demo: Moniteur", {
-            description: newNotification.value,
-            action: {
-              label: (
-                <div>
-                  <Info className="mr-2" />
-                </div>
-              ),
-              onClick: () => console.log("Undo"),
-            },
-          });
+        // Vérifie si une notification du même type existe déjà
+        const existingNotification = prevNotifications.find(
+          (notification) => notification.type === newNotification.type
+        );
+
+        // Conditions pour ajouter la notification
+        const shouldAddNotification =
+          !existingNotification ||
+          existingNotification.value !== newNotification.value;
+
+        if (shouldAddNotification) {
+          const updatedNotifications = [
+            newNotification,
+            ...prevNotifications.filter(
+              (notification) => notification.type !== newNotification.type // Supprime les anciennes du même type
+            ),
+          ];
+
+          // Si le drawer est fermé, afficher un toast
+          if (!open) {
+            toast(`${newNotification.type}`, {
+              description: newNotification.value,
+              action: {
+                label: (
+                  <div>
+                    {newNotification.type === "Moniteur" && (
+                      <SquareActivity className="mr-2" />
+                    )}
+                    {newNotification.type === "SAS" && (
+                      <DoorOpen className="mr-2" />
+                    )}
+                    {newNotification.type === "Chateau" && (
+                      <FlaskConical className="mr-2" />
+                    )}
+                    {newNotification.type === "Bipeure" && (
+                      <Volume2 className="mr-2" />
+                    )}
+                    {newNotification.type === "Ombriere" && (
+                      <Spline className="mr-2" />
+                    )}
+                  </div>
+                ),
+                onClick: () => console.log("Undo"),
+              },
+            });
+          }
+
+          return updatedNotifications;
         }
 
-        return updatedNotifications;
+        // Si aucune condition n'est remplie, retourne l'état précédent
+        return prevNotifications;
       });
     }
-    // const intervalId = setInterval(() => {
-    //   setNotifications((prevNotifications) => {
-    //     const newNotification = {
-    //       type: "Moniteur",
-    //       value: `Activé à ${new Date().toLocaleTimeString()}`
-    //     };
-    //     const updatedNotifications = [newNotification, ...prevNotifications]; // Ajouter en début de liste
-
-    //     // Si le drawer est fermé, afficher un toast
-    //     if (!open) {
-    //       toast("Demo: Moniteur", {
-    //         description: newNotification.value,
-    //         action: {
-    //           label: (<div><Info className="mr-2" /></div>),
-    //           onClick: () => console.log("Undo"),
-    //         },
-    //       });
-    //     }
-
-    //     return updatedNotifications;
-    //   });
-    // }, 3000);
-
-    // return () => clearInterval(intervalId);
   }, [open, sensorNotification]);
 
   const list = (
@@ -97,7 +125,19 @@ export default function Notifications() {
                 className="p-5 my-2 rounded-lg flex items-center gap-5 border shadow-sm"
               >
                 <div>
-                  <BellRing className="text-gray-500" />
+                  {notification.type === "Moniteur" && (
+                    <SquareActivity className="mr-2" />
+                  )}
+                  {notification.type === "SAS" && <DoorOpen className="mr-2" />}
+                  {notification.type === "Chateau" && (
+                    <FlaskConical className="mr-2" />
+                  )}
+                  {notification.type === "Bipeure" && (
+                    <Volume2 className="mr-2" />
+                  )}
+                  {notification.type === "Ombriere" && (
+                    <Spline className="mr-2" />
+                  )}
                 </div>
                 <div>
                   <h3 className="font-bold block">{notification.type}</h3>

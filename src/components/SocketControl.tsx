@@ -3,9 +3,17 @@
 import { useSocket } from "@/context/SocketContext";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { Power } from "lucide-react";
+import { restartMonitor } from "@/lib/postData/restartMonitor";
 
 export default function SocketControl() {
-  const { isConnected, setWantStopSocket, connect, disconnect } = useSocket();
+  const {
+    sensorNotification,
+    isConnected,
+    setWantStopSocket,
+    connect,
+    disconnect,
+  } = useSocket();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -14,19 +22,21 @@ export default function SocketControl() {
 
   const handleToggleConnection = async () => {
     setIsLoading(true);
-    try {
-      if (isConnected) {
-        // await disconnect();
-        setWantStopSocket(true);
-      } else {
-        // await connect();
-        setWantStopSocket(false);
-      }
-    } catch (error) {
-      console.error("Erreur lors de la (dé)connexion :", error);
-    } finally {
-      setIsLoading(false);
-    }
+    restartMonitor();
+    setIsLoading(false);
+    // try {
+    //   if (isConnected) {
+    //     // await disconnect();
+    //     setWantStopSocket(true);
+    //   } else {
+    //     // await connect();
+    //     setWantStopSocket(false);
+    //   }
+    // } catch (error) {
+    //   console.error("Erreur lors de la (dé)connexion :", error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
   return (
@@ -37,12 +47,19 @@ export default function SocketControl() {
         }`}
       ></span>
       <span>{isConnected ? "Connecté" : "Déconnecté"}</span>
-      <Button 
-        className={`${isConnected ? "bg-red-500 hover:bg-red-600" : ""}`} 
+      {/* <Button
+        className={`${isConnected ? "bg-red-500 hover:bg-red-600" : ""}`}
         onClick={handleToggleConnection}
         disabled={isLoading}
       >
-        {isLoading ? "En cours..." : (isConnected ? "Déconnecter" : "Connecter")}
+        {isLoading ? "En cours..." : isConnected ? "Déconnecter" : "Connecter"}
+      </Button> */}
+      <Button
+        className={`bg-primary`}
+        onClick={handleToggleConnection}
+        disabled={isLoading}
+      >
+        <Power /> Restart
       </Button>
     </div>
   );

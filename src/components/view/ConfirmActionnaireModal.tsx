@@ -10,8 +10,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { sendCommand } from "@/lib/postData/sendCommands";
+import { useSocket } from "@/context/SocketContext";
 
 const modeSwitchCodes = {
   300: "Désactiver manuelAuto S1",
@@ -43,6 +44,27 @@ export function ConfirmActionnaireModal({
   description: string;
   setModeAuto: Dispatch<SetStateAction<boolean>>;
 }) {
+  const [modeState, setModeState] = useState<number>();
+  const { sensorData } = useSocket();
+
+  useEffect(() => {
+  const mState = sensorData && Object.keys(sensorData)
+    .filter((key) => key.endsWith(title as string))
+    .reduce<{ [key: string]: number }>((obj, key) => {
+      const k = key.replace('ManuelAuto', "");
+      obj[k] = sensorData[key];
+      setModeState(sensorData[key])
+      return obj;
+    }, {});
+
+
+    console.log(mState)
+
+    // setModeState(mState[title as string])
+  }, [sensorData])
+
+
+
   const setAutoHandling = async () => {
     let code = "";
     Object.entries(modeSwitchCodes).forEach(([key, value]) => {
@@ -67,7 +89,7 @@ export function ConfirmActionnaireModal({
           variant={modeAuto ? "default" : "outline"}
           className={`shadow w-full ${!modeAuto && "bg-gray-200"}`}
         >
-          {modeAuto ? "Manuel" : "Auto"}
+          {modeState === 0 ? "Manuel" : "Auto"}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="w-96">
