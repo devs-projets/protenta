@@ -26,6 +26,7 @@ import {
 import Link from "next/link";
 import { Config } from "./settingsComponents/Config";
 import { usePathname } from "next/navigation";
+import {Users} from "lucide-react";
 
 // This is sample data.
 const data = {
@@ -41,8 +42,13 @@ const data = {
       items: [],
     },
     {
+      title: "Utilisateurs",
+      url: "/dashboard/user-management",
+      items: []
+    },
+    {
       title: "Données",
-      url: "/dashboard",
+      url: "#",
       items: [
         {
           title: "Température",
@@ -150,6 +156,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <div className="flex items-center gap-2">
                         {item.title === "Dashboard" && <LayoutDashboard />}
                         {item.title === "Journal" && <ArrowDownUp />}
+                        {item.title === "Utilisateurs" && <Users />}
                         {item.title === "Données" && <CircleGauge />}
                         {item.title === "Capteurs" && <Cable />}
                         {item.title}

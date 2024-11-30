@@ -3,11 +3,13 @@
 import Link from "next/link";
 import React from "react";
 import { UserRound, UserRoundCog } from "lucide-react";
+import { LoginForm } from "@/components/login/LoginForm";
 
 const Login = () => {
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="mx-10">
+      <LoginForm />
+      {/* <div className="mx-10">
         <Link
           onClick={() => localStorage.setItem("userRole", "simple")}
           href={"/dashboard"}
@@ -26,7 +28,7 @@ const Login = () => {
           <UserRoundCog className="bg-primary border p-5 rounded-lg shadow-lg h-72 w-72 text-white mb-5" />
           <span className="text-4xl font-bold">Expert</span>
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 };
