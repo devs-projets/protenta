@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import MoyenneCard from "./view/MoyenneCard";
+import MoyenneCard from "./moyennes/MoyenneCard";
 import Link from "next/link";
 import { ISensorStoredData } from "@/types/storedData";
 import { defaulMoyenneCardData } from "@/mockData/defaultMoyenneCardData";

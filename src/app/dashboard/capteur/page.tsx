@@ -1,4 +1,4 @@
-import Capteurs from "@/components/view/Capteurs";
+import Capteurs from "@/components/capteurs/Capteurs";
 import React from "react";
 
 const Capteur = () => {

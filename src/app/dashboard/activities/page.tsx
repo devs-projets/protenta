@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { SensorLog } from "@/components/view/IndividualCapteurLogs";
+import { SensorLog } from "@/components/capteurs/IndividualCapteurLogs";
 import { ISensorAverageData } from "@/types/monitor";
 
 interface IJoural extends ISensorAverageData {

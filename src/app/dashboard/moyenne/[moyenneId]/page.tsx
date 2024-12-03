@@ -1,7 +1,7 @@
 "use client"
 
-import IndividualMoyenneCard from "@/components/view/IndividualMoyenneCard";
-import IndividualMoyenneChart from "@/components/view/IndividualMoyenneChart";
+import IndividualMoyenneCard from "@/components/moyennes/IndividualMoyenneCard";
+import IndividualMoyenneChart from "@/components/moyennes/IndividualMoyenneChart";
 import { RootState } from "@/store/store";
 import React from "react";
 import { useSelector } from "react-redux";

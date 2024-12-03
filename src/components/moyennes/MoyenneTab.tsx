@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TableComponent } from "./Table";
-import { ChartComponent } from "./Chart";
+import { TableComponent } from "../view/Table";
+import { ChartComponent } from "../view/Chart";
 import { ChartArea, TableProperties } from "lucide-react";
-import { DatePickerWithRange } from "./DatePiker";
+import { DatePickerWithRange } from "../view/DatePiker";
 import { ISensorStoredData } from "@/types/storedData";
 
 export function MoyenneTabs({sensorData}: {sensorData: ISensorStoredData[]}) {

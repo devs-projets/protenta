@@ -1,6 +1,6 @@
 import { Switch } from "../../ui/switch";
 import { useEffect, useState } from "react";
-import { ConfirmActionnaireModal } from "../../view/ConfirmActionnaireModal";
+import { ConfirmActionnaireModal } from "../../actionnaires/ConfirmActionnaireModal";
 import { ActionnaireDefautlDesctiption } from "@/types/actionnaireState";
 import { sendCommand } from "@/lib/postData/sendCommands";
 

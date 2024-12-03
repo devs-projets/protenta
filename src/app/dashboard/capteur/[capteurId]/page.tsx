@@ -2,8 +2,8 @@
 
 import CapteurDataCardList from "@/components/capteurs/CapteurDataCardList";
 import MoyennesCardList from "@/components/MoyennesCardList";
-import CapteurTab from "@/components/view/CapteurTab";
-import IndividualCapteurCard from "@/components/view/IndividualCapteurCard";
+import CapteurTab from "@/components/capteurs/CapteurTab";
+import IndividualCapteurCard from "@/components/capteurs/IndividualCapteurCard";
 import { useSocket } from "@/context/SocketContext";
 import { useParams } from "next/navigation";
 import React, { useEffect } from "react";

@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Logs, ChartNetwork } from "lucide-react";
 import { useSocket } from "@/context/SocketContext";
-import IndividualCapteurLogs from "@/components/view/IndividualCapteurLogs";
+import IndividualCapteurLogs from "@/components/capteurs/IndividualCapteurLogs";
 import { useParams } from "next/navigation";
-import LiveDataCharts from "../capteurs/LiveDataCharts";
+import LiveDataCharts from "./LiveDataCharts";
 
 const CapteurTab = () => {
   const { sensorData, connect, disconnect } = useSocket();

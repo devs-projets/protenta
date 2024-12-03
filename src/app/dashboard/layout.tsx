@@ -1,9 +1,9 @@
 "use client";
 
-import { AppSidebar } from "@/components/app-sidebar";
-import CurrentDate from "@/components/CurrentDate";
+import { AppSidebar } from "@/components/layoutComposants/app-sidebar";
+import CurrentDate from "@/components/layoutComposants/CurrentDate";
 import Notifications from "@/components/notifications/Notifications";
-import SocketControl from "@/components/SocketControl";
+import SocketControl from "@/components/layoutComposants/SocketControl";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,

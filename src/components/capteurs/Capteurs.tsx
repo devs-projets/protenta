@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import CardCapteur from "@/components/view/CardCapteur";
+import CardCapteur from "./CardCapteur";
 import Link from "next/link";
 import { useSocket } from "@/context/SocketContext";
 import { defaultSensorData } from "@/mockData/defaultMonitor";

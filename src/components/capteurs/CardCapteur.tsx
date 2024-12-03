@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CapteurItem } from "./Capteurs";
+import { CapteurItem } from "../capteurs/Capteurs";
 import { SensorLog } from "./IndividualCapteurLogs";
 import { ISensorData } from "@/types/monitor";
 

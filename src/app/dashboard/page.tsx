@@ -2,7 +2,7 @@
 
 import ActionnaireTemoin from "@/components/actionnaires/ActionnaireTemoin";
 import MoyennesCardList from "@/components/MoyennesCardList";
-import { MoyenneTabs } from "@/components/view/MoyenneTab";
+import { MoyenneTabs } from "@/components/moyennes/MoyenneTab";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";

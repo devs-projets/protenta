@@ -24,7 +24,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { Config } from "./settingsComponents/Config";
+import { Config } from "@/components/settingsComponents/Config";
 import { usePathname } from "next/navigation";
 import {Users} from "lucide-react";
 
