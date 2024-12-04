@@ -17,9 +17,9 @@ const HomePageLoading = () => {
   return (
     <section>
       <div className="flex justify-center items-center rounded-lg">
-        <div className="text-xl text-center">
+        <div className="text-xl text-center flex flex-col items-center">
           <Leaf size={80} color="green" />
-          Protenta 
+          <span className="block font-bold text-primary text-3xl">Serre du Sahel </span>
         </div>
       </div>
       <div className="flex justify-center my-5">
