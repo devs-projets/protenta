@@ -19,8 +19,8 @@ export interface ISensorData {
   gyro_z: number; // Gyroscope data along z-axis
   accuracy: number; // Accuracy level of the sensor data
 
-  co2: number;
-  gaz: number;
+  co2?: number;
+  gaz?: number;
 
   // Threshold values
   SeuilHumidity_min: number; // Minimum humidity threshold

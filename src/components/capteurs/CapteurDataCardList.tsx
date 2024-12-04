@@ -1,26 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Co2Icon from "@/assets/icons/co2.png";
-import HumiditeIcon from "@/assets/icons/humidite.png";
-import SolHumiditeIcon from "@/assets/icons/solHumidite.png";
-import LumiereIcon from "@/assets/icons/lumiere.png";
-import PressionAtmoIcon from "@/assets/icons/pressionAtmo.png";
-import TemperatureIcon from "@/assets/icons/temperature.png";
 import Image from "next/image";
-import Link from "next/link";
-import { IHourData } from "@/types/hourDara";
-import { StaticImageData } from "next/image";
+import { ISensorStoredData } from "@/types/storedData";
+import { MoyenneItem } from "@/types/moyenneItem";
+import { defaulMoyenneCardData } from "@/mockData/defaultMoyenneCardData";
 
-const CapteurDataCardList = ({ sensorData }: { sensorData: IHourData[] }) => {
-  const [moyennes, setMoyennes] = useState<MoyenneItem[]>([
-    { name: "Température", icon: TemperatureIcon, value: 0.0 },
-    { name: "Humidité", icon: HumiditeIcon, value: 0.0 },
-    { name: "Lumière", icon: LumiereIcon, value: 0.0 },
-    { name: "Pression atm", icon: PressionAtmoIcon, value: 0.0 },
-    { name: "Humidité sol", icon: SolHumiditeIcon, value: 0.0 },
-    { name: "CO₂", icon: Co2Icon, value: 0.0 },
-  ]);
+const CapteurDataCardList = ({ sensorData }: { sensorData: ISensorStoredData[] }) => {
+  const [moyennes, setMoyennes] = useState<MoyenneItem[]>(defaulMoyenneCardData);
 
   // const { socket, sensorData } = useSocket();
 
