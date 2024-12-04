@@ -19,6 +19,9 @@ export interface ISensorData {
   gyro_z: number; // Gyroscope data along z-axis
   accuracy: number; // Accuracy level of the sensor data
 
+  co2: number;
+  gaz: number;
+
   // Threshold values
   SeuilHumidity_min: number; // Minimum humidity threshold
   SeuilHumidity_max: number; // Maximum humidity threshold
@@ -55,6 +58,24 @@ export interface ISensorData {
   S14: number;
   S15: number;
   S16: number;
+
+  // Output handler
+  ManuelAutoS1?: number;
+  ManuelAutoS2?: number;
+  ManuelAutoS3?: number;
+  ManuelAutoS4?: number;
+  ManuelAutoS5?: number;
+  ManuelAutoS6?: number;
+  ManuelAutoS7?: number;
+  ManuelAutoS8?: number;
+  ManuelAutoS9?: number;
+  ManuelAutoS10?: number;
+  ManuelAutoS11?: number;
+  ManuelAutoS12?: number;
+  ManuelAutoS13?: number;
+  ManuelAutoS14?: number;
+  ManuelAutoS15?: number;
+  ManuelAutoS16?: number;
 
   MomentFloraison: boolean; // Indicates whether flowering has started
   a1: number; // Output atate for a1 (0 = off, 1 = on)

@@ -1,8 +1,8 @@
 export interface ISensorStoredData {
   id: string;
-  timestamp: string; // ISO 8601 timestamp
-  startTimestamp: string; // ISO 8601 timestamp
-  endTimestamp: string; // ISO 8601 timestamp
+  timestamp: string;
+  startTimestamp: string;
+  endTimestamp: string;
   averageTemp: number;
   averageHumidity: number;
   averagePressure: number;
@@ -46,8 +46,8 @@ export interface ISensorStoredData {
   S14: number;
   S15: number;
   S16: number;
-  PolStartTime: string | null; // ISO 8601 timestamp or null
-  PolEndTime: string | null; // ISO 8601 timestamp or null
+  PolStartTime: string | null;
+  PolEndTime: string | null;
   Periode: string | null;
   MomentFloraison: boolean;
   originalDataId?: string | null;

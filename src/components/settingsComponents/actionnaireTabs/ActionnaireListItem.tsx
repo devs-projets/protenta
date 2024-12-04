@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ConfirmActionnaireModal } from "../../actionnaires/ConfirmActionnaireModal";
 import { ActionnaireDefautlDesctiption } from "@/types/actionnaireState";
 import { sendCommand } from "@/lib/postData/sendCommands";
+import { useSocket } from "@/context/SocketContext";
 
 const codes = {
   S1: { active: "101", inactive: "100" },
@@ -33,6 +34,28 @@ const ActionnaireListItem = ({
   const [modeAuto, setModeAuto] = useState<boolean>(true);
   const [switchStatus, setSwitchStatus] = useState<boolean>(status);
   const [description, setDescription] = useState<string>("");
+
+  const { sensorData } = useSocket();
+
+  useEffect(() => {
+  const mState = sensorData && Object.keys(sensorData)
+    .filter((key) => key.endsWith(title as string))
+    .reduce<{ [key: string]: number }>((obj, key) => {
+      const k = key.replace('ManuelAuto', "");
+      if (k === title) {
+        if(sensorData[key] === 0) {
+          setModeAuto(true);
+        }
+        if(sensorData[key] === 1) {
+          setModeAuto(false);
+        }
+      }
+      // obj[k] = sensorData[key];
+      // setModeAuto(sensorData[key])
+      return obj;
+    }, {});
+    // setModeState(mState[title as string])
+  }, [sensorData])
 
   useEffect(() => {
     setSwitchStatus(status);
@@ -72,7 +95,7 @@ const ActionnaireListItem = ({
         title={title}
         modeAuto={modeAuto}
         description={description}
-        setModeAuto={setModeAuto}
+        // setModeAuto={setModeAuto}
       />
     </li>
   );

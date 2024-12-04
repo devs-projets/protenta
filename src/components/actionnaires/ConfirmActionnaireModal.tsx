@@ -37,12 +37,12 @@ export function ConfirmActionnaireModal({
   title,
   modeAuto,
   description,
-  setModeAuto,
+  // setModeAuto,
 }: {
   title: string;
   modeAuto: boolean;
   description: string;
-  setModeAuto: Dispatch<SetStateAction<boolean>>;
+  // setModeAuto: Dispatch<SetStateAction<boolean>>;
 }) {
   const [modeState, setModeState] = useState<number>();
   const { sensorData } = useSocket();
@@ -56,10 +56,6 @@ export function ConfirmActionnaireModal({
       setModeState(sensorData[key])
       return obj;
     }, {});
-
-
-    console.log(mState)
-
     // setModeState(mState[title as string])
   }, [sensorData])
 
@@ -74,12 +70,12 @@ export function ConfirmActionnaireModal({
     });
     const message = `L'actionnaire "${description}" est passé en mode Automatique avec succès !`;
     sendCommand({ [`param${code}`]: true }, message);
-    setModeAuto(true);
+    // setModeAuto(true);
   };
 
   const handleActionnaireMode = () => {
     if (!modeAuto) setAutoHandling();
-    else setModeAuto(false);
+    // else setModeAuto(false);
   };
 
   return (

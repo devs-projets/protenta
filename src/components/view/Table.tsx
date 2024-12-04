@@ -64,7 +64,7 @@ export function TableComponent({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (sensorData && sensorData.length > 0) {
+    if (sensorData) {
       const transformedData = transformSensorData(sensorData);
       setDataWithDates(transformedData);
       setLoading(false);
@@ -82,7 +82,7 @@ export function TableComponent({
   const dates = Object.keys(dataWithDates);
   const mainEntries = Object.keys(units);
 
-  return (
+  return sensorData && sensorData.length > 0 ? (
     <Table>
       <TableHeader>
         <TableRow>
@@ -112,5 +112,12 @@ export function TableComponent({
         ))}
       </TableBody>
     </Table>
+  ) : (
+    // Cas où il n'y a pas de données
+    <div className="flex justify-center items-center min-h-52">
+      <p className="text-gray-500 text-lg font-medium">
+        Aucune donnée disponible
+      </p>
+    </div>
   );
 }

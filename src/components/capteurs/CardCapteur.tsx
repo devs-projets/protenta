@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { CapteurItem } from "../capteurs/Capteurs";
-import { SensorLog } from "./IndividualCapteurLogs";
 import { ISensorData } from "@/types/monitor";
 
 const CardCapteur = ({
@@ -18,10 +16,10 @@ const CardCapteur = ({
 
   useEffect(() => {
     if (sensorData?.localName === item.id) {
-      setIndicator(true); // Mettre en évidence la card en cours de mise à jour
+      setIndicator(true);
       setCurrentSensorData(sensorData);
     } else {
-      setIndicator(false); // Réinitialiser les autres cards à l'état par défaut
+      setIndicator(false);
     }
   }, [sensorData, item.id]);
 
@@ -32,8 +30,12 @@ const CardCapteur = ({
           indicator ? "bg-green-500" : "bg-[#d4d3d3]"
         } rounded-tl-lg rounded-tr-lg p-2 text-center font-bold transition-colors duration-300`}
       >
-        <h2>
-          Capteur l{capteurIndex} {currentSensorData?.latest}
+        <h2 className={`${currentSensorData && "flex justify-around"}`}>
+          <span className="block">Capteur l{capteurIndex} </span>
+          <span className="block">
+            {currentSensorData &&
+              new Date(currentSensorData.latest).toLocaleTimeString()}
+          </span>
         </h2>
       </div>
       <div>
@@ -67,9 +69,17 @@ const CardCapteur = ({
               hPa
             </span>
           </li>
-          <li className="flex justify-between my-1">
-            <span className="block">Air : </span>
-            <span className="block">---/---/---/---</span>
+          <li className="flex flex-col justify-between my-1">
+            <span className="block">Air (Co2/Gaz/Iaq/accuracy) :</span>
+            <span className="block text-right">
+              {currentSensorData?.MeanCo2 ? currentSensorData.gyro_x : "---"}
+              {" / "}
+              {currentSensorData?.gaz ? currentSensorData.gyro_x : "---"}
+              {" / "}
+              {currentSensorData?.iaq ? currentSensorData.gyro_y : "---"}
+              {" / "}
+              {currentSensorData?.accuracy ? currentSensorData.gyro_z : "---"}
+            </span>
           </li>
           <li className="flex justify-between my-1">
             <span className="block">Lumière : </span>
@@ -81,17 +91,17 @@ const CardCapteur = ({
           <li className="flex justify-between my-1">
             <span className="block">Acc. : </span>
             <span className="block">
-              x : {currentSensorData?.acc_x ? currentSensorData.acc_x : "---"} y :{" "}
-              {currentSensorData?.acc_y ? currentSensorData.acc_y : "---"} z :{" "}
+              x : {currentSensorData?.acc_x ? currentSensorData.acc_x : "---"} y
+              : {currentSensorData?.acc_y ? currentSensorData.acc_y : "---"} z :{" "}
               {currentSensorData?.acc_z ? currentSensorData.acc_z : "---"}
             </span>
           </li>
           <li className="flex justify-between my-1">
             <span className="block">Gyro. : </span>
             <span className="block">
-              x : {currentSensorData?.gyro_x ? currentSensorData.gyro_x : "---"} y :{" "}
-              {currentSensorData?.gyro_y ? currentSensorData.gyro_y : "---"} z :{" "}
-              {currentSensorData?.gyro_z ? currentSensorData.gyro_z : "---"}
+              x : {currentSensorData?.gyro_x ? currentSensorData.gyro_x : "---"}{" "}
+              y : {currentSensorData?.gyro_y ? currentSensorData.gyro_y : "---"}{" "}
+              z : {currentSensorData?.gyro_z ? currentSensorData.gyro_z : "---"}
             </span>
           </li>
         </ul>

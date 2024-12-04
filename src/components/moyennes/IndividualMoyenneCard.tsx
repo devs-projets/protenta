@@ -19,10 +19,10 @@ const IndividualMoyenneCard = ({ data }: { data: ISensorStoredData[] }) => {
   const lastAverageData = data[0] || {};
   const currentDate = lastAverageData.timestamp
     ? new Date(lastAverageData.timestamp).toLocaleDateString()
-    : "Date non disponible";
+    : "-- / -- / --";
   const currentHeure = lastAverageData.timestamp
     ? new Date(lastAverageData.timestamp).toLocaleTimeString()
-    : "Heure non disponible";
+    : "-- : -- : --";
 
   return (
     <div>
