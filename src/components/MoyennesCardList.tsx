@@ -6,35 +6,32 @@ import Link from "next/link";
 import { ISensorStoredData } from "@/types/storedData";
 import { defaulMoyenneCardData } from "@/mockData/defaultMoyenneCardData";
 import { MoyenneItem } from "@/types/moyenneItem";
+import { useSocket } from "@/context/SocketContext";
 
 
-const MoyennesCardList = ({
-  sensorData,
-}: {
-  sensorData: ISensorStoredData[];
-}) => {
+const MoyennesCardList = () => {
   const [moyennes, setMoyennes] = useState<MoyenneItem[]>(
     defaulMoyenneCardData
   );
+  const {sensorData} = useSocket();
 
   useEffect(() => {
-    if (sensorData[0]) {
-      const last = sensorData[0];
+    if (sensorData) {
       setMoyennes((prevMoyennes) =>
         prevMoyennes.map((item) => {
           switch (item.name) {
             case "Température":
-              return { ...item, value: last.averageTemp };
+              return { ...item, value: sensorData.MeanTemp };
             case "Humidité":
-              return { ...item, value: last.averageHumidity };
+              return { ...item, value: sensorData.MeanHumidity };
             case "Lumière":
-              return { ...item, value: last.averageLightA };
+              return { ...item, value: sensorData.MeanLum };
             case "Pression atm":
-              return { ...item, value: last.averagePressure };
+              return { ...item, value: sensorData.MeanPress };
             case "Humidité sol":
-              return { ...item, value: last.averageSol };
+              return { ...item, value: sensorData.averageSol };
             case "CO₂":
-              return { ...item, value: last.averageIaq };
+              return { ...item, value: sensorData.MeanCo2};
             default:
               return item;
           }

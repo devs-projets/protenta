@@ -34,8 +34,16 @@ const ConfigTabs = () => {
   useEffect(() => {
     const fetchSensorData = async () => {
       try {
-        const data = await getStoredSensorData("minute");
-        if (data) setLastData(data[0]);
+        // const data = await getStoredSensorData("minute");
+        // if (data) setLastData(data[0]);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor/latest-data`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data)
+          setLastData(data);
+        }
       } catch (error) {
         console.error("An error occurred while fetching sensor data:", error);
       } finally {
@@ -49,12 +57,27 @@ const ConfigTabs = () => {
   useEffect(() => {
     if (lastData) {
       const newActionnaires = Object.keys(lastData)
-        .filter((key): key is keyof ISensorStoredData => key.startsWith("S"))
+        .filter(
+          (key): key is keyof ISensorStoredData =>
+            (key.startsWith("S") && !key.startsWith("Seuil")) ||
+            key.startsWith("ManuelAutoS")
+        )
         .reduce((acc, key) => {
-          (acc as any)[key] = lastData[key];
+          if (key.startsWith("S")) {
+            const manuelKey = `ManuelAuto${key}` as keyof ISensorStoredData;
+            const sValue = Number(lastData[key]) || 0;
+            const manuelValue = Number(lastData[manuelKey]) || 0;
+            (acc as any)[key] = sValue - manuelValue;
+          } else {
+            (acc as any)[key] = Number(lastData[key]) || 0;
+          }
+
           return acc;
         }, {} as Partial<ISensorStoredData>);
+
+      // Mettre à jour l'état avec les nouvelles valeurs
       setActionnairesFetched(newActionnaires);
+
       const newLimites = Object.keys(lastData)
         .filter((key): key is keyof ISensorStoredData =>
           key.startsWith("lastSeuil")

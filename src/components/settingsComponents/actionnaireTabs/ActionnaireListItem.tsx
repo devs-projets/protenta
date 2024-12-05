@@ -27,35 +27,37 @@ const ombriere = { deploy: "220", inactive: "222", reactor: "221" };
 const ActionnaireListItem = ({
   title,
   status,
+  mode,
 }: {
   title: string;
   status: boolean;
+  mode: boolean,
 }) => {
-  const [modeAuto, setModeAuto] = useState<boolean>(true);
+  const [modeAuto, setModeAuto] = useState<boolean>(mode);
   const [switchStatus, setSwitchStatus] = useState<boolean>(status);
   const [description, setDescription] = useState<string>("");
 
-  const { sensorData } = useSocket();
+  // const { sensorData } = useSocket();
 
-  useEffect(() => {
-  const mState = sensorData && Object.keys(sensorData)
-    .filter((key) => key.endsWith(title as string))
-    .reduce<{ [key: string]: number }>((obj, key) => {
-      const k = key.replace('ManuelAuto', "");
-      if (k === title) {
-        if(sensorData[key] === 0) {
-          setModeAuto(true);
-        }
-        if(sensorData[key] === 1) {
-          setModeAuto(false);
-        }
-      }
-      // obj[k] = sensorData[key];
-      // setModeAuto(sensorData[key])
-      return obj;
-    }, {});
-    // setModeState(mState[title as string])
-  }, [sensorData])
+  // useEffect(() => {
+  // const mState = sensorData && Object.keys(sensorData)
+  //   .filter((key) => key.endsWith(title as string))
+  //   .reduce<{ [key: string]: number }>((obj, key) => {
+  //     const k = key.replace('ManuelAuto', "");
+  //     if (k === title) {
+  //       if(sensorData[key] === 0) {
+  //         setModeAuto(true);
+  //       }
+  //       if(sensorData[key] === 1) {
+  //         setModeAuto(false);
+  //       }
+  //     }
+  //     // obj[k] = sensorData[key];
+  //     // setModeAuto(sensorData[key])
+  //     return obj;
+  //   }, {});
+  //   // setModeState(mState[title as string])
+  // }, [sensorData])
 
   useEffect(() => {
     setSwitchStatus(status);
@@ -95,7 +97,7 @@ const ActionnaireListItem = ({
         title={title}
         modeAuto={modeAuto}
         description={description}
-        // setModeAuto={setModeAuto}
+        setModeAuto={setModeAuto}
       />
     </li>
   );

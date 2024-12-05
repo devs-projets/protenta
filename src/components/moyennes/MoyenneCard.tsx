@@ -43,7 +43,7 @@ const MoyenneCard = ({ item }: { item: MoyenneItem }) => {
           alt={item.name}
         />
       </div>
-      <p>{value === null ? "0.0" : value.toFixed(2)} {item.unit}</p>
+      <p>{value?.toFixed(2) ?? "0.0"} {item.unit}</p>
     </article>
   );
 };

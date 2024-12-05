@@ -8,13 +8,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
 const Experts = () => {
-  const { data: hourData } = useSelector((state: RootState) => state.hourData);
+  const { data: hourData } = useSelector((state: RootState) => state.minuteData);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0 h-screen">
       <h1 className="text-center text-2xl font-bold">Moyennes</h1>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
-        <MoyennesCardList sensorData={hourData} />
+        {/* <MoyennesCardList sensorData={hourData} /> */}
+        <MoyennesCardList />
       </div>
 
       <ActionnaireTemoin />
