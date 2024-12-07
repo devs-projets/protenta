@@ -13,10 +13,9 @@ export async function getStoredSensorData(
        }
 
        const data = await response.json();
-       console.log(period, data);
        return Array.isArray(data) ? data : [];
    } catch (error) {
        console.error("An error occurred while fetching data:", error);
-       throw error; // Laisser Redux Toolkit gérer cette erreur
+       throw error;
    }
 }

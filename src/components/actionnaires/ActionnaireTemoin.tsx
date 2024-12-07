@@ -4,14 +4,17 @@ import { ActionnaireDefautlDesctiption } from "@/types/actionnaireState";
 import { ISensorStoredData } from "@/types/storedData";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { defaulActionnairesData } from "@/mockData/defaultActionnairesData";
+import ActionnaireCard from "./ActionnaireCard";
+import { ILatestData } from "@/types/latestDataState";
 
 const ActionnaireTemoin = () => {
   const [actionnaires, setActionnaires] = useState<{ [key: string]: number }>(
     {}
   );
   const { sensorData } = useSocket();
-  const { data: minuteData } = useSelector(
-    (state: RootState) => state.minuteData
+  const { data: latestData } = useSelector(
+    (state: RootState) => state.latestData
   );
 
   useEffect(() => {
@@ -24,26 +27,29 @@ const ActionnaireTemoin = () => {
         }, {});
 
       setActionnaires(actionnairesList);
-    } else if (minuteData[0]) {
-      const lastData: ISensorStoredData = minuteData[0];
-      const actionnairesList = Object.keys(lastData)
+    } else if (latestData) {
+      // const lastData: ISensorStoredData = minuteData[0];
+      const actionnairesList = Object.keys(latestData)
         .filter(
           (key): key is keyof ISensorStoredData =>
             key.startsWith("S") && !key.startsWith("Seuil")
         )
         .reduce<{ [key: string]: number }>((obj, key) => {
-          obj[key] = lastData[key] as number;
+          obj[key] = latestData[key as keyof ILatestData] as number;
           return obj;
         }, {});
       setActionnaires(actionnairesList);
     }
-  }, [sensorData, minuteData]);
+  }, [sensorData, latestData]);
 
   return (
     <div className="border py-5 rounded-lg shadow-lg">
       <h1 className="text-center text-2xl font-bold mb-5">Actionnaires</h1>
       <div className="flex flex-wrap justify-center gap-5">
-        {Object.entries(actionnaires).map(([key, value]) => (
+        {defaulActionnairesData.map((item, index) => (
+          <ActionnaireCard key={item.name} item={item} data={latestData} index={index} />
+        ))}
+        {/* {Object.entries(actionnaires).map(([key, value]) => (
           <div
             className="flex justify-center items-center gap-5 flex-wrap"
             key={key}
@@ -60,7 +66,7 @@ const ActionnaireTemoin = () => {
               </div>
             </div>
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
   );

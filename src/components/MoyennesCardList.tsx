@@ -7,38 +7,41 @@ import { ISensorStoredData } from "@/types/storedData";
 import { defaulMoyenneCardData } from "@/mockData/defaultMoyenneCardData";
 import { MoyenneItem } from "@/types/moyenneItem";
 import { useSocket } from "@/context/SocketContext";
-
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const MoyennesCardList = () => {
   const [moyennes, setMoyennes] = useState<MoyenneItem[]>(
     defaulMoyenneCardData
   );
-  const {sensorData} = useSocket();
+  const { data: latestData } = useSelector(
+    (state: RootState) => state.latestData
+  );
 
   useEffect(() => {
-    if (sensorData) {
+    if (latestData) {
       setMoyennes((prevMoyennes) =>
         prevMoyennes.map((item) => {
           switch (item.name) {
             case "Température":
-              return { ...item, value: sensorData.MeanTemp };
+              return { ...item, value: latestData.MeanTemp };
             case "Humidité":
-              return { ...item, value: sensorData.MeanHumidity };
+              return { ...item, value: latestData.MeanHumidity };
             case "Lumière":
-              return { ...item, value: sensorData.MeanLum };
+              return { ...item, value: latestData.MeanLum };
             case "Pression atm":
-              return { ...item, value: sensorData.MeanPress };
+              return { ...item, value: latestData.MeanPress };
             case "Humidité sol":
-              return { ...item, value: sensorData.averageSol };
+              return { ...item, value: 0 };
             case "CO₂":
-              return { ...item, value: sensorData.MeanCo2};
+              return { ...item, value: latestData.MeanCo2 };
             default:
               return item;
           }
         })
       );
     }
-  }, [sensorData]);
+  }, [latestData]);
 
   return (
     <>

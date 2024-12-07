@@ -5,9 +5,9 @@ import { ISensorStoredData } from "@/types/storedData";
 import { sendCommand } from "@/lib/postData/sendCommands";
 
 const FloraisonComponent = ({
-  floraisonFeteched,
+  floraisonFetched,
 }: {
-  floraisonFeteched: Partial<ISensorStoredData> | undefined;
+  floraisonFetched: Partial<ISensorStoredData> | undefined;
 }) => {
   const [disableEditMode, setDisableEditMode] = useState<boolean>(true);
   const [start, setStart] = useState<string | null>(null);
@@ -16,15 +16,15 @@ const FloraisonComponent = ({
   const [floraison, setFloraison] = useState<boolean | undefined>(false);
 
   useEffect(() => {
-    setStart(floraisonFeteched?.PolStartTime ?? null);
-    setEnd(floraisonFeteched?.PolEndTime ?? null);
+    setStart(floraisonFetched?.PolStartTime ?? null);
+    setEnd(floraisonFetched?.PolEndTime ?? null);
     setPollinisation(
-      floraisonFeteched?.PolStartTime
-        ? parseInt(floraisonFeteched.PolStartTime)
+      floraisonFetched?.PolStartTime
+        ? parseInt(floraisonFetched.PolStartTime)
         : null
     );
-    setFloraison(floraisonFeteched?.MomentFloraison);
-  }, [floraisonFeteched]);
+    setFloraison(floraisonFetched?.MomentFloraison);
+  }, [floraisonFetched]);
 
   const handleChangeFloraison = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

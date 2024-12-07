@@ -62,7 +62,7 @@ const ActionnaireListItem = ({
   useEffect(() => {
     setSwitchStatus(status);
     const itemIndex = parseInt(title.slice(1));
-    const desc = ActionnaireDefautlDesctiption[itemIndex];
+    const desc = ActionnaireDefautlDesctiption[itemIndex - 1];
     setDescription(desc);
   }, []);
 

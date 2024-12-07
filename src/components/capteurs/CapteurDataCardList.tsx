@@ -6,47 +6,40 @@ import { ISensorStoredData } from "@/types/storedData";
 import { MoyenneItem } from "@/types/moyenneItem";
 import { defaulMoyenneCardData } from "@/mockData/defaultMoyenneCardData";
 
-const CapteurDataCardList = ({ sensorData }: { sensorData: ISensorStoredData[] }) => {
-  const [moyennes, setMoyennes] = useState<MoyenneItem[]>(defaulMoyenneCardData);
+const CapteurDataCardList = ({ sensorData }: { sensorData: any }) => {
+  const [moyennes, setMoyennes] = useState<MoyenneItem[]>(
+    defaulMoyenneCardData
+  );
 
   // const { socket, sensorData } = useSocket();
 
   useEffect(() => {
-    async function fetchAverages() {
-      try {
-        // Simulation d'une entrée de l'API
-        // const data: Average = simulateAverageData();
+    if (sensorData) {
+      setMoyennes((prevMoyennes) =>
+        prevMoyennes.map((item) => {
+          const updatedValue = (() => {
+            switch (item.name) {
+              case "Température":
+                return sensorData.temperature ?? item.value;
+              case "Humidité":
+                return sensorData.humidity ?? item.value;
+              case "Lumière":
+                return sensorData.light_A ?? item.value;
+              case "Pression atm":
+                return sensorData.pressure ?? item.value;
+              case "Humidité sol":
+                return sensorData.sol ?? item.value;
+              case "CO₂":
+                return sensorData.co2 ?? item.value;
+              default:
+                return item.value;
+            }
+          })();
 
-        if (sensorData[0]) {
-          const last = sensorData[0];
-          // console.log("=> ", last);
-          setMoyennes((prevMoyennes) =>
-            prevMoyennes.map((item) => {
-              switch (item.name) {
-                case "Température":
-                  return { ...item, value: last.averageTemp };
-                case "Humidité":
-                  return { ...item, value: last.averageTemp };
-                case "Lumière":
-                  return { ...item, value: last.averageLightA };
-                case "Pression atm":
-                  return { ...item, value: last.averagePressure };
-                case "Humidité sol":
-                  return { ...item, value: last.averageSol };
-                case "CO₂":
-                  return { ...item, value: last.averageIaq };
-                default:
-                  return item;
-              }
-            })
-          );
-        }
-      } catch (error) {
-        console.error("Erreur lors de la récupération des moyennes", error);
-      }
+          return { ...item, value: updatedValue };
+        })
+      );
     }
-
-    fetchAverages();
   }, [sensorData]);
 
   return (
@@ -63,9 +56,7 @@ const CapteurDataCardList = ({ sensorData }: { sensorData: ISensorStoredData[] }
                 alt={item.name}
               />
             </div>
-            <p>
-              {item.value === 0 ? "0.0" : item.value.toString().slice(0, 5)}
-            </p>
+            <p>{item.value === 0 ? "0.0" : item.value}</p>
           </article>
         </div>
       ))}
