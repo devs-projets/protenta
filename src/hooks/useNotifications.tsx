@@ -9,7 +9,6 @@ export const useNotifications = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const { sensorNotification } = useSocket();
-  console.log(notifications)
 
   const fetchNotifications = useCallback(async (pageToFetch: number) => {
     if (isLoading || !hasMore) return;

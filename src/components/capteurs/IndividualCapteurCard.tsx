@@ -1,6 +1,5 @@
 import React from "react";
 import { Cable } from "lucide-react";
-import { SensorLog } from "./IndividualCapteurLogs";
 import { ILatestData } from "@/types/latestDataState";
 
 const IndividualCapteurCard = ({

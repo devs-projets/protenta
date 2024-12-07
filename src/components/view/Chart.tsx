@@ -88,9 +88,9 @@ const Chart = ({
             <Area
               dataKey="value"
               type="natural"
-              fill="var(--color-temperature)"
+              fill="hsl(var(--primary))"
               fillOpacity={0.4}
-              stroke="var(--color-temperature)"
+              stroke="hsl(var(--primary))"
             />
           </AreaChart>
         </ChartContainer>

@@ -21,7 +21,8 @@ export const SocketManager: React.FC<{ children: React.ReactNode }> = ({ childre
         disconnect();
       }
     };
-  }, [pathname, isConnected, wantStopSocket, connect, disconnect]);
+  // }, [pathname, isConnected, wantStopSocket, connect, disconnect]);
+  }, [connect, disconnect]);
 
   return <>{children}</>;
 };
