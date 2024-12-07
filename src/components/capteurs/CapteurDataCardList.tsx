@@ -11,8 +11,6 @@ const CapteurDataCardList = ({ sensorData }: { sensorData: any }) => {
     defaulMoyenneCardData
   );
 
-  // const { socket, sensorData } = useSocket();
-
   useEffect(() => {
     if (sensorData) {
       setMoyennes((prevMoyennes) =>

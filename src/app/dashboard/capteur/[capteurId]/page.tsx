@@ -1,18 +1,45 @@
 "use client";
 
 import CapteurDataCardList from "@/components/capteurs/CapteurDataCardList";
-import MoyennesCardList from "@/components/MoyennesCardList";
 import CapteurTab from "@/components/capteurs/CapteurTab";
 import IndividualCapteurCard from "@/components/capteurs/IndividualCapteurCard";
 import { useSocket } from "@/context/SocketContext";
 import { useParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { getLatestData } from "@/lib/fetchData/getLatestData";
+import { ILatestData } from "@/types/latestDataState";
+import Spinner from "@/components/Spinner";
+import { TriangleAlert } from "lucide-react";
 
 const CapteurId = () => {
   const localName = useParams().capteurId as string;
   const { sensorData, disconnect } = useSocket();
+  const [data, setData] = useState<ILatestData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // console.log("From capteur id : ", sensorData)
+  const getThisCapteurLastData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await getLatestData("capteur", localName);
+      setData(response);
+    } catch (err) {
+      console.error("An error occurred while fetching capteur data", err);
+      setError("Une erreur est survenue lors de la récupération des données.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!sensorData) {
+      getThisCapteurLastData();
+    } else {
+      setData(sensorData);
+      setLoading(false);
+    }
+  }, [sensorData]);
 
   useEffect(() => {
     return () => {
@@ -20,12 +47,42 @@ const CapteurId = () => {
     };
   }, [disconnect]);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-full flex flex-col justify-center items-center">
+        <TriangleAlert size={40} />
+        <p className="text-lg font-semibold my-4">{error}</p>
+        <button
+          className="bg-primary text-white px-4 py-2 rounded"
+          onClick={getThisCapteurLastData}
+        >
+          Réessayer
+        </button>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <p className="text-gray-600">Aucune donnée disponible.</p>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <IndividualCapteurCard sensorData={sensorData} localName={localName} />
+      <IndividualCapteurCard sensorData={data} localName={localName} />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6 px-3">
-        <CapteurDataCardList sensorData={sensorData} />
-        {/* <MoyennesCardList sensorData={sensorData} capteurID={localName as string} /> */}
+        <CapteurDataCardList sensorData={data} />
       </div>
       <div className="flex-1 overflow-hidden">
         <div className="bg-muted/50 rounded-xl p-5 mb-5">

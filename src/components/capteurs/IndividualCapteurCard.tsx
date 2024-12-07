@@ -1,8 +1,23 @@
 import React from "react";
 import { Cable } from "lucide-react";
 import { SensorLog } from "./IndividualCapteurLogs";
+import { ILatestData } from "@/types/latestDataState";
 
-const IndividualCapteurCard = ({sensorData, localName}: {sensorData: SensorLog; localName: string}) => {
+const IndividualCapteurCard = ({
+  sensorData,
+  localName,
+}: {
+  sensorData: Partial<ILatestData> | null;
+  localName: string;
+}) => {
+  const lastSignalTime =
+    sensorData?.localName === localName ? sensorData.timestamp : null;
+  const formattedTime = lastSignalTime
+    ? `${new Date(lastSignalTime).toLocaleDateString()} à ${new Date(
+        lastSignalTime
+      ).toLocaleTimeString()}`
+    : "--/--/--";
+
   return (
     <div className="grid md:grid-cols-3 gap-5 md:mx-auto mb-5 max-w-2xl">
       <div className="text-center rounded-xl bg-gray-300 shadow">
@@ -17,7 +32,7 @@ const IndividualCapteurCard = ({sensorData, localName}: {sensorData: SensorLog; 
       </div>
       <div className="flex flex-col justify-center bg-gray-100 px-5 rounded-lg shadow">
         <h2 className="font-bold">Dernière connexion :</h2>
-        <p>{sensorData?.localName === localName ? sensorData?.latest : "--/--/--"}</p>
+        <p>{formattedTime}</p>
       </div>
     </div>
   );

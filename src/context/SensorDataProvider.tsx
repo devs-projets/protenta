@@ -61,25 +61,25 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   // Gestion des erreurs
-  // const errorMessage =
-  //   hourError || dayError
-  //     ? "Une erreur est survenue lors du chargement des données."
-  //     : null;
+  const errorMessage =
+    hourError || dayError
+      ? "Une erreur est survenue lors du chargement des données."
+      : null;
 
-  // if (errorMessage) {
-  //   return (
-  //     <div className="h-screen flex flex-col justify-center items-center">
-  //       <TriangleAlert size={40} />
-  //       <p className="text-lg font-semibold my-4">{errorMessage}</p>
-  //       <button
-  //         className="bg-primary text-white px-4 py-2 rounded"
-  //         onClick={fetchDatas}
-  //       >
-  //         Réessayer
-  //       </button>
-  //     </div>
-  //   );
-  // }
+  if (errorMessage) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center">
+        <TriangleAlert size={40} />
+        <p className="text-lg font-semibold my-4">{errorMessage}</p>
+        <button
+          className="bg-primary text-white px-4 py-2 rounded"
+          onClick={fetchDatas}
+        >
+          Réessayer
+        </button>
+      </div>
+    );
+  }
 
   return <div>{children}</div>;
 };
