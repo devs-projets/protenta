@@ -6,13 +6,19 @@ import { ISensorStoredData } from "@/types/storedData";
 import { MoyenneItem } from "@/types/moyenneItem";
 import { defaulMoyenneCardData } from "@/mockData/defaultMoyenneCardData";
 
-const CapteurDataCardList = ({ sensorData }: { sensorData: any }) => {
+const CapteurDataCardList = ({
+  sensorData,
+  localName,
+}: {
+  sensorData: any;
+  localName: string;
+}) => {
   const [moyennes, setMoyennes] = useState<MoyenneItem[]>(
     defaulMoyenneCardData
   );
 
   useEffect(() => {
-    if (sensorData) {
+    if (sensorData && sensorData.localName === localName) {
       setMoyennes((prevMoyennes) =>
         prevMoyennes.map((item) => {
           const updatedValue = (() => {

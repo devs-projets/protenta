@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import LiveDataCharts from "./LiveDataCharts";
 
 const CapteurTab = () => {
-  const { sensorData, connect, disconnect } = useSocket();
+  const { sensorData } = useSocket();
   const localName = useParams().capteurId as string;
 
   return (

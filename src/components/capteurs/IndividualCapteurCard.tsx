@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Cable } from "lucide-react";
 import { ILatestData } from "@/types/latestDataState";
 
@@ -9,13 +9,41 @@ const IndividualCapteurCard = ({
   sensorData: Partial<ILatestData> | null;
   localName: string;
 }) => {
-  const lastSignalTime =
-    sensorData?.localName === localName ? sensorData.timestamp : null;
-  const formattedTime = lastSignalTime
-    ? `${new Date(lastSignalTime).toLocaleDateString()} à ${new Date(
-        lastSignalTime
-      ).toLocaleTimeString()}`
-    : "--/--/--";
+  const [formattedTime, setFormattedTime] = useState<any>();
+
+  useEffect(() => {
+    if (sensorData?.localName === localName) {
+      const lastSignalTime = sensorData.timestamp
+        ? sensorData.timestamp
+        : sensorData.latest
+        ? sensorData.latest
+        : null;
+      const formatted = lastSignalTime
+        ? `${new Date(lastSignalTime).toLocaleDateString()} à ${new Date(
+            lastSignalTime
+          ).toLocaleTimeString()}`
+        : "--/--/--";
+      setFormattedTime(formatted);
+    }
+    // const lastSignalTime =
+    //   sensorData?.localName === localName
+    //     ? sensorData.timestamp
+    //       ? sensorData.timestamp
+    //       : sensorData.latest
+    //     : null;
+    // const formatted = lastSignalTime
+    //   ? `${new Date(lastSignalTime).toLocaleDateString()} à ${new Date(
+    //       lastSignalTime
+    //     ).toLocaleTimeString()}`
+    //   : "--/--/--";
+    // console.log(formatted);
+    // setFormattedTime(formatted);
+  }, [sensorData]);
+
+  let conditionalStyleForDate = "";
+  if (sensorData && !sensorData.timestamp) {
+    conditionalStyleForDate = "text-red-500";
+  }
 
   return (
     <div className="grid md:grid-cols-3 gap-5 md:mx-auto mb-5 max-w-2xl">
@@ -31,7 +59,7 @@ const IndividualCapteurCard = ({
       </div>
       <div className="flex flex-col justify-center bg-gray-100 px-5 rounded-lg shadow">
         <h2 className="font-bold">Dernière connexion :</h2>
-        <p>{formattedTime}</p>
+        <p className={conditionalStyleForDate}>{formattedTime ?? "--/--/--"}</p>
       </div>
     </div>
   );

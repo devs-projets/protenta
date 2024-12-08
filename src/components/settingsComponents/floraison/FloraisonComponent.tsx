@@ -14,6 +14,7 @@ const FloraisonComponent = ({
   const [end, setEnd] = useState<string | null>(null);
   const [pollinisation, setPollinisation] = useState<number | null>(null);
   const [floraison, setFloraison] = useState<boolean | undefined>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setStart(floraisonFetched?.PolStartTime ?? null);
@@ -26,8 +27,19 @@ const FloraisonComponent = ({
     setFloraison(floraisonFetched?.MomentFloraison);
   }, [floraisonFetched]);
 
+  const validateTime = () => {
+    if (start && end && start >= end) {
+      setError("Erreur : L'heure de fin doit être supérieure à l'heure de début.");
+      return false;
+    }
+    setError(null);
+    return true;
+  };
+
   const handleChangeFloraison = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!validateTime()) return;
+
     const data = {
       PolStartTime: start,
       PolEndTime: end,
@@ -38,6 +50,16 @@ const FloraisonComponent = ({
     sendCommand(data, message);
     
     setDisableEditMode(true);
+  };
+
+  const handleStartChange = (value: string) => {
+    setStart(value);
+    validateTime(); // Revalider à chaque changement
+  };
+
+  const handleEndChange = (value: string) => {
+    setEnd(value);
+    validateTime(); // Revalider à chaque changement
   };
 
   return (
@@ -57,10 +79,17 @@ const FloraisonComponent = ({
               {start ?? "Date non définie"}
             </p>
           ) : (
+            // <input
+            //   type="date"
+            //   value={start as string}
+            //   onChange={(e) => setStart(e.target.value)}
+            //   className="border p-2 rounded-lg border-primary text-center"
+            //   disabled={disableEditMode}
+            // />
             <input
-              type="date"
+              type="time"
               value={start as string}
-              onChange={(e) => setStart(e.target.value)}
+              onChange={(e) => handleStartChange(e.target.value)}
               className="border p-2 rounded-lg border-primary text-center"
               disabled={disableEditMode}
             />
@@ -73,10 +102,17 @@ const FloraisonComponent = ({
               {end ?? "Date non définie"}
             </p>
           ) : (
+            // <input
+            //   type="date"
+            //   value={end as string}
+            //   onChange={(e) => setEnd(e.target.value)}
+            //   className="border p-2 rounded-lg border-primary text-center"
+            //   disabled={disableEditMode}
+            // />
             <input
-              type="date"
+              type="time"
               value={end as string}
-              onChange={(e) => setEnd(e.target.value)}
+              onChange={(e) => handleEndChange(e.target.value)}
               className="border p-2 rounded-lg border-primary text-center"
               disabled={disableEditMode}
             />
@@ -93,6 +129,7 @@ const FloraisonComponent = ({
               type="number"
               className="border p-2 rounded-lg border-primary max-w-24"
               value={pollinisation as number}
+              min={0}
               onChange={(e) => setPollinisation(parseInt(e.target.value))}
               disabled={disableEditMode}
             />
@@ -106,6 +143,7 @@ const FloraisonComponent = ({
             disabled={disableEditMode}
           />
         </div>
+        {error && <p className="text-red-500 text-center">{error}</p>}
         <div>
           {!disableEditMode && (
             <div className="grid grid-cols-2 gap-2">

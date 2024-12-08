@@ -64,7 +64,8 @@ const IndividualCapteurLogs = ({
     if (!sensorData || sensorData.localName !== capteurID) return;
 
     const newLog = { ...sensorData, etat: getRandomState() };
-    setLogs((prevLogs) => [newLog, ...prevLogs.slice(0, 99)]); // Limite les logs à 100 pour éviter une surcharge
+    // Limite les logs à 100 pour éviter une surcharge
+    setLogs((prevLogs) => [newLog, ...prevLogs.slice(0, 99)]);
   }, [sensorData, capteurID]);
 
   const filteredLogs = filterEtat

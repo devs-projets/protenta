@@ -32,15 +32,20 @@ const CapteurId = () => {
     }
   };
 
+  // Load la dernier donnée rélative à ce captueur depuis la DB
   useEffect(() => {
-    if (!sensorData) {
-      getThisCapteurLastData();
-    } else {
+    getThisCapteurLastData();
+  }, []);
+
+  // Met à jours le rendu si le capteur envoie de nouvelle données via socket
+  useEffect(() => {
+    if (sensorData && sensorData.localName === localName) {
       setData(sensorData);
-      setLoading(false);
     }
   }, [sensorData]);
 
+  // TODO : A supprimer si nous devons avoir l'écoute de la
+  // socket en continue. => Actuellement la connexion est perdu si l'on switch de page
   useEffect(() => {
     return () => {
       disconnect();
@@ -82,7 +87,7 @@ const CapteurId = () => {
     <div>
       <IndividualCapteurCard sensorData={data} localName={localName} />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6 px-3">
-        <CapteurDataCardList sensorData={data} />
+        <CapteurDataCardList sensorData={data} localName={localName} />
       </div>
       <div className="flex-1 overflow-hidden">
         <div className="bg-muted/50 rounded-xl p-5 mb-5">
