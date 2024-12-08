@@ -25,9 +25,6 @@ export function MoyenneTabs({
   const { data: hourData } = useSelector((state: RootState) => state.hourData);
   const { data: dayData } = useSelector((state: RootState) => state.dayData);
 
-  console.log(dayData);
-  console.log(filteredData);
-
   useEffect(() => {
     if (visualisationPeriode === "Heures") {
       setData(hourData);
@@ -44,7 +41,7 @@ export function MoyenneTabs({
         const selectedDateStr = selectedDate.toLocaleDateString();
         return entryDate === selectedDateStr;
       });
-  
+
       // Trier les données par timestamp
       setFilteredData(
         filtered.sort(
@@ -52,19 +49,25 @@ export function MoyenneTabs({
             new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
         )
       );
-    } else if (visualisationPeriode === "Jours" && selectedRange?.from && selectedRange?.to) {
+    } else if (
+      visualisationPeriode === "Jours" &&
+      selectedRange?.from &&
+      selectedRange?.to
+    ) {
       // Ajuster la date de fin pour inclure toute la journée
       const adjustedEndDate = new Date(selectedRange.to);
       adjustedEndDate.setHours(23, 59, 59, 999); // Mettre l'heure à 23h59m59s999ms pour inclure toute la journée du 26/12
-  
+
       // Filtrer par plage de dates
       const filtered = dayData.filter((entry) => {
         const entryDate = new Date(entry.timestamp);
         if (selectedRange.from) {
-          return entryDate >= selectedRange.from && entryDate <= adjustedEndDate;
+          return (
+            entryDate >= selectedRange.from && entryDate <= adjustedEndDate
+          );
         }
       });
-  
+
       // Trier les données par timestamp
       setFilteredData(
         filtered.sort(
@@ -74,7 +77,6 @@ export function MoyenneTabs({
       );
     }
   }, [selectedDate, selectedRange, visualisationPeriode, hourData, dayData]);
-  
 
   return (
     <Tabs defaultValue="Tableau">
@@ -100,7 +102,10 @@ export function MoyenneTabs({
         />
       </TabsContent>
       <TabsContent value="Graphique">
-        <ChartComponent sensorData={filteredData} />
+        <ChartComponent
+          visualisationPeriode={visualisationPeriode}
+          sensorData={filteredData}
+        />
       </TabsContent>
     </Tabs>
   );

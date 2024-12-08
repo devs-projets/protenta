@@ -3,10 +3,8 @@
 import React, { useEffect, useState } from "react";
 import MoyenneCard from "./moyennes/MoyenneCard";
 import Link from "next/link";
-import { ISensorStoredData } from "@/types/storedData";
 import { defaulMoyenneCardData } from "@/mockData/defaultMoyenneCardData";
 import { MoyenneItem } from "@/types/moyenneItem";
-import { useSocket } from "@/context/SocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 

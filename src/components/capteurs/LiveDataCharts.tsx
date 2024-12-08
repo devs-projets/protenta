@@ -2,6 +2,11 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import TemperatureLiveChart from "./TemperatureLiveChart";
 import RealTimeHumiditéChart from "./HumiditeLiveChart";
+import RealTimeChart from "./TemperatureLiveChart";
+
+function generateRandomData(min: number, max: number): number {
+  return Math.floor(min + Math.random() * (max - min));
+}
 
 const LiveDataCharts = () => {
   return (
@@ -15,22 +20,65 @@ const LiveDataCharts = () => {
         <TabsTrigger value="Co2">CO₂</TabsTrigger>
       </TabsList>
       <TabsContent value="Temperature" className="bg-[#D1D5DB] m-0 pb-5 px-5">
-        <TemperatureLiveChart />
+        {/* <TemperatureLiveChart /> */}
+        <RealTimeChart
+          label="Temperature"
+          unit="°C"
+          color="#16A34A"
+          minThreshold={15}
+          maxThreshold={30}
+          generateRandomData={() => generateRandomData(10, 35)}
+        />
       </TabsContent>
-      <TabsContent value="Humidité" className="bg-red-300 m-0">
-        <RealTimeHumiditéChart />
+      <TabsContent value="Humidité" className="m-0">
+        <RealTimeChart
+          label="Humidité"
+          unit="%"
+          color="#16A34A"
+          minThreshold={40}
+          maxThreshold={70}
+          generateRandomData={() => generateRandomData(35, 90)}
+        />
       </TabsContent>
-      <TabsContent value="Lumière" className="bg-red-300 m-0">
-        Lumière
+      <TabsContent value="Lumière" className="m-0">
+        <RealTimeChart
+          label="Lumière"
+          unit="Lux"
+          color="#16A34A"
+          minThreshold={400}
+          maxThreshold={700}
+          generateRandomData={() => generateRandomData(350, 950)}
+        />
       </TabsContent>
-      <TabsContent value="Pression_Atm" className="bg-red-300 m-0">
-        PressionAtm
+      <TabsContent value="Pression_Atm" className="m-0">
+        <RealTimeChart
+          label="Pression_Atm"
+          unit="Bar"
+          color="#16A34A"
+          minThreshold={400}
+          maxThreshold={700}
+          generateRandomData={() => generateRandomData(350, 950)}
+        />
       </TabsContent>
-      <TabsContent value="Humidité_Sol" className="bg-red-300 m-0">
-        Humidité Sol
+      <TabsContent value="Humidité_Sol" className="m-0">
+        <RealTimeChart
+          label="Humidité_Sol"
+          unit="%"
+          color="#16A34A"
+          minThreshold={40}
+          maxThreshold={70}
+          generateRandomData={() => generateRandomData(35, 90)}
+        />
       </TabsContent>
-      <TabsContent value="Co2" className="bg-red-300 m-0">
-        CO₂
+      <TabsContent value="Co2" className="m-0">
+        <RealTimeChart
+          label="Co2"
+          unit="ppm"
+          color="#16A34A"
+          minThreshold={300}
+          maxThreshold={400}
+          generateRandomData={() => generateRandomData(250, 450)}
+        />
       </TabsContent>
     </Tabs>
   );

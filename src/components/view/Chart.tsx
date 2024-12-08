@@ -1,6 +1,6 @@
 "use client";
 
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -17,33 +17,81 @@ import {
 } from "@/components/ui/chart";
 import { ISensorStoredData } from "@/types/storedData";
 
+// Configuration des métriques
+const metrics = [
+  { key: "Temperature", title: "Graphe de Température", unit: "°C" },
+  { key: "Humidité", title: "Graphe d'Humidité", unit: "%" },
+  { key: "Lumière", title: "Graphe de la Lumière", unit: "lux" },
+  {
+    key: "Pression atmosphérique",
+    title: "Graphe de Pression Atmosphérique",
+    unit: "bar",
+  },
+  { key: "Humidite du sol", title: "Graphe de l'Humidité du Sol", unit: "" },
+  { key: "Co2", title: "Graphe de CO2", unit: "ppm" },
+];
+
 // Fonction pour transformer les données de `sensorData` en format graphique
-const transformSensorData = (sensorData: ISensorStoredData[], key: string) => {
-  return sensorData.map((entry) => ({
-    date: new Date(entry.timestamp).toLocaleDateString("fr-FR", {
-      day: "2-digit",
-      month: "2-digit",
-    }),
+const generateHourlyTimeRange = () => {
+  const now = new Date();
+  const hours = [];
+  for (let i = 0; i < 24; i++) {
+    const hour = new Date();
+    hour.setHours(i, 0, 0, 0);
+    hours.push(hour.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }));
+  }
+  return hours;
+};
+
+const transformSensorData = (
+  sensorData: ISensorStoredData[],
+  key: string,
+  visualPeriod: string
+) => {
+  const formattedData = sensorData.map((entry) => ({
+    date:
+      visualPeriod === "Jours"
+        ? new Date(entry.timestamp).toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "2-digit",
+          })
+        : new Date(entry.timestamp).toLocaleString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
     value: (() => {
       switch (key) {
         case "Temperature":
-          return entry.averageTemp ? entry.averageTemp / 100 : 0; // Conversion en °C
+          return entry.averageTemp ? entry.averageTemp / 100 : 0;
         case "Humidité":
-          return entry.averageHumidity ? entry.averageHumidity / 100 : 0; // En pourcentage
-          case "Lumière":
-            return entry.averageLightA ? entry.averageLightA / 1000 : 0
+          return entry.averageHumidity ? entry.averageHumidity / 100 : 0;
+        case "Lumière":
+          return entry.averageLightA ? entry.averageLightA / 1000 : 0;
         case "Pression atmosphérique":
-          return entry.averagePressure ? entry.averagePressure / 1000 : 0; // Conversion en Bar
-          case "Humidite du sol":
-            return entry.averageSol ? entry.averageSol : 0;
+          return entry.averagePressure ? entry.averagePressure / 1000 : 0;
+        case "Humidite du sol":
+          return entry.averageSol || 0;
         case "Co2":
-          return entry.averageIaq || 0; // ppm
+          return entry.averageIaq || 0;
         default:
           return 0;
       }
     })(),
   }));
+
+  if (visualPeriod === "Heures") {
+    const fullTimeRange = generateHourlyTimeRange();
+    const dataMap = new Map(formattedData.map((item) => [item.date, item.value]));
+
+    return fullTimeRange.map((time) => ({
+      date: time,
+      value: dataMap.get(time) || 0, // Valeur par défaut si absente
+    }));
+  }
+
+  return formattedData;
 };
+
 
 // Composant pour afficher un graphique
 const Chart = ({
@@ -71,40 +119,57 @@ const Chart = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="max-h-60 w-full">
-          <AreaChart data={data} margin={{ left: 12, right: 12 }}>
-            <CartesianGrid vertical={false} />
+        <ChartContainer
+          config={chartConfig}
+          className="aspect-auto h-[250px] w-full"
+        >
+          <AreaChart
+            data={data}
+            margin={{ left: 12, right: 12 }}
+            className="bg-gray-100 rounded-lg"
+          >
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis
               dataKey="date"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value}
             />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="line" />}
+            <YAxis
+              tickFormatter={(value) => `${value}`}
+              tickLine={false}
+              axisLine={{ stroke: "#ccc" }}
+              stroke="#ccc"
             />
+            <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
             <Area
               dataKey="value"
-              type="natural"
-              fill="hsl(var(--primary))"
-              fillOpacity={0.4}
-              stroke="hsl(var(--primary))"
+              type="monotone"
+              fillOpacity={0}
+              stroke="#16A34A"
+              strokeWidth={3}
+              dot={(props) => {
+                const { cx, cy, value } = props;
+                return (
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={4}
+                    strokeWidth={2}
+                    fill={value === 0 ? "transparent" : "#16A34A"}
+                    stroke={value === 0 ? "transparent" : "#16A34A"}
+                  />
+                );
+              }}
             />
           </AreaChart>
         </ChartContainer>
       </CardContent>
       <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Données du{" "}
-              {data.length > 0
-                ? `${data[0].date} au ${data[data.length - 1].date}`
-                : "N/A"}
-            </div>
-          </div>
+        <div className="text-sm">
+          {data.length > 0
+            ? `Données du ${data[0].date} au ${data[data.length - 1].date}`
+            : "Aucune donnée disponible"}
         </div>
       </CardFooter>
     </Card>
@@ -113,47 +178,24 @@ const Chart = ({
 
 // Composant principal
 export function ChartComponent({
+  visualisationPeriode,
   sensorData,
 }: {
+  visualisationPeriode: string;
   sensorData: ISensorStoredData[];
 }) {
-  // Transformation des données pour chaque mesure
-  const temperatureData = transformSensorData(sensorData, "Temperature");
-  const humiditeData = transformSensorData(sensorData, "Humidité");
-  const pressAtmData = transformSensorData(
-    sensorData,
-    "Pression atmosphérique"
-  );
-  const co2Data = transformSensorData(sensorData, "Co2");
-  const lumiere = transformSensorData(sensorData, "Lumière");
-  const HumSol = transformSensorData(sensorData, "Humidite du sol");
-
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-y-auto">
         <div className="flex flex-col px-5">
-          <Chart
-            title="Graphe de Température"
-            dataKey="Temperature"
-            data={temperatureData}
-          />
-          <Chart
-            title="Graphe d'Humidité"
-            dataKey="Humidité"
-            data={humiditeData}
-          />
-          <Chart
-            title="Graphe de la Lumière"
-            dataKey="Humidité"
-            data={lumiere}
-          />
-          <Chart
-            title="Graphe de Pression Atmosphérique"
-            dataKey="Pression atmosphérique"
-            data={pressAtmData}
-          />
-          <Chart title="Graphe de l'Humidité du Sol" dataKey="Co2" data={HumSol} />
-          <Chart title="Graphe de CO2" dataKey="Co2" data={co2Data} />
+          {metrics.map(({ key, title }) => {
+            const data = transformSensorData(
+              sensorData,
+              key,
+              visualisationPeriode
+            );
+            return <Chart key={key} title={title} dataKey={key} data={data} />;
+          })}
         </div>
       </div>
     </div>

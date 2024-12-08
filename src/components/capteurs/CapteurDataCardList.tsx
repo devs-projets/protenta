@@ -60,7 +60,7 @@ const CapteurDataCardList = ({
                 alt={item.name}
               />
             </div>
-            <p>{item.value === 0 ? "0.0" : item.value}</p>
+            <p>{item.value === 0 ? "0.0" : item.value} {item.unit}</p>
           </article>
         </div>
       ))}
