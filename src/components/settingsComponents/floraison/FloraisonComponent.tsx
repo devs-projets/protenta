@@ -29,7 +29,9 @@ const FloraisonComponent = ({
 
   const validateTime = () => {
     if (start && end && start >= end) {
-      setError("Erreur : L'heure de fin doit être supérieure à l'heure de début.");
+      setError(
+        "Erreur : L'heure de fin doit être supérieure à l'heure de début."
+      );
       return false;
     }
     setError(null);
@@ -46,20 +48,37 @@ const FloraisonComponent = ({
       Periode: pollinisation,
       MomentFloraison: floraison ? 1 : 0,
     };
+    console.log(data);
     const message = "La floraison a été mis à jour avec succès !";
     sendCommand(data, message);
-    
+
     setDisableEditMode(true);
   };
 
   const handleStartChange = (value: string) => {
     setStart(value);
-    validateTime(); // Revalider à chaque changement
+    validateTime();
   };
 
   const handleEndChange = (value: string) => {
     setEnd(value);
-    validateTime(); // Revalider à chaque changement
+    validateTime();
+  };
+
+  const handleChangeWithTimezone = (time: string): string => {
+    const [hours, minutes] = time.split(":");
+    const date = new Date();
+
+    date.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
+
+    return date.toISOString();
+  };
+
+  const isoToTime = (isoString: string): string => {
+    const date = new Date(isoString);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`; // Retourne au format "HH:mm"
   };
 
   return (
@@ -79,17 +98,15 @@ const FloraisonComponent = ({
               {start ?? "Date non définie"}
             </p>
           ) : (
-            // <input
-            //   type="date"
-            //   value={start as string}
-            //   onChange={(e) => setStart(e.target.value)}
-            //   className="border p-2 rounded-lg border-primary text-center"
-            //   disabled={disableEditMode}
-            // />
             <input
               type="time"
-              value={start as string}
-              onChange={(e) => handleStartChange(e.target.value)}
+              value={start ? isoToTime(start) : ""}
+              onChange={(e) => {
+                const timeWithTimezone = handleChangeWithTimezone(
+                  e.target.value
+                );
+                handleStartChange(timeWithTimezone);
+              }}
               className="border p-2 rounded-lg border-primary text-center"
               disabled={disableEditMode}
             />
@@ -102,17 +119,15 @@ const FloraisonComponent = ({
               {end ?? "Date non définie"}
             </p>
           ) : (
-            // <input
-            //   type="date"
-            //   value={end as string}
-            //   onChange={(e) => setEnd(e.target.value)}
-            //   className="border p-2 rounded-lg border-primary text-center"
-            //   disabled={disableEditMode}
-            // />
             <input
               type="time"
-              value={end as string}
-              onChange={(e) => handleEndChange(e.target.value)}
+              value={end ? isoToTime(end) : ""}
+              onChange={(e) => {
+                const timeWithTimezone = handleChangeWithTimezone(
+                  e.target.value
+                );
+                handleEndChange(timeWithTimezone);
+              }}
               className="border p-2 rounded-lg border-primary text-center"
               disabled={disableEditMode}
             />
