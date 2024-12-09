@@ -3,7 +3,15 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ConfirmActionnaireModal } from "../../actionnaires/ConfirmActionnaireModal";
 import { ActionnaireDefautlDesctiption } from "@/types/actionnaireState";
 import { sendCommand } from "@/lib/postData/sendCommands";
-import { useSocket } from "@/context/SocketContext";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const codes = {
   S1: { active: "101", inactive: "100" },
@@ -28,45 +36,24 @@ const ActionnaireListItem = ({
   title,
   status,
   mode,
-  setReload
+  setReload,
 }: {
   title: string;
   status: boolean;
-  mode: boolean,
+  mode: boolean;
   setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [modeAuto, setModeAuto] = useState<boolean>(mode);
-  const [switchStatus, setSwitchStatus] = useState<boolean>(status);
+  const [switchStatus, setSwitchStatus] = useState<boolean | undefined>(status);
   const [description, setDescription] = useState<string>("");
-
-  // const { sensorData } = useSocket();
-
-  // useEffect(() => {
-  // const mState = sensorData && Object.keys(sensorData)
-  //   .filter((key) => key.endsWith(title as string))
-  //   .reduce<{ [key: string]: number }>((obj, key) => {
-  //     const k = key.replace('ManuelAuto', "");
-  //     if (k === title) {
-  //       if(sensorData[key] === 0) {
-  //         setModeAuto(true);
-  //       }
-  //       if(sensorData[key] === 1) {
-  //         setModeAuto(false);
-  //       }
-  //     }
-  //     // obj[k] = sensorData[key];
-  //     // setModeAuto(sensorData[key])
-  //     return obj;
-  //   }, {});
-  //   // setModeState(mState[title as string])
-  // }, [sensorData])
+  const [S12Value, setS12Valuee] = useState<string | undefined>();
 
   useEffect(() => {
     setSwitchStatus(status);
     const itemIndex = parseInt(title.slice(1));
     const desc = ActionnaireDefautlDesctiption[itemIndex - 1];
     setDescription(desc);
-  }, []);
+  }, [status, mode]);
 
   const submitAction = async () => {
     // const thisActionCodes = codes[title as keyof typeof codes];
@@ -77,32 +64,70 @@ const ActionnaireListItem = ({
       const message = `L'actionnaire "${description}" été ${
         thisActionCodes === "active" ? "Activé" : "Désactivé"
       } avec succès !`;
-      sendCommand({ [title]: thisActionCodes }, message)
-      .then((result) => {
+      sendCommand({ [title]: thisActionCodes }, message).then((result) => {
         if (result?.success) {
           setSwitchStatus(!switchStatus);
           setReload(true);
-        }  else {
-          setSwitchStatus(switchStatus)
+        } else {
+          setSwitchStatus(switchStatus);
         }
-      })
-    } else {
-      alert("Action sur l'ombrière");
+      });
     }
   };
 
   return (
-    <li className="grid grid-cols-5 gap-4 p-2 my-2 items-center">
+    <li className="grid grid-cols-6 gap-4 p-2 my-2 items-center">
       <h3>{title}</h3>
       <p className="col-span-2">{description}</p>
-      <Switch
-        checked={switchStatus}
-        disabled={modeAuto}
-        onClick={() => {
-          setSwitchStatus(!switchStatus);
-          submitAction();
-        }}
-      />
+      <div className="col-span-2">
+        {title != "S12" && (
+          <div className="flex justify-center">
+            <Switch
+              checked={switchStatus && switchStatus}
+              disabled={modeAuto}
+              onClick={() => {
+                setSwitchStatus(!switchStatus);
+                submitAction();
+              }}
+            />
+          </div>
+        )}
+        {title === "S12" && (
+          <div>
+            <Select
+              onValueChange={(value) => {
+                const message = `L'actionnaire "${description}" été ${value} avec succès !`;
+                sendCommand({ [title]: value }, message).then((result) => {
+                  if (result?.success) {
+                    setSwitchStatus(!switchStatus);
+                    setReload(true);
+                  } else {
+                    setSwitchStatus(switchStatus);
+                  }
+                });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Action" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem className="cursor-pointer" value="Deploy">
+                    Déployer
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="Reactor">
+                    Reacter
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="Arreter">
+                    Arreter
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      </div>
+
       <ConfirmActionnaireModal
         title={title}
         modeAuto={modeAuto}
