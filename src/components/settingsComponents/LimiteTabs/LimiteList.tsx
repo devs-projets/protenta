@@ -1,10 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Limite } from "../ConfigTabs";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import LimiteListItem from "../LimiteTabs/LimiteListItem";
 import { Save, X } from "lucide-react";
 import { sendCommand } from "@/lib/postData/sendCommands";
 
-const LimiteList = ({ newLimites }: { newLimites: any }) => {
+export interface Limite {
+  code: string;
+  name: string;
+  unit: string;
+  minValue: number;
+  maxValue: number;
+}
+
+const LimiteList = ({
+  newLimites,
+  setReload,
+}: {
+  newLimites: any;
+  setReload: Dispatch<SetStateAction<boolean>>;
+}) => {
   const initialLimites: Limite[] = [
     {
       code: "lastSeuilTemp",
@@ -106,7 +119,11 @@ const LimiteList = ({ newLimites }: { newLimites: any }) => {
     });
     const message = "Les limites ont été mises à jour avec succès !";
 
-    sendCommand(data, message);
+    sendCommand(data, message).then((result) => {
+      if (result?.success) {
+        setReload(true);
+      }
+    });
   };
 
   return (

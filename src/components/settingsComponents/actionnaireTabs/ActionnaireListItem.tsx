@@ -1,5 +1,5 @@
 import { Switch } from "../../ui/switch";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ConfirmActionnaireModal } from "../../actionnaires/ConfirmActionnaireModal";
 import { ActionnaireDefautlDesctiption } from "@/types/actionnaireState";
 import { sendCommand } from "@/lib/postData/sendCommands";
@@ -28,10 +28,12 @@ const ActionnaireListItem = ({
   title,
   status,
   mode,
+  setReload
 }: {
   title: string;
   status: boolean;
   mode: boolean,
+  setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [modeAuto, setModeAuto] = useState<boolean>(mode);
   const [switchStatus, setSwitchStatus] = useState<boolean>(status);
@@ -76,6 +78,14 @@ const ActionnaireListItem = ({
         thisActionCodes === "active" ? "Activé" : "Désactivé"
       } avec succès !`;
       sendCommand({ [title]: thisActionCodes }, message)
+      .then((result) => {
+        if (result?.success) {
+          setSwitchStatus(!switchStatus);
+          setReload(true);
+        }  else {
+          setSwitchStatus(switchStatus)
+        }
+      })
     } else {
       alert("Action sur l'ombrière");
     }

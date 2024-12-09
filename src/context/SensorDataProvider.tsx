@@ -48,7 +48,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
     fetchLatestDataWithBackup();
     fetchDatas();
 
-    const interval = setInterval(fetchLatestDataWithBackup, 5000);
+    const interval = setInterval(fetchLatestDataWithBackup, 1000);
     return () => clearInterval(interval);
   }, [dispatch]);
 

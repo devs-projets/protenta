@@ -1,13 +1,15 @@
 import { Switch } from "@/components/ui/switch";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Pencil, Save, X } from "lucide-react";
 import { ISensorStoredData } from "@/types/storedData";
 import { sendCommand } from "@/lib/postData/sendCommands";
 
 const FloraisonComponent = ({
   floraisonFetched,
+  setReload,
 }: {
   floraisonFetched: Partial<ISensorStoredData> | undefined;
+  setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [disableEditMode, setDisableEditMode] = useState<boolean>(true);
   const [start, setStart] = useState<string | null>(null);
@@ -50,7 +52,11 @@ const FloraisonComponent = ({
     };
     console.log(data);
     const message = "La floraison a été mis à jour avec succès !";
-    sendCommand(data, message);
+    sendCommand(data, message).then((result) => {
+      if (result?.success) {
+        setReload(true);
+      }
+    });
 
     setDisableEditMode(true);
   };
@@ -95,7 +101,12 @@ const FloraisonComponent = ({
           <label>Début :</label>
           {disableEditMode ? (
             <p className="border p-2 rounded-lg border-primary text-center">
-              {start ?? "Date non définie"}
+              {start
+                ? new Date(start).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "Date non définie"}
             </p>
           ) : (
             <input
@@ -116,7 +127,12 @@ const FloraisonComponent = ({
           <label>Fin :</label>
           {disableEditMode ? (
             <p className="border p-2 rounded-lg border-primary text-center">
-              {end ?? "Date non définie"}
+              {end
+                ? new Date(end).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "Date non définie"}
             </p>
           ) : (
             <input
@@ -145,6 +161,7 @@ const FloraisonComponent = ({
               className="border p-2 rounded-lg border-primary max-w-24"
               value={pollinisation as number}
               min={0}
+              max={59}
               onChange={(e) => setPollinisation(parseInt(e.target.value))}
               disabled={disableEditMode}
             />

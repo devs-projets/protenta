@@ -20,10 +20,12 @@ const ConfigTabs = () => {
   const [floraisonFetched, setFloraisonFetched] =
     useState<Partial<ILatestData>>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [reload, setReload] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchSensorData = async () => {
       try {
+        if (!loading) setLoading(true);
         const data = await getLatestData("monitor");
         setActionnairesFetched(extractActionnaires(data));
         setLimitesFetched(extractLimites(data));
@@ -32,11 +34,12 @@ const ConfigTabs = () => {
         console.error("An error occurred while fetching sensor data:", error);
       } finally {
         setLoading(false);
+        setReload(false);
       }
     };
 
     fetchSensorData();
-  }, []);
+  }, [reload]);
 
   return (
     <div>
@@ -53,16 +56,16 @@ const ConfigTabs = () => {
         </TabsList>
 
         <TabsContent value="limites">
-          <LimiteList newLimites={limitesFetched} />
+          <LimiteList newLimites={limitesFetched} setReload={setReload} />
         </TabsContent>
 
         <TabsContent value="actionnaires">
-          <ActionnaireList actionnairesFetched={actionnairesFetched} />
+          <ActionnaireList actionnairesFetched={actionnairesFetched} setReload={setReload} />
         </TabsContent>
 
         <TabsContent value="floraison">
           {/* <FloraisonComponent floraisonFetched={floraisonFetched} /> */}
-          <FloraisonComponent floraisonFetched={floraisonFetched} />
+          <FloraisonComponent floraisonFetched={floraisonFetched} setReload={setReload} />
         </TabsContent>
       </Tabs>
     </div>

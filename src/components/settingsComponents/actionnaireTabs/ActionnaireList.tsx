@@ -10,13 +10,11 @@ export interface Actionnaire {
 
 const ActionnaireList = ({
   actionnairesFetched,
+  setReload
 }: {
   actionnairesFetched: Partial<ISensorStoredData> | undefined;
+  setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
-  // console.log('=============================\n')
-  //         console.log(actionnairesFetched);
-  //         console.log('\n=============================')
-
   const [actionnaires, setActionnaires] = useState<Actionnaire[]>([]);
 
   useEffect(() => {
@@ -46,6 +44,7 @@ const ActionnaireList = ({
               title={actionnaire.name}
               status={actionnaire.status}
               mode={actionnaire.mode}
+              setReload={setReload}
             />
           )
       )}
