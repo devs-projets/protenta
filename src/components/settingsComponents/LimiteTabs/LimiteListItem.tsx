@@ -27,6 +27,7 @@ const LimiteListItem = ({
         <input
           type="number"
           value={minValue}
+          min={0}
           onChange={onMinChange}
           placeholder="Min"
           className="border rounded px-2 py-1"
@@ -35,6 +36,7 @@ const LimiteListItem = ({
         <input
           type="number"
           value={maxValue}
+          min={0}
           onChange={onMaxChange}
           placeholder="Max"
           className="border rounded px-2 py-1"

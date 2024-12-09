@@ -36,11 +36,13 @@ const ActionnaireListItem = ({
   title,
   status,
   mode,
+  s11andS12,
   setReload,
 }: {
   title: string;
   status: boolean;
   mode: boolean;
+  s11andS12: string;
   setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [modeAuto, setModeAuto] = useState<boolean>(mode);
@@ -97,6 +99,7 @@ const ActionnaireListItem = ({
         {title === "S12" && (
           <div>
             <Select
+              value={s11andS12}
               onValueChange={(value) => {
                 const message = `L'actionnaire "${description}" été ${value} avec succès !`;
                 sendCommand({ [title]: value }, message).then((result) => {

@@ -3,6 +3,15 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Pencil, Save, X } from "lucide-react";
 import { ISensorStoredData } from "@/types/storedData";
 import { sendCommand } from "@/lib/postData/sendCommands";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const FloraisonComponent = ({
   floraisonFetched,
@@ -17,6 +26,8 @@ const FloraisonComponent = ({
   const [pollinisation, setPollinisation] = useState<number | null>(null);
   const [floraison, setFloraison] = useState<boolean | undefined>(false);
   const [error, setError] = useState<string | null>(null);
+
+  console.log(floraisonFetched);
 
   useEffect(() => {
     setStart(floraisonFetched?.PolStartTime ?? null);
@@ -71,22 +82,6 @@ const FloraisonComponent = ({
     validateTime();
   };
 
-  const handleChangeWithTimezone = (time: string): string => {
-    const [hours, minutes] = time.split(":");
-    const date = new Date();
-
-    date.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
-
-    return date.toISOString();
-  };
-
-  const isoToTime = (isoString: string): string => {
-    const date = new Date(isoString);
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`; // Retourne au format "HH:mm"
-  };
-
   return (
     <div className="max-w-64 mx-auto pt-5">
       <form
@@ -109,18 +104,27 @@ const FloraisonComponent = ({
                 : "Date non définie"}
             </p>
           ) : (
-            <input
-              type="time"
-              value={start ? isoToTime(start) : ""}
-              onChange={(e) => {
-                const timeWithTimezone = handleChangeWithTimezone(
-                  e.target.value
-                );
-                handleStartChange(timeWithTimezone);
-              }}
-              className="border p-2 rounded-lg border-primary text-center"
-              disabled={disableEditMode}
-            />
+            <Select
+              value={start ?? ""}
+              onValueChange={(value) => handleStartChange(value)}
+            >
+              <SelectTrigger className="w-24">
+                <SelectValue placeholder="Heure" />
+              </SelectTrigger>
+              <SelectContent className="w-16">
+                <SelectGroup>
+                  {Array.from({ length: 24 }, (_, index) => (
+                    <SelectItem
+                      key={index}
+                      className="cursor-pointer"
+                      value={index.toString()}
+                    >
+                      {index.toString().padStart(2, "0")} h
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           )}
         </div>
         <div className="flex justify-between items-center">
@@ -135,18 +139,27 @@ const FloraisonComponent = ({
                 : "Date non définie"}
             </p>
           ) : (
-            <input
-              type="time"
-              value={end ? isoToTime(end) : ""}
-              onChange={(e) => {
-                const timeWithTimezone = handleChangeWithTimezone(
-                  e.target.value
-                );
-                handleEndChange(timeWithTimezone);
-              }}
-              className="border p-2 rounded-lg border-primary text-center"
-              disabled={disableEditMode}
-            />
+            <Select
+              value={end ?? ""}
+              onValueChange={(value) => handleEndChange(value)}
+            >
+              <SelectTrigger className="w-24">
+                <SelectValue placeholder="Heure" />
+              </SelectTrigger>
+              <SelectContent className="w-16">
+                <SelectGroup>
+                  {Array.from({ length: 24 }, (_, index) => (
+                    <SelectItem
+                      key={index}
+                      className="cursor-pointer"
+                      value={index.toString()}
+                    >
+                      {index.toString().padStart(2, "0")} h
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           )}
         </div>
         <div className="flex justify-between items-center">

@@ -97,24 +97,24 @@ const LimiteList = ({
     const data: any = {};
     limites.map((x) => {
       if (x.code === "lastSeuilHumidity") {
-        data["HumMin"] = x.minValue;
-        data["HumMax"] = x.maxValue;
+        data["HumMin"] = x.minValue ?? 0;
+        data["HumMax"] = x.maxValue ?? 0;
       }
       if (x.code === "lastSeuilTemp") {
-        data["TemMin"] = x.minValue;
-        data["TemMax"] = x.maxValue;
+        data["TemMin"] = x.minValue ?? 0;
+        data["TemMax"] = x.maxValue ?? 0;
       }
       if (x.code === "lastSeuilLum") {
-        data["LumMin"] = x.minValue;
-        data["LumMax"] = x.maxValue;
+        data["LumMin"] = x.minValue ?? 0;
+        data["LumMax"] = x.maxValue ?? 0;
       }
       if (x.code === "lastSeuilPression") {
-        data["PressMin"] = x.minValue;
-        data["PressMax"] = x.maxValue;
+        data["PressMin"] = x.minValue ?? 0;
+        data["PressMax"] = x.maxValue ?? 0;
       }
       if (x.code === "lastSeuilCo2") {
-        data["Co2Min"] = x.minValue;
-        data["Co2Max"] = x.maxValue;
+        data["Co2Min"] = x.minValue ?? 0;
+        data["Co2Max"] = x.maxValue ?? 0;
       }
     });
     const message = "Les limites ont été mises à jour avec succès !";
@@ -122,6 +122,7 @@ const LimiteList = ({
     sendCommand(data, message).then((result) => {
       if (result?.success) {
         setReload(true);
+        setOnLimitesChange(false);
       }
     });
   };

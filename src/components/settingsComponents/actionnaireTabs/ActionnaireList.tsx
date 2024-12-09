@@ -10,12 +10,13 @@ export interface Actionnaire {
 
 const ActionnaireList = ({
   actionnairesFetched,
-  setReload
+  setReload,
 }: {
   actionnairesFetched: Partial<ISensorStoredData> | undefined;
   setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [actionnaires, setActionnaires] = useState<Actionnaire[]>([]);
+  const [s11andS12, setS11andS12] = useState<string>("");
 
   useEffect(() => {
     if (actionnairesFetched) {
@@ -30,6 +31,19 @@ const ActionnaireList = ({
         })
       );
       setActionnaires(data);
+      const filteredStatuses = data
+        .filter((item) => item.name === "S11" || item.name === "S12")
+        .map((item) => item.status);
+
+      if (!filteredStatuses[0] && !filteredStatuses[1]) {
+        setS11andS12('Arreter')
+      }
+      if (!filteredStatuses[0] && filteredStatuses[1]) {
+        setS11andS12('Reactor')
+      }
+      if (filteredStatuses[0] && !filteredStatuses[1]) {
+        setS11andS12('Deploy')
+      }
     }
   }, [actionnairesFetched]);
 
@@ -45,6 +59,7 @@ const ActionnaireList = ({
               status={actionnaire.status}
               mode={actionnaire.mode}
               setReload={setReload}
+              s11andS12={s11andS12}
             />
           )
       )}
