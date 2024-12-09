@@ -75,10 +75,12 @@ const ActionnaireListItem = ({
     }
   };
 
+  if (title === "S11") return;
+
   return (
     <li className="grid grid-cols-6 gap-4 p-2 my-2 items-center">
-      <h3>{title}</h3>
-      <p className="col-span-2">{description}</p>
+      <h3>{title === "S12" ? "S11-S12" : title}</h3>
+      <p className="col-span-2">{title === "S12" ? "Ombrière" : description}</p>
       <div className="col-span-2">
         {title != "S12" && (
           <div className="flex justify-center">

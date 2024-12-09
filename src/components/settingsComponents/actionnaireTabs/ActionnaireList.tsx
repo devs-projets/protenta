@@ -22,7 +22,7 @@ const ActionnaireList = ({
       const data: Actionnaire[] = Object.keys(actionnairesFetched).map(
         (key) => ({
           name: key,
-          status: actionnairesFetched[key as keyof ISensorStoredData] === 1,
+          status: actionnairesFetched[key as keyof ISensorStoredData] === 0,
           mode:
             actionnairesFetched[
               `ManuelAuto${key}` as keyof ISensorStoredData
