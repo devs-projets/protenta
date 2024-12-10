@@ -20,35 +20,35 @@ const LimiteList = ({
 }) => {
   const initialLimites: Limite[] = [
     {
-      code: "lastSeuilTemp",
+      code: "SeuilTemp_",
       name: "Température",
       unit: "°C",
       minValue: 0,
       maxValue: 0,
     },
     {
-      code: "lastSeuilHumidity",
+      code: "SeuilHumidity_",
       name: "Humidité",
       unit: "%",
       minValue: 0,
       maxValue: 0,
     },
     {
-      code: "lastSeuilLum",
+      code: "SeuilLum_",
       name: "Lumière",
       unit: "lux",
       minValue: 0,
       maxValue: 0,
     },
     {
-      code: "lastSeuilPression",
+      code: "SeuilPression_",
       name: "Pression Atmosphérique",
       unit: "Bae",
       minValue: 0,
       maxValue: 0,
     },
     {
-      code: "lastSeuilCo2",
+      code: "SeuilCo2_",
       name: "CO₂",
       unit: "ppm",
       minValue: 0,
@@ -63,8 +63,8 @@ const LimiteList = ({
     if (newLimites) {
       const updatedLimites = limites.map((limite) => {
         const code = limite.code;
-        const minKey = `${code}Min`;
-        const maxKey = `${code}Max`;
+        const minKey = `${code}min`;
+        const maxKey = `${code}max`;
         return {
           ...limite,
           minValue: newLimites[minKey],
@@ -74,6 +74,8 @@ const LimiteList = ({
       setLimites(updatedLimites);
     }
   }, [newLimites]);
+
+  console.log(limites)
 
   const handleMinChange = (index: number, value: number) => {
     setLimites((prev) => {
@@ -96,23 +98,23 @@ const LimiteList = ({
   const submitNewLimites = async () => {
     const data: any = {};
     limites.map((x) => {
-      if (x.code === "lastSeuilHumidity") {
+      if (x.code === "SeuilHumidity_") {
         data["HumMin"] = x.minValue ?? 0;
         data["HumMax"] = x.maxValue ?? 0;
       }
-      if (x.code === "lastSeuilTemp") {
+      if (x.code === "SeuilTemp_") {
         data["TemMin"] = x.minValue ?? 0;
         data["TemMax"] = x.maxValue ?? 0;
       }
-      if (x.code === "lastSeuilLum") {
+      if (x.code === "SeuilLum_") {
         data["LumMin"] = x.minValue ?? 0;
         data["LumMax"] = x.maxValue ?? 0;
       }
-      if (x.code === "lastSeuilPression") {
+      if (x.code === "SeuilPression_") {
         data["PressMin"] = x.minValue ?? 0;
         data["PressMax"] = x.maxValue ?? 0;
       }
-      if (x.code === "lastSeuilCo2") {
+      if (x.code === "SeuilCo2_") {
         data["Co2Min"] = x.minValue ?? 0;
         data["Co2Max"] = x.maxValue ?? 0;
       }

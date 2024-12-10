@@ -5,7 +5,7 @@ export const extractLimites = (
 ): Partial<ILatestData> => {
   return Object.keys(lastData)
     .filter((key): key is keyof ILatestData =>
-      key.startsWith("lastSeuil")
+      key.startsWith("Seuil")
     )
     .reduce((acc, key) => {
       (acc as any)[key] = lastData[key];

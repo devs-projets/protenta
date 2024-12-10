@@ -29,6 +29,7 @@ const ConfigTabs = () => {
         if (!loading) setLoading(true);
         const data = await getLatestData("monitor");
         setStoredData(data);
+        console.log(data)
         setActionnairesFetched(extractActionnaires(data));
         setLimitesFetched(extractLimites(data));
         setFloraisonFetched(extractFloraison(data));
@@ -41,7 +42,7 @@ const ConfigTabs = () => {
     };
 
     fetchSensorData();
-  }, [reload, storedData, setStoredData]);
+  }, [reload, setStoredData]);
 
   return (
     <div>
@@ -66,7 +67,6 @@ const ConfigTabs = () => {
         </TabsContent>
 
         <TabsContent value="floraison">
-          {/* <FloraisonComponent floraisonFetched={floraisonFetched} /> */}
           <FloraisonComponent floraisonFetched={floraisonFetched} setReload={setReload} />
         </TabsContent>
       </Tabs>

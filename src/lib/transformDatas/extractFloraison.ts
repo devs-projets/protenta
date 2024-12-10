@@ -5,7 +5,7 @@ export const extractFloraison = (
 ): Partial<ILatestData> => {
   return {
     MomentFloraison: lastData.MomentFloraison,
-    Periode: lastData.Periode,
+    PeriodePol: lastData.PeriodePol,
     PolEndTime: lastData.PolEndTime,
     PolStartTime: lastData.PolStartTime,
   };

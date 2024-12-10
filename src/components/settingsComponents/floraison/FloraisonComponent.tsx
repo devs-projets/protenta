@@ -1,7 +1,6 @@
 import { Switch } from "@/components/ui/switch";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Pencil, Save, X } from "lucide-react";
-import { ISensorStoredData } from "@/types/storedData";
 import { sendCommand } from "@/lib/postData/sendCommands";
 import {
   Select,
@@ -12,34 +11,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ILatestData } from "@/types/latestDataState";
 
 const FloraisonComponent = ({
   floraisonFetched,
   setReload,
 }: {
-  floraisonFetched: Partial<ISensorStoredData> | undefined;
+  floraisonFetched: Partial<ILatestData> | undefined;
   setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [disableEditMode, setDisableEditMode] = useState<boolean>(true);
   const [start, setStart] = useState<string | null>(null);
   const [end, setEnd] = useState<string | null>(null);
-  const [pollinisation, setPollinisation] = useState<number | null>(null);
+  const [pollinisation, setPollinisation] = useState<string | null>(null);
   const [floraison, setFloraison] = useState<boolean | undefined>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setStart(floraisonFetched?.PolStartTime ?? null);
     setEnd(floraisonFetched?.PolEndTime ?? null);
-    setPollinisation(
-      floraisonFetched?.PolStartTime
-        ? parseInt(floraisonFetched.PolStartTime)
-        : null
-    );
+    setPollinisation(floraisonFetched?.PeriodePol ?? null);
     setFloraison(floraisonFetched?.MomentFloraison);
   }, [floraisonFetched]);
 
   const validateTime = () => {
-    if (start && end && start >= end) {
+    if (start && end && parseInt(start) >= parseInt(end)) {
       setError(
         "Erreur : L'heure de fin doit être supérieure à l'heure de début."
       );
@@ -56,7 +52,7 @@ const FloraisonComponent = ({
     const data = {
       PolStartTime: start,
       PolEndTime: end,
-      Periode: pollinisation,
+      PeriodePol: pollinisation,
       MomentFloraison: floraison ? 1 : 0,
     };
     const message = "La floraison a été mis à jour avec succès !";
@@ -94,10 +90,9 @@ const FloraisonComponent = ({
           {disableEditMode ? (
             <p className="border p-2 rounded-lg border-primary text-center">
               {start
-                ? new Date(start).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
+                ? parseInt(start) < 10
+                  ? `0${start}h00`
+                  : `${start}h00`
                 : "Non définie"}
             </p>
           ) : (
@@ -129,10 +124,9 @@ const FloraisonComponent = ({
           {disableEditMode ? (
             <p className="border p-2 rounded-lg border-primary text-center">
               {end
-                ? new Date(end).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
+                ? parseInt(end) < 10
+                  ? `0${end}h00`
+                  : `${start}h00`
                 : "Non définie"}
             </p>
           ) : (
@@ -169,10 +163,10 @@ const FloraisonComponent = ({
             <input
               type="number"
               className="border p-2 rounded-lg border-primary max-w-24"
-              value={pollinisation as number}
+              value={pollinisation ?? ""}
               min={0}
               max={59}
-              onChange={(e) => setPollinisation(parseInt(e.target.value))}
+              onChange={(e) => setPollinisation(e.target.value)}
               disabled={disableEditMode}
             />
           )}
