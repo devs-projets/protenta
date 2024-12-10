@@ -3,6 +3,7 @@ export interface ISensorData {
   name: string;
 
   latest: string; // Latest sensor reading timestamp or identifier
+  timestamp: string;
   elapsed: string; // Elapsed time since the last reading
   localName: string; // Local name of the sensor/device
   temperature: number; // Temperature value

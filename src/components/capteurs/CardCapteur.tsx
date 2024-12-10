@@ -34,7 +34,7 @@ const CardCapteur = ({
           <span className="block">Capteur l{capteurIndex} </span>
           <span className="block">
             {currentSensorData &&
-              new Date(currentSensorData.latest).toLocaleTimeString()}
+              new Date(currentSensorData.timestamp).toLocaleTimeString()}
           </span>
         </h2>
       </div>

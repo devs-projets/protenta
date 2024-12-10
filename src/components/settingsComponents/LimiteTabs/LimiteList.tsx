@@ -43,7 +43,7 @@ const LimiteList = ({
     {
       code: "SeuilPression_",
       name: "Pression Atmosphérique",
-      unit: "Bae",
+      unit: "Bar",
       minValue: 0,
       maxValue: 0,
     },

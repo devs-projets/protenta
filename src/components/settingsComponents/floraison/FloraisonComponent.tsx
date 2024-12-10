@@ -30,7 +30,7 @@ const FloraisonComponent = ({
   useEffect(() => {
     setStart(floraisonFetched?.PolStartTime ?? null);
     setEnd(floraisonFetched?.PolEndTime ?? null);
-    setPollinisation(floraisonFetched?.PeriodePol ?? null);
+    setPollinisation(floraisonFetched?.Periode ?? null);
     setFloraison(floraisonFetched?.MomentFloraison);
   }, [floraisonFetched]);
 
@@ -52,7 +52,7 @@ const FloraisonComponent = ({
     const data = {
       PolStartTime: start,
       PolEndTime: end,
-      PeriodePol: pollinisation,
+      Periode: pollinisation,
       MomentFloraison: floraison ? 1 : 0,
     };
     const message = "La floraison a été mis à jour avec succès !";
@@ -154,7 +154,7 @@ const FloraisonComponent = ({
           )}
         </div>
         <div className="flex justify-between items-center">
-          <label>Pollinisation :</label>
+          <label>Durée de pollinisation :</label>
           {disableEditMode ? (
             <p className="border min-w-16 p-2 rounded-lg border-primary text-center">
               {pollinisation ?? "Non définie"}
