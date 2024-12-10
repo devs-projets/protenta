@@ -20,10 +20,11 @@ const ActionnaireList = ({
 
   useEffect(() => {
     if (actionnairesFetched) {
+      console.log(actionnairesFetched)
       const data: Actionnaire[] = Object.keys(actionnairesFetched).map(
         (key) => ({
           name: key,
-          status: actionnairesFetched[key as keyof ISensorStoredData] === 1,
+          status: key.startsWith('S') && actionnairesFetched[key as keyof ISensorStoredData] === 1,
           mode:
             actionnairesFetched[
               `ManuelAuto${key}` as keyof ISensorStoredData
