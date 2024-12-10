@@ -27,8 +27,6 @@ const FloraisonComponent = ({
   const [floraison, setFloraison] = useState<boolean | undefined>(false);
   const [error, setError] = useState<string | null>(null);
 
-  console.log(floraisonFetched);
-
   useEffect(() => {
     setStart(floraisonFetched?.PolStartTime ?? null);
     setEnd(floraisonFetched?.PolEndTime ?? null);
@@ -61,7 +59,6 @@ const FloraisonComponent = ({
       Periode: pollinisation,
       MomentFloraison: floraison ? 1 : 0,
     };
-    console.log(data);
     const message = "La floraison a été mis à jour avec succès !";
     sendCommand(data, message).then((result) => {
       if (result?.success) {
@@ -101,7 +98,7 @@ const FloraisonComponent = ({
                     hour: "2-digit",
                     minute: "2-digit",
                   })
-                : "Date non définie"}
+                : "Non définie"}
             </p>
           ) : (
             <Select
@@ -136,7 +133,7 @@ const FloraisonComponent = ({
                     hour: "2-digit",
                     minute: "2-digit",
                   })
-                : "Date non définie"}
+                : "Non définie"}
             </p>
           ) : (
             <Select
@@ -166,7 +163,7 @@ const FloraisonComponent = ({
           <label>Pollinisation :</label>
           {disableEditMode ? (
             <p className="border min-w-16 p-2 rounded-lg border-primary text-center">
-              {pollinisation ?? "Date non définie"}
+              {pollinisation ?? "Non définie"}
             </p>
           ) : (
             <input

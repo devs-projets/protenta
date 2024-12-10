@@ -21,12 +21,14 @@ const ConfigTabs = () => {
     useState<Partial<ILatestData>>();
   const [loading, setLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false);
+  const [storedData, setStoredData] = useState<any>();
 
   useEffect(() => {
     const fetchSensorData = async () => {
       try {
         if (!loading) setLoading(true);
         const data = await getLatestData("monitor");
+        setStoredData(data);
         setActionnairesFetched(extractActionnaires(data));
         setLimitesFetched(extractLimites(data));
         setFloraisonFetched(extractFloraison(data));
@@ -39,7 +41,7 @@ const ConfigTabs = () => {
     };
 
     fetchSensorData();
-  }, [reload]);
+  }, [reload, storedData, setStoredData]);
 
   return (
     <div>
