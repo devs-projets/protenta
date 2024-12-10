@@ -72,11 +72,11 @@ const CardCapteur = ({
           <li className="flex flex-col justify-between my-1">
             <span className="block">Air (Co2/Gaz/Iaq/accuracy) :</span>
             <span className="block text-right">
-              {currentSensorData?.MeanCo2 ? currentSensorData.gyro_x : "---"}
+              {currentSensorData?.MeanCo2 ? currentSensorData.MeanCo2 : "---"}
               {" / "}
-              {currentSensorData?.gaz ? currentSensorData.gyro_x : "---"}
+              {currentSensorData?.gaz ? currentSensorData.gaz : "---"}
               {" / "}
-              {currentSensorData?.iaq ? currentSensorData.gyro_y : "---"}
+              {currentSensorData?.iaq ? currentSensorData.iaq : "---"}
               {" / "}
               {currentSensorData?.accuracy ? currentSensorData.gyro_z : "---"}
             </span>
