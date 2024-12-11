@@ -38,14 +38,15 @@ const Notifications = () => {
   }, [sensorNotification, sensorData, open]);
 
   useEffect(() => {
+    if (!open) {
+      if (notificationQueue.current.length > 0 && !isDisplaying) {
+        displayNextNotification();
+      }
+    }
     if (open) {
       notificationQueue.current = [];
       setIsDisplaying(false);
       reset();
-    } else {
-      if (notificationQueue.current.length > 0 && !isDisplaying) {
-        displayNextNotification();
-      }
     }
   }, [open]);
 
@@ -77,7 +78,6 @@ const Notifications = () => {
               {nextNotification.type === "Ombriere" && (
                 <Spline className="mr-2" />
               )}
-              {nextNotification.type}
             </div>
           ),
           onClick: () => console.log("Action clicked"),

@@ -61,7 +61,7 @@ const ActionnaireListItem = ({
     // const thisActionCodes = codes[title as keyof typeof codes];
     let thisActionCodes = "";
     if (title != "S12") {
-      if (switchStatus) thisActionCodes = "inactive";
+      if (status) thisActionCodes = "inactive";
       else thisActionCodes = "active";
       const message = `L'actionnaire "${description}" été ${
         thisActionCodes === "active" ? "Activé" : "Désactivé"
@@ -70,9 +70,10 @@ const ActionnaireListItem = ({
         if (result?.success) {
           // setSwitchStatus(!switchStatus);
           setReload(true);
-        } else {
-          setSwitchStatus(switchStatus);
-        }
+        } 
+        // else {
+        //   setSwitchStatus(switchStatus);
+        // }
       });
     }
   };
@@ -87,10 +88,10 @@ const ActionnaireListItem = ({
         {title != "S12" && (
           <div className="flex justify-center">
             <Switch
-              checked={switchStatus && switchStatus}
+              checked={status}
               disabled={modeAuto}
               onClick={() => {
-                setSwitchStatus(!switchStatus);
+                // setSwitchStatus(!switchStatus);
                 submitAction();
               }}
             />
@@ -100,16 +101,13 @@ const ActionnaireListItem = ({
           <div>
             <Select
               value={s11andS12}
+              disabled={modeAuto}
               onValueChange={(value) => {
                 const message = `L'actionnaire "${description}" été ${value} avec succès !`;
                 sendCommand({ [title]: value }, message).then((result) => {
                   if (result?.success) {
-                    // setSwitchStatus(!switchStatus);
                     setReload(true);
                   }
-                  // else {
-                  //   setSwitchStatus(switchStatus);
-                  // }
                 });
               }}
             >

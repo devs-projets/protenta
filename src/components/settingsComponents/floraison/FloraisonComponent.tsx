@@ -157,7 +157,7 @@ const FloraisonComponent = ({
           <label>Durée de pollinisation :</label>
           {disableEditMode ? (
             <p className="border p-2 rounded-lg border-primary text-center">
-              {pollinisation ?? "Non définie"}
+              {floraisonFetched?.Periode ?? "N/A"}
             </p>
           ) : (
             <input
