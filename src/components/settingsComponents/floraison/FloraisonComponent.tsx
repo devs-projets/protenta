@@ -126,7 +126,7 @@ const FloraisonComponent = ({
               {end
                 ? parseInt(end) < 10
                   ? `0${end}h00`
-                  : `${start}h00`
+                  : `${end}h00`
                 : "Non définie"}
             </p>
           ) : (
@@ -156,7 +156,7 @@ const FloraisonComponent = ({
         <div className="flex justify-between items-center">
           <label>Durée de pollinisation :</label>
           {disableEditMode ? (
-            <p className="border min-w-16 p-2 rounded-lg border-primary text-center">
+            <p className="border p-2 rounded-lg border-primary text-center">
               {pollinisation ?? "Non définie"}
             </p>
           ) : (

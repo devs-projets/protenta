@@ -3,7 +3,7 @@ import { getNotifications } from "@/lib/fetchData/getNotifications";
 import { INotification } from "@/types/notification";
 import { useSocket } from "@/context/SocketContext";
 
-export const useNotifications = () => {
+export const useNotifications = (open: boolean) => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -70,6 +70,11 @@ export const useNotifications = () => {
     setPage((prevPage) => prevPage + 1);
   };
 
-  return { notifications, loadMore, isLoading, hasMore };
+  return {
+    notifications,
+    loadMore,
+    isLoading,
+    hasMore,
+    reset: () => fetchNotifications(0),
+  };
 };
-

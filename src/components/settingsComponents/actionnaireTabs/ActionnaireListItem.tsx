@@ -46,7 +46,7 @@ const ActionnaireListItem = ({
   setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [modeAuto, setModeAuto] = useState<boolean>(mode);
-  const [switchStatus, setSwitchStatus] = useState<boolean | undefined>(status);
+  const [switchStatus, setSwitchStatus] = useState<boolean | undefined>();
   const [description, setDescription] = useState<string>("");
   const [S12Value, setS12Valuee] = useState<string | undefined>();
 
@@ -68,7 +68,7 @@ const ActionnaireListItem = ({
       } avec succès !`;
       sendCommand({ [title]: thisActionCodes }, message).then((result) => {
         if (result?.success) {
-          setSwitchStatus(!switchStatus);
+          // setSwitchStatus(!switchStatus);
           setReload(true);
         } else {
           setSwitchStatus(switchStatus);
@@ -104,11 +104,12 @@ const ActionnaireListItem = ({
                 const message = `L'actionnaire "${description}" été ${value} avec succès !`;
                 sendCommand({ [title]: value }, message).then((result) => {
                   if (result?.success) {
-                    setSwitchStatus(!switchStatus);
+                    // setSwitchStatus(!switchStatus);
                     setReload(true);
-                  } else {
-                    setSwitchStatus(switchStatus);
                   }
+                  // else {
+                  //   setSwitchStatus(switchStatus);
+                  // }
                 });
               }}
             >
