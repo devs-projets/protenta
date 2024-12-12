@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSocket } from "@/context/SocketContext";
 
 const codes = {
   S1: { active: "101", inactive: "100" },
@@ -48,6 +49,7 @@ const ActionnaireListItem = ({
   const [modeAuto, setModeAuto] = useState<boolean>(mode);
   const [switchStatus, setSwitchStatus] = useState<boolean>(status);
   const [description, setDescription] = useState<string>("");
+  const { sensorData } = useSocket();
   const [S12Value, setS12Valuee] = useState<string | undefined>();
 
   useEffect(() => {
@@ -55,6 +57,9 @@ const ActionnaireListItem = ({
     const desc = ActionnaireDefautlDesctiption[itemIndex - 1];
     setDescription(desc);
   }, []);
+  
+    useEffect(() => {
+    }, [sensorData])
 
   const submitAction = async () => {
     // const thisActionCodes = codes[title as keyof typeof codes];
@@ -88,7 +93,7 @@ const ActionnaireListItem = ({
             <Switch
               checked={switchStatus}
               disabled={modeAuto}
-              onClick={() => submitAction()}
+              onClick={submitAction}
             />
           </div>
         )}
