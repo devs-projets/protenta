@@ -12,11 +12,11 @@ export const extractActionnaires = (
     .reduce((acc, key) => {
       if (key.startsWith("S")) {
         const manuelKey = `ManuelAuto${key}` as keyof ILatestData;
-        const sValue = Number(lastData[key]) || 0;
-        const manuelValue = Number(lastData[manuelKey]) || 0;
+        const sValue = Number(lastData[key]);
+        const manuelValue = Number(lastData[manuelKey]);
         (acc as any)[key] = sValue - manuelValue;
       } else {
-        (acc as any)[key] = Number(lastData[key]) || 0;
+        (acc as any)[key] = Number(lastData[key]);
       }
       return acc;
     }, {} as Partial<ILatestData>);

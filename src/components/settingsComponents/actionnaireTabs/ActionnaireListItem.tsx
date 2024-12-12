@@ -49,7 +49,7 @@ const ActionnaireListItem = ({
   const [modeAuto, setModeAuto] = useState<boolean>(mode);
   const [switchStatus, setSwitchStatus] = useState<boolean>(status);
   const [description, setDescription] = useState<string>("");
-  const { sensorData } = useSocket();
+  // const { sensorData } = useSocket();
   const [S12Value, setS12Valuee] = useState<string | undefined>();
 
   useEffect(() => {
@@ -58,8 +58,8 @@ const ActionnaireListItem = ({
     setDescription(desc);
   }, []);
   
-    useEffect(() => {
-    }, [sensorData])
+    // useEffect(() => {
+    // }, [sensorData])
 
   const submitAction = async () => {
     // const thisActionCodes = codes[title as keyof typeof codes];
