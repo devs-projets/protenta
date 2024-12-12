@@ -46,12 +46,11 @@ const ActionnaireListItem = ({
   setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [modeAuto, setModeAuto] = useState<boolean>(mode);
-  const [switchStatus, setSwitchStatus] = useState<boolean | undefined>();
+  const [switchStatus, setSwitchStatus] = useState<boolean>(status);
   const [description, setDescription] = useState<string>("");
   const [S12Value, setS12Valuee] = useState<string | undefined>();
 
   useEffect(() => {
-    setSwitchStatus(status);
     const itemIndex = parseInt(title.slice(1));
     const desc = ActionnaireDefautlDesctiption[itemIndex - 1];
     setDescription(desc);
@@ -61,19 +60,18 @@ const ActionnaireListItem = ({
     // const thisActionCodes = codes[title as keyof typeof codes];
     let thisActionCodes = "";
     if (title != "S12") {
-      if (status) thisActionCodes = "inactive";
+      if (switchStatus) thisActionCodes = "inactive";
       else thisActionCodes = "active";
       const message = `L'actionnaire "${description}" été ${
         thisActionCodes === "active" ? "Activé" : "Désactivé"
       } avec succès !`;
       sendCommand({ [title]: thisActionCodes }, message).then((result) => {
         if (result?.success) {
-          // setSwitchStatus(!switchStatus);
+          setSwitchStatus(!switchStatus);
           setReload(true);
-        } 
-        // else {
-        //   setSwitchStatus(switchStatus);
-        // }
+        } else {
+          setSwitchStatus(switchStatus);
+        }
       });
     }
   };
@@ -88,12 +86,9 @@ const ActionnaireListItem = ({
         {title != "S12" && (
           <div className="flex justify-center">
             <Switch
-              checked={status}
+              checked={switchStatus}
               disabled={modeAuto}
-              onClick={() => {
-                // setSwitchStatus(!switchStatus);
-                submitAction();
-              }}
+              onClick={() => submitAction()}
             />
           </div>
         )}

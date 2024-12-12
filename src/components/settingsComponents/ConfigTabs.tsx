@@ -19,6 +19,7 @@ const ConfigTabs = () => {
   const [limitesFetched, setLimitesFetched] = useState<Partial<ILatestData>>();
   const [floraisonFetched, setFloraisonFetched] =
     useState<Partial<ILatestData>>();
+    
   const [loading, setLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false);
   const [storedData, setStoredData] = useState<any>();
