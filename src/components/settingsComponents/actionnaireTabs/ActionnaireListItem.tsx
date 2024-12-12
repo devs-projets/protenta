@@ -72,8 +72,8 @@ const ActionnaireListItem = ({
       } avec succès !`;
       sendCommand({ [title]: thisActionCodes }, message).then((result) => {
         if (result?.success) {
-          setSwitchStatus(!switchStatus);
           setReload(true);
+          // setSwitchStatus(!switchStatus);
         } else {
           setSwitchStatus(switchStatus);
         }
