@@ -55,7 +55,7 @@ const ActionnaireListItem = ({
     const itemIndex = parseInt(title.slice(1));
     const desc = ActionnaireDefautlDesctiption[itemIndex - 1];
     setDescription(desc);
-  }, [status, mode]);
+  }, []);
 
   const submitAction = async () => {
     // const thisActionCodes = codes[title as keyof typeof codes];
