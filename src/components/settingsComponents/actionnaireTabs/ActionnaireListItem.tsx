@@ -50,7 +50,7 @@ const ActionnaireListItem = ({
   const [switchStatus, setSwitchStatus] = useState<boolean>(status);
   const [description, setDescription] = useState<string>("");
   // const { sensorData } = useSocket();
-  const [S12Value, setS12Valuee] = useState<string | undefined>();
+  const [S12Value, setS12Valuee] = useState<string | undefined>(s11andS12);
 
   useEffect(() => {
     const itemIndex = parseInt(title.slice(1));
@@ -73,7 +73,7 @@ const ActionnaireListItem = ({
       sendCommand({ [title]: thisActionCodes }, message).then((result) => {
         if (result?.success) {
           setReload(true);
-          // setSwitchStatus(!switchStatus);
+          setSwitchStatus(!switchStatus);
         } else {
           setSwitchStatus(switchStatus);
         }
@@ -100,13 +100,14 @@ const ActionnaireListItem = ({
         {title === "S12" && (
           <div>
             <Select
-              value={s11andS12}
+              value={S12Value}
               disabled={modeAuto}
               onValueChange={(value) => {
                 const message = `L'actionnaire "${description}" été ${value} avec succès !`;
                 sendCommand({ [title]: value }, message).then((result) => {
                   if (result?.success) {
                     setReload(true);
+                    setS12Valuee(value);
                   }
                 });
               }}

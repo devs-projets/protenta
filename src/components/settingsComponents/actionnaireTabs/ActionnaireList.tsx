@@ -13,49 +13,19 @@ const ActionnaireList = ({
   actionnairesFetched,
   setReload,
 }: {
-  actionnairesFetched: Partial<ILatestData> | undefined;
+  actionnairesFetched: Actionnaire[] | undefined;
   setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [actionnaires, setActionnaires] = useState<Actionnaire[]>([]);
   const [s11andS12, setS11andS12] = useState<string>("");
-  console.log(actionnairesFetched)
+  console.log(actionnairesFetched);
 
   useEffect(() => {
     if (actionnairesFetched) {
+      setActionnaires(actionnairesFetched);
 
-      const listActionnaire: Partial<ILatestData> = Object.keys(
-        actionnairesFetched
-      )
-        .filter((key) => key.startsWith("S") && !key.startsWith("ManuelAuto"))
-        .reduce<any>((obj, key) => {
-          obj[key as keyof ILatestData] =
-            actionnairesFetched[key as keyof ILatestData];
-          return obj;
-        }, {});
-
-      const modesActionnaire: Partial<ILatestData> = Object.keys(
-        actionnairesFetched
-      )
-        .filter((key) => !key.startsWith("S") && key.startsWith("ManuelAuto"))
-        .reduce<any>((obj, key) => {
-          obj[key as keyof ILatestData] =
-            actionnairesFetched[key as keyof ILatestData];
-          return obj;
-        }, {});
-        
-      const data: Actionnaire[] = Object.keys(listActionnaire).map((key) => ({
-        name: key,
-        status: Boolean(listActionnaire[key as keyof ILatestData]),
-        mode: Boolean(
-          !modesActionnaire[`ManuelAuto${key}` as keyof ILatestData]
-        ),
-      }));
-
-      console.log(data);
-
-      setActionnaires(data);
-
-      const filteredStatuses = data
+      // Customised status for S11 & S12
+      const filteredStatuses = actionnairesFetched
         .filter((item) => item.name === "S11" || item.name === "S12")
         .map((item) => item.status);
 
@@ -70,6 +40,8 @@ const ActionnaireList = ({
       }
     }
   }, [actionnairesFetched]);
+
+  console.log(actionnaires);
 
   return (
     <ul className="max-h-[300px] overflow-y-auto">

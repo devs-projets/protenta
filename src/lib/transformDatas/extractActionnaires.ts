@@ -1,25 +1,33 @@
+import { Actionnaire } from "@/components/settingsComponents/actionnaireTabs/ActionnaireList";
 import { ILatestData } from "@/types/latestDataState";
 
-export const extractActionnaires = (
-  lastData: ILatestData
-): Partial<ILatestData> => {
-  return Object.keys(lastData)
+export const extractActionnaires = (lastData: ILatestData): Actionnaire[] => {
+  const listActionnaire: Partial<ILatestData> = Object.keys(lastData)
     .filter(
-      (key): key is keyof ILatestData =>
-        (key.startsWith("S") && !key.startsWith("Seuil")) ||
-        key.startsWith("ManuelAutoS")
+      (key) =>
+        key.startsWith("S") &&
+        !key.startsWith("ManuelAuto") &&
+        !key.startsWith("Seuil")
     )
-    .reduce((acc, key) => {
-      if (key.startsWith("S")) {
-        const manuelKey = `ManuelAuto${key}` as keyof ILatestData;
-        const sValue = Number(lastData[key]);
-        const manuelValue = Number(lastData[manuelKey]);
-        (acc as any)[key] = sValue - manuelValue;
-      } else {
-        (acc as any)[key] = Number(lastData[key]);
-      }
-      return acc;
-    }, {} as Partial<ILatestData>);
+    .reduce<any>((obj, key) => {
+      obj[key as keyof ILatestData] = lastData[key as keyof ILatestData];
+      return obj;
+    }, {});
+
+  const modesActionnaire: Partial<ILatestData> = Object.keys(lastData)
+    .filter((key) => !key.startsWith("S") && key.startsWith("ManuelAuto"))
+    .reduce<any>((obj, key) => {
+      obj[key as keyof ILatestData] = lastData[key as keyof ILatestData];
+      return obj;
+    }, {});
+
+  const data: Actionnaire[] = Object.keys(listActionnaire).map((key) => ({
+    name: key,
+    status: Boolean(listActionnaire[key as keyof ILatestData]),
+    mode: Boolean(!modesActionnaire[`ManuelAuto${key}` as keyof ILatestData]),
+  }));
+
+  return data || [];
 };
 
 export const extractSingleActionnaire = (

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LimiteList from "./LimiteTabs/LimiteList";
-import ActionnaireList from "./actionnaireTabs/ActionnaireList";
+import ActionnaireList, { Actionnaire } from "./actionnaireTabs/ActionnaireList";
 import FloraisonComponent from "./floraison/FloraisonComponent";
 import { ISensorStoredData } from "@/types/storedData";
 import Spinner from "../Spinner";
@@ -15,7 +15,7 @@ import { ILatestData } from "@/types/latestDataState";
 
 const ConfigTabs = () => {
   const [actionnairesFetched, setActionnairesFetched] =
-    useState<Partial<ILatestData>>();
+    useState<Actionnaire[]>();
   const [limitesFetched, setLimitesFetched] = useState<Partial<ILatestData>>();
   const [floraisonFetched, setFloraisonFetched] =
     useState<Partial<ILatestData>>();
@@ -31,6 +31,7 @@ const ConfigTabs = () => {
         const data = await getLatestData("monitor");
         setStoredData(data);
         setActionnairesFetched(extractActionnaires(data));
+        // setActionnairesFetched(data);
         setLimitesFetched(extractLimites(data));
         setFloraisonFetched(extractFloraison(data));
       } catch (error) {
