@@ -16,6 +16,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Provider } from "react-redux";
 import store from "@/store/store";
 import SensorDataProvider from "@/context/SensorDataProvider";
+import UserMenu from "@/components/login/UserMenu";
 
 export default function DashboardLayout({
   children,
@@ -23,7 +24,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Provider store={store}>
+    // <Provider store={store}>
       <SocketProvider>
         <SocketManager>
           <SensorDataProvider>
@@ -46,6 +47,7 @@ export default function DashboardLayout({
                     <SocketControl />
                     <CurrentDate />
                     <Notifications />
+                    <UserMenu />
                   </div>
                 </header>
                 <div
@@ -59,6 +61,6 @@ export default function DashboardLayout({
           </SensorDataProvider>
         </SocketManager>
       </SocketProvider>
-    </Provider>
+    // </Provider>
   );
 }
