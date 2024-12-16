@@ -37,6 +37,15 @@ import DeleteUser from "@/components/users/DeleteUser";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { updateUser } from "@/lib/auth/updateUser";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { EUserRole } from "@/types/userRole";
 
 const users = [
   {
@@ -65,18 +74,26 @@ const TableRow = ({
   user,
   setDeleteUser,
   setOnUpdateUser,
+  setOnUpdateUserRole
 }: {
   user: User;
   setDeleteUser: (deleteState: boolean) => void;
   setOnUpdateUser: (updateState: boolean) => void;
+  setOnUpdateUserRole: (updateState: boolean) => void;
 }) => {
   const [status, setStatus] = useState<string>("");
   const [updateInfos, setUpdateInfos] = useState<boolean>(false);
+  const [updateRole, setUpdateRole] = useState<boolean>(false);
 
   // Update User infos
   const [newLastName, setNewLastName] = useState<string>(user.lastName);
   const [newFirstName, setFirstName] = useState<string>(user.firstName);
   const [newPhone, setNewPhone] = useState<string>(user.phoneNumber);
+
+  // Update User role
+  const [newRoleSelected, setNewRoleSelected] = useState<EUserRole>(
+    user.role as EUserRole
+  );
 
   const { access_token } = useSelector((state: RootState) => state.auth);
 
@@ -109,6 +126,30 @@ const TableRow = ({
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
       alert("Erreur lors de la mise à jour de l'utilisateur.");
+    }
+  };
+
+  const submitNewUserRole = async () => {
+    try {
+      const data: Partial<IUpdateUser> = {
+        role: newRoleSelected,
+      };
+
+      const response = await updateUser(access_token, data, user.id);
+
+      if (response) {
+        reinitUserInfo();
+        setOnUpdateUserRole(true);
+        setUpdateRole(false);
+        alert("Rôle de l'utilisateur mis à jour avec succès !");
+      } else {
+        alert(
+          "Erreur lors de la mise à jour du rôle l'utilisateur.\nVeuillez réessayer !"
+        );
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du Rôle :", error);
+      alert("Erreur lors de la mise à jour du Rôle.");
     }
   };
 
@@ -332,11 +373,67 @@ const TableRow = ({
                   <AccordionItem value="item-2">
                     <AccordionTrigger>Rôle</AccordionTrigger>
                     <AccordionContent>
-                      Wouri Chouf porte le rôle d'un Dev. <br />
+                      {user.userName} porte le rôle d'un {user.role}. <br />
                       Voulez vous changer son rôle ? <br />
-                      <span className="inline-block bg-primary w-full px-4 py-2 rounded-lg cursor-pointer text-center text-white my-3">
-                        Modifier
-                      </span>
+                      {!updateRole && (
+                        <span
+                          onClick={() => setUpdateRole(true)}
+                          className="inline-block bg-primary w-full px-4 py-2 rounded-lg cursor-pointer text-center text-white my-3"
+                        >
+                          Modifier
+                        </span>
+                      )}
+                      {updateRole && (
+                        <Select
+                          value={newRoleSelected}
+                          onValueChange={(value) =>
+                            setNewRoleSelected(value as EUserRole)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Rôle de l'utilisateur" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              {Object.values(EUserRole)
+                                .filter((role) => role !== EUserRole.SUDO)
+                                .map((role) => (
+                                  <SelectItem
+                                    key={role}
+                                    value={role}
+                                    className="cursor-pointer"
+                                  >
+                                    {role}
+                                  </SelectItem>
+                                ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                      {updateRole && (
+                        <div>
+                          <div className="flex justify-center items-center gap-5">
+                            <button
+                              type="button"
+                              className="flex gap-1 justify-center items-center bg-gray-400 w-full p-2 text-white rounded-lg"
+                              // onClick={() => {
+                              //   setUpdateInfos(false);
+                              //   reinitUserInfo();
+                              // }}
+                            >
+                              <X />
+                              Annuler
+                            </button>
+                            <button
+                              onClick={submitNewUserRole}
+                              className="flex gap-1 justify-center items-center bg-primary w-full p-2 text-white rounded-lg"
+                            >
+                              <Save />
+                              Enregistrer
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-3">
@@ -376,6 +473,7 @@ const Page = () => {
   const [newUser, setNewUser] = useState<boolean>(false);
   const [deleteUser, setDeleteUser] = useState<boolean>(false);
   const [onUpdateUser, setOnUpdateUser] = useState<boolean>(false);
+  const [onUpdateUserRole, setOnUpdateUserRole] = useState<boolean>(false);
 
   const { access_token } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
@@ -398,7 +496,8 @@ const Page = () => {
     getUsers();
     setNewUser(false);
     setDeleteUser(false);
-  }, [newUser, deleteUser, onUpdateUser]);
+    setOnUpdateUserRole(false);
+  }, [newUser, deleteUser, onUpdateUser, onUpdateUserRole]);
 
   console.log(users);
 
@@ -467,6 +566,7 @@ const Page = () => {
                 user={user}
                 setDeleteUser={setDeleteUser}
                 setOnUpdateUser={setOnUpdateUser}
+                setOnUpdateUserRole={setOnUpdateUserRole}
               />
             ))
           ) : (

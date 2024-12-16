@@ -184,15 +184,17 @@ const AddUser = ({ setNewUser }: { setNewUser: (param: boolean) => void }) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {Object.values(EUserRole).map((role) => (
-                      <SelectItem
-                        key={role}
-                        value={role}
-                        className="cursor-pointer"
-                      >
-                        {role}
-                      </SelectItem>
-                    ))}
+                    {Object.values(EUserRole)
+                      .filter((role) => role !== EUserRole.SUDO)
+                      .map((role) => (
+                        <SelectItem
+                          key={role}
+                          value={role}
+                          className="cursor-pointer"
+                        >
+                          {role}
+                        </SelectItem>
+                      ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
