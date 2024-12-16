@@ -27,6 +27,7 @@ import { getAllUsers } from "@/lib/auth/allUser";
 import Spinner from "@/components/Spinner";
 import { useRouter } from "next/navigation";
 import AddUser from "@/components/users/AddUser";
+import DeleteUser from "@/components/users/DeleteUser";
 
 const users = [
   {
@@ -51,7 +52,13 @@ const users = [
   },
 ];
 
-const TableRow = ({ user }: { user: User }) => {
+const TableRow = ({
+  user,
+  setDeleteUser,
+}: {
+  user: User;
+  setDeleteUser: (deleteState: boolean) => void;
+}) => {
   const [status, setStatus] = useState<string>("");
   useEffect(() => {
     const s = Math.random() > 0.5 ? "Active" : "Inactive";
@@ -129,7 +136,9 @@ const TableRow = ({ user }: { user: User }) => {
                       <div className="col-span-1 py-2 px-4 bg-gray-400 rounded-lg">
                         Nom :
                       </div>
-                      <div className="py-2 px-4 col-span-2">{user.lastName}</div>
+                      <div className="py-2 px-4 col-span-2">
+                        {user.lastName}
+                      </div>
                     </div>
                   </li>
                   <li className="bg-gray-200 p-2 rounded-lg">
@@ -137,7 +146,9 @@ const TableRow = ({ user }: { user: User }) => {
                       <div className="col-span-1 py-2 px-4 bg-gray-400 rounded-lg">
                         Prénom :
                       </div>
-                      <div className="py-2 px-4 col-span-2">{user.firstName}</div>
+                      <div className="py-2 px-4 col-span-2">
+                        {user.firstName}
+                      </div>
                     </div>
                   </li>
                   <li className="bg-gray-200 p-2 rounded-lg">
@@ -145,7 +156,9 @@ const TableRow = ({ user }: { user: User }) => {
                       <div className="col-span-1 py-2 px-4 bg-gray-400 rounded-lg">
                         Ttire :
                       </div>
-                      <div className="py-2 px-4 col-span-2">Docteur Bio-Diversité</div>
+                      <div className="py-2 px-4 col-span-2">
+                        Docteur Bio-Diversité
+                      </div>
                     </div>
                   </li>
                   <li className="bg-gray-200 p-2 rounded-lg">
@@ -161,7 +174,9 @@ const TableRow = ({ user }: { user: User }) => {
                       <div className="col-span-1 py-2 px-4 bg-gray-400 rounded-lg">
                         Téléphone :
                       </div>
-                      <div className="py-2 px-4 col-span-2">{user.phoneNumber}</div>
+                      <div className="py-2 px-4 col-span-2">
+                        {user.phoneNumber}
+                      </div>
                     </div>
                   </li>
                 </ul>
@@ -188,11 +203,11 @@ const TableRow = ({ user }: { user: User }) => {
                   <AccordionItem value="item-3">
                     <AccordionTrigger>Compte</AccordionTrigger>
                     <AccordionContent>
-                      Ce compte est actif. <br />
-                      Voulez vous le désactivé ? <br />
-                      <span className="inline-block bg-primary w-full px-4 py-2 rounded-lg cursor-pointer text-center text-white my-3">
-                        Modifier
-                      </span>
+                      <p>
+                        Ce compte est actif. <br />
+                        Voulez vous le désactivé ?
+                      </p>
+                      <DeleteUser user={user} setDeleteUser={setDeleteUser} />
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -214,6 +229,7 @@ const Page = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [newUser, setNewUser] = useState<boolean>(false);
+  const [deleteUser, setDeleteUser] = useState<boolean>(false);
   const { access_token } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
 
@@ -234,7 +250,8 @@ const Page = () => {
   useEffect(() => {
     getUsers();
     setNewUser(false);
-  }, [newUser]);
+    setDeleteUser(false);
+  }, [newUser, deleteUser]);
 
   console.log(users);
 
@@ -286,7 +303,9 @@ const Page = () => {
               <th
                 key={header}
                 scope="col"
-                className={`px-6 py-3 ${header === "Actions" ? "text-center" : "text-left"} text-xs font-medium text-gray-500 uppercase tracking-wider`}
+                className={`px-6 py-3 ${
+                  header === "Actions" ? "text-center" : "text-left"
+                } text-xs font-medium text-gray-500 uppercase tracking-wider`}
               >
                 {header}
               </th>
@@ -295,7 +314,13 @@ const Page = () => {
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {users && users.length > 0 ? (
-            users.map((user) => <TableRow key={user.id} user={user} />)
+            users.map((user) => (
+              <TableRow
+                key={user.id}
+                user={user}
+                setDeleteUser={setDeleteUser}
+              />
+            ))
           ) : (
             <p>Aucun utilisateur à afficher </p>
           )}
