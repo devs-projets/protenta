@@ -26,7 +26,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { User } from "@/types/user";
+import { ICreateUser, IUpdateUser, User } from "@/types/user";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { getAllUsers } from "@/lib/auth/allUser";
@@ -36,6 +36,7 @@ import AddUser from "@/components/users/AddUser";
 import DeleteUser from "@/components/users/DeleteUser";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { updateUser } from "@/lib/auth/updateUser";
 
 const users = [
   {
@@ -63,12 +64,53 @@ const users = [
 const TableRow = ({
   user,
   setDeleteUser,
+  setOnUpdateUser,
 }: {
   user: User;
   setDeleteUser: (deleteState: boolean) => void;
+  setOnUpdateUser: (updateState: boolean) => void;
 }) => {
   const [status, setStatus] = useState<string>("");
   const [updateInfos, setUpdateInfos] = useState<boolean>(false);
+
+  // Update User infos
+  const [newLastName, setNewLastName] = useState<string>(user.lastName);
+  const [newFirstName, setFirstName] = useState<string>(user.firstName);
+  const [newPhone, setNewPhone] = useState<string>(user.phoneNumber);
+
+  const { access_token } = useSelector((state: RootState) => state.auth);
+
+  const reinitUserInfo = () => {
+    setNewLastName(user.lastName);
+    setFirstName(user.firstName);
+    setNewPhone(user.phoneNumber);
+  };
+
+  const submitNewUserInfos = async () => {
+    try {
+      const data: Partial<IUpdateUser> = {
+        firstName: newFirstName,
+        lastName: newLastName,
+        phoneNumber: newPhone,
+      };
+
+      const response = await updateUser(access_token, data, user.id);
+
+      if (response) {
+        reinitUserInfo();
+        setOnUpdateUser(true);
+        setUpdateInfos(false);
+        alert("Utilisateur mis à jour avec succès !");
+      } else {
+        alert(
+          "Erreur lors de la mise à jour de l'utilisateur.\nVeuillez réessayer !"
+        );
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
+      alert("Erreur lors de la mise à jour de l'utilisateur.");
+    }
+  };
 
   useEffect(() => {
     const s = Math.random() > 0.5 ? "Active" : "Inactive";
@@ -209,8 +251,8 @@ const TableRow = ({
                               type="text"
                               placeholder="Nom de l'utilisateur"
                               className="text-lg"
-                              // value={lastName}
-                              // onChange={(e) => setLastName(e.target.value)}
+                              value={newLastName}
+                              onChange={(e) => setNewLastName(e.target.value)}
                             />
                           </>
                         )}
@@ -227,8 +269,8 @@ const TableRow = ({
                               type="text"
                               placeholder="Nom de l'utilisateur"
                               className="text-lg"
-                              // value={lastName}
-                              // onChange={(e) => setLastName(e.target.value)}
+                              value={newFirstName}
+                              onChange={(e) => setFirstName(e.target.value)}
                             />
                           </>
                         )}
@@ -245,8 +287,8 @@ const TableRow = ({
                               type="tel"
                               placeholder="Téléphone de l'utilisateur"
                               className="text-lg"
-                              // value={lastName}
-                              // onChange={(e) => setLastName(e.target.value)}
+                              value={newPhone}
+                              onChange={(e) => setNewPhone(e.target.value)}
                             />
                           </>
                         )}
@@ -267,15 +309,15 @@ const TableRow = ({
                                 type="button"
                                 className="flex gap-1 justify-center items-center bg-gray-400 w-full p-2 text-white rounded-lg"
                                 onClick={() => {
-                                  // setLimites(initialLimites);
-                                  setUpdateInfos(false)
+                                  setUpdateInfos(false);
+                                  reinitUserInfo();
                                 }}
                               >
                                 <X />
                                 Annuler
                               </button>
                               <button
-                                // onClick={submitNewLimites}
+                                onClick={submitNewUserInfos}
                                 className="flex gap-1 justify-center items-center bg-primary w-full p-2 text-white rounded-lg"
                               >
                                 <Save />
@@ -333,6 +375,8 @@ const Page = () => {
   const [error, setError] = useState<string | null>(null);
   const [newUser, setNewUser] = useState<boolean>(false);
   const [deleteUser, setDeleteUser] = useState<boolean>(false);
+  const [onUpdateUser, setOnUpdateUser] = useState<boolean>(false);
+
   const { access_token } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
 
@@ -354,7 +398,7 @@ const Page = () => {
     getUsers();
     setNewUser(false);
     setDeleteUser(false);
-  }, [newUser, deleteUser]);
+  }, [newUser, deleteUser, onUpdateUser]);
 
   console.log(users);
 
@@ -422,6 +466,7 @@ const Page = () => {
                 key={user.id}
                 user={user}
                 setDeleteUser={setDeleteUser}
+                setOnUpdateUser={setOnUpdateUser}
               />
             ))
           ) : (

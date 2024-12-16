@@ -18,3 +18,12 @@ export interface ICreateUser {
   phone: string;
   role: EUserRole;
 }
+
+export interface IUpdateUser {
+  userName: string;
+  passWord: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  role: EUserRole
+}
