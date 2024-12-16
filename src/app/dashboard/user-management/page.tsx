@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { PencilLine, TriangleAlert, UserCircle2Icon } from "lucide-react";
+import {
+  PencilLine,
+  Save,
+  TriangleAlert,
+  UserCircle2Icon,
+  X,
+} from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,6 +34,8 @@ import Spinner from "@/components/Spinner";
 import { useRouter } from "next/navigation";
 import AddUser from "@/components/users/AddUser";
 import DeleteUser from "@/components/users/DeleteUser";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const users = [
   {
@@ -60,6 +68,8 @@ const TableRow = ({
   setDeleteUser: (deleteState: boolean) => void;
 }) => {
   const [status, setStatus] = useState<string>("");
+  const [updateInfos, setUpdateInfos] = useState<boolean>(false);
+
   useEffect(() => {
     const s = Math.random() > 0.5 ? "Active" : "Inactive";
     setStatus(s);
@@ -185,6 +195,99 @@ const TableRow = ({
               <TabsContent value="Permissions">
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="item-1">
+                    <AccordionTrigger>Informations</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="my-3">
+                        {!updateInfos && <p>Nom: {user.firstName}</p>}
+                        {updateInfos && (
+                          <>
+                            <Label htmlFor="nom" className="text-lg">
+                              Nom
+                            </Label>
+                            <Input
+                              id="nom"
+                              type="text"
+                              placeholder="Nom de l'utilisateur"
+                              className="text-lg"
+                              // value={lastName}
+                              // onChange={(e) => setLastName(e.target.value)}
+                            />
+                          </>
+                        )}
+                      </div>
+                      <div className="my-3">
+                        {!updateInfos && <p>Prénom: {user.lastName}</p>}
+                        {updateInfos && (
+                          <>
+                            <Label htmlFor="prenom" className="text-lg">
+                              Prénom
+                            </Label>
+                            <Input
+                              id="prenom"
+                              type="text"
+                              placeholder="Nom de l'utilisateur"
+                              className="text-lg"
+                              // value={lastName}
+                              // onChange={(e) => setLastName(e.target.value)}
+                            />
+                          </>
+                        )}
+                      </div>
+                      <div className="my-3">
+                        {!updateInfos && <p>Téléphoné: {user.phoneNumber}</p>}
+                        {updateInfos && (
+                          <>
+                            <Label htmlFor="phone" className="text-lg">
+                              Téléphone
+                            </Label>
+                            <Input
+                              id="phone"
+                              type="tel"
+                              placeholder="Téléphone de l'utilisateur"
+                              className="text-lg"
+                              // value={lastName}
+                              // onChange={(e) => setLastName(e.target.value)}
+                            />
+                          </>
+                        )}
+                      </div>
+                      <div>
+                        {!updateInfos && (
+                          <span
+                            onClick={() => setUpdateInfos(true)}
+                            className="inline-block bg-primary w-full px-4 py-2 rounded-lg cursor-pointer text-center text-white my-3"
+                          >
+                            Modifier
+                          </span>
+                        )}
+                        {updateInfos && (
+                          <div>
+                            <div className="flex justify-center items-center gap-5">
+                              <button
+                                type="button"
+                                className="flex gap-1 justify-center items-center bg-gray-400 w-full p-2 text-white rounded-lg"
+                                onClick={() => {
+                                  // setLimites(initialLimites);
+                                  setUpdateInfos(false)
+                                }}
+                              >
+                                <X />
+                                Annuler
+                              </button>
+                              <button
+                                // onClick={submitNewLimites}
+                                className="flex gap-1 justify-center items-center bg-primary w-full p-2 text-white rounded-lg"
+                              >
+                                <Save />
+                                Enregistrer
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="item-2">
                     <AccordionTrigger>Rôle</AccordionTrigger>
                     <AccordionContent>
                       Wouri Chouf porte le rôle d'un Dev. <br />
@@ -194,13 +297,13 @@ const TableRow = ({
                       </span>
                     </AccordionContent>
                   </AccordionItem>
-                  <AccordionItem value="item-2">
+                  <AccordionItem value="item-3">
                     <AccordionTrigger>Mot de passe</AccordionTrigger>
                     <AccordionContent>
                       Voulez vous reinitiliser le pass de Wouri Chouf?
                     </AccordionContent>
                   </AccordionItem>
-                  <AccordionItem value="item-3">
+                  <AccordionItem value="item-4">
                     <AccordionTrigger>Compte</AccordionTrigger>
                     <AccordionContent>
                       <p>
