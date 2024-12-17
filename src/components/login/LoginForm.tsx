@@ -52,11 +52,11 @@ export function LoginForm() {
       <CardContent>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="email" className="text-lg">Email</Label>
+            <Label htmlFor="userName" className="text-lg">Nom d'utilisateur</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
+              id="userName"
+              type="text"
+              placeholder="Saisissez votre nom d'utilisateur"
               required
               onChange={(e) => setUserName(e.target.value)}
                className="text-lg"
@@ -70,6 +70,7 @@ export function LoginForm() {
               id="password"
               type="password"
               required
+              placeholder="Saisissez votre mot de passe"
               onChange={(e) => setPassWord(e.target.value)}
                className="text-lg"
             />

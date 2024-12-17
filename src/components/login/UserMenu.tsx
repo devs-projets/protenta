@@ -71,7 +71,7 @@ const UserMenu = () => {
           </MenubarItem>
           <MenubarItem className="cursor-pointer" onClick={handleLogout}>
             <LogOut />{" "}
-            <span className="font-bold ml-2 text-lg">Paramètres</span>
+            <span className="font-bold ml-2 text-lg">Déconnexion</span>
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>

@@ -46,6 +46,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EUserRole } from "@/types/userRole";
+import { generateStrongPassword } from "@/lib/auth/generateRandomPassWord";
 
 const users = [
   {
@@ -74,7 +75,7 @@ const TableRow = ({
   user,
   setDeleteUser,
   setOnUpdateUser,
-  setOnUpdateUserRole
+  setOnUpdateUserRole,
 }: {
   user: User;
   setDeleteUser: (deleteState: boolean) => void;
@@ -84,11 +85,13 @@ const TableRow = ({
   const [status, setStatus] = useState<string>("");
   const [updateInfos, setUpdateInfos] = useState<boolean>(false);
   const [updateRole, setUpdateRole] = useState<boolean>(false);
+  const [updatePassWord, setUpdatePassWord] = useState<boolean>(false);
 
   // Update User infos
   const [newLastName, setNewLastName] = useState<string>(user.lastName);
   const [newFirstName, setFirstName] = useState<string>(user.firstName);
   const [newPhone, setNewPhone] = useState<string>(user.phoneNumber);
+  const [newPassWordGenerated, setNewPassWordGenerated] = useState<string>("");
 
   // Update User role
   const [newRoleSelected, setNewRoleSelected] = useState<EUserRole>(
@@ -150,6 +153,35 @@ const TableRow = ({
     } catch (error) {
       console.error("Erreur lors de la mise à jour du Rôle :", error);
       alert("Erreur lors de la mise à jour du Rôle.");
+    }
+  };
+
+  const handleGeneratePassword = () => {
+    const password = generateStrongPassword();
+    setNewPassWordGenerated(password);
+  };
+
+  const submitNewUserPassWord = async () => {
+    try {
+      const data: Partial<IUpdateUser> = {
+        passWord: newPassWordGenerated,
+      };
+
+      const response = await updateUser(access_token, data, user.id);
+
+      if (response) {
+        setUpdatePassWord(false);
+        alert(
+          `Mode de passe de l'utilisateur mis à jour avec succès !\nNoueau mot de passe = ${data.passWord}`
+        );
+      } else {
+        alert(
+          "Erreur lors de la mise à jour du mot de passe de l'utilisateur.\nVeuillez réessayer !"
+        );
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du mot de passe :", error);
+      alert("Erreur lors de la mise à jour du mot de passe.");
     }
   };
 
@@ -390,7 +422,7 @@ const TableRow = ({
                             setNewRoleSelected(value as EUserRole)
                           }
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className="my-2">
                             <SelectValue placeholder="Rôle de l'utilisateur" />
                           </SelectTrigger>
                           <SelectContent>
@@ -416,10 +448,7 @@ const TableRow = ({
                             <button
                               type="button"
                               className="flex gap-1 justify-center items-center bg-gray-400 w-full p-2 text-white rounded-lg"
-                              // onClick={() => {
-                              //   setUpdateInfos(false);
-                              //   reinitUserInfo();
-                              // }}
+                              onClick={() => setUpdateRole(false)}
                             >
                               <X />
                               Annuler
@@ -440,6 +469,54 @@ const TableRow = ({
                     <AccordionTrigger>Mot de passe</AccordionTrigger>
                     <AccordionContent>
                       Voulez vous reinitiliser le pass de Wouri Chouf?
+                      {!updatePassWord && (
+                        <span
+                          onClick={() => setUpdatePassWord(true)}
+                          className="inline-block bg-primary w-full px-4 py-2 rounded-lg cursor-pointer text-center text-white my-3"
+                        >
+                          Reinitiliser
+                        </span>
+                      )}
+                      {updatePassWord && (
+                        <div className="flex items-center gap-3 my-2">
+                          <Input
+                            id="password"
+                            type="text"
+                            value={newPassWordGenerated}
+                            readOnly
+                            className="text-lg"
+                            placeholder="Mot de passe généré"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleGeneratePassword}
+                            className="bg-primary text-white p-2 rounded-lg"
+                          >
+                            Générer
+                          </button>
+                        </div>
+                      )}
+                      {updatePassWord && (
+                        <div>
+                          <div className="flex justify-center items-center gap-5">
+                            <button
+                              type="button"
+                              className="flex gap-1 justify-center items-center bg-gray-400 w-full p-2 text-white rounded-lg"
+                              onClick={() => setUpdatePassWord(false)}
+                            >
+                              <X />
+                              Annuler
+                            </button>
+                            <button
+                              onClick={submitNewUserPassWord}
+                              className="flex gap-1 justify-center items-center bg-primary w-full p-2 text-white rounded-lg"
+                            >
+                              <Save />
+                              Enregistrer
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </AccordionContent>
                   </AccordionItem>
                   <AccordionItem value="item-4">
@@ -447,7 +524,7 @@ const TableRow = ({
                     <AccordionContent>
                       <p>
                         Ce compte est actif. <br />
-                        Voulez vous le désactivé ?
+                        Voulez vous le Supprimer ?
                       </p>
                       <DeleteUser user={user} setDeleteUser={setDeleteUser} />
                     </AccordionContent>
@@ -498,8 +575,6 @@ const Page = () => {
     setDeleteUser(false);
     setOnUpdateUserRole(false);
   }, [newUser, deleteUser, onUpdateUser, onUpdateUserRole]);
-
-  console.log(users);
 
   if (loading) {
     return (

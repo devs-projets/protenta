@@ -8,6 +8,7 @@ import {
   ArrowDownUp,
   ChevronUp,
   ChevronDown,
+  Sprout
 } from "lucide-react";
 
 import {
@@ -34,6 +35,11 @@ const data = {
     {
       title: "Dashboard",
       url: "/dashboard",
+      items: [],
+    },
+    {
+      title: "Cultures",
+      url: "/dashboard/cultures",
       items: [],
     },
     {
@@ -159,6 +165,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {item.title === "Utilisateurs" && <Users />}
                         {item.title === "Données" && <CircleGauge />}
                         {item.title === "Capteurs" && <Cable />}
+                        {item.title === "Cultures" && <Sprout />}
                         {item.title}
                       </div>
 

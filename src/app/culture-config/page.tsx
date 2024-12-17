@@ -7,7 +7,7 @@ import { SimpleDatePiker } from "@/components/view/SimpleDatePicker";
 import Link from "next/link";
 import React, { useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [hasInteracted, setHasInteracted] = useState(false);
 
@@ -107,4 +107,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
