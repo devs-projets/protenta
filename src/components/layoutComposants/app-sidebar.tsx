@@ -28,6 +28,7 @@ import Link from "next/link";
 import { Config } from "@/components/settingsComponents/Config";
 import { usePathname } from "next/navigation";
 import {Users} from "lucide-react";
+import UserMenu from "../login/UserMenu";
 
 // This is sample data.
 const data = {
@@ -251,6 +252,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <div>
               <SidebarMenuButton asChild className="hover:bg-primary">
                 <Config />
+              </SidebarMenuButton>
+            </div>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <div className=" mt-2">
+              <SidebarMenuButton asChild className="hover:bg-primary">
+                <UserMenu />
               </SidebarMenuButton>
             </div>
           </SidebarMenuItem>

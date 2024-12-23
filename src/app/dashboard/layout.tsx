@@ -47,7 +47,6 @@ export default function DashboardLayout({
                     <SocketControl />
                     <CurrentDate />
                     <Notifications />
-                    <UserMenu />
                   </div>
                 </header>
                 <div
