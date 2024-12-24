@@ -13,7 +13,7 @@ export async function deleteUser(access_token: string, id: string): Promise<IDel
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token.slice(1, -1)}`,
+          "Authorization": `Bearer ${access_token.slice(1, -1)}`,
         },
       }
     );

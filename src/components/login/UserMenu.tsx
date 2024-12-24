@@ -1,16 +1,8 @@
 import {
   Menubar,
-  MenubarCheckboxItem,
   MenubarContent,
   MenubarItem,
   MenubarMenu,
-  MenubarRadioGroup,
-  MenubarRadioItem,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarSub,
-  MenubarSubContent,
-  MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
@@ -42,8 +34,6 @@ const UserMenu = () => {
   useEffect(() => {
     getUser();
   }, []);
-
-  console.log(user);
 
   const handleLogout = () => {
     dispatch(logout());

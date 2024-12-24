@@ -1,9 +1,7 @@
-import { User } from "@/types/user";
-
-export async function getAllUsers(access_token: string): Promise<User[]> {
+export async function getAllSerres(access_token: string) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/users`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor/serres`,
       {
         method: "GET",
         headers: {
@@ -21,6 +19,6 @@ export async function getAllUsers(access_token: string): Promise<User[]> {
     return data;
   } catch (error) {
     console.error(error);
-    throw Error("Error while fetching user data");
+    throw Error("Error while fetching serres data");
   }
 }

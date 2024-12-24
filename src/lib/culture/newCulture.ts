@@ -1,15 +1,9 @@
-import { IUpdateUser, User } from "@/types/user";
-
-export async function updateUser(
-  access_token: string,
-  data: Partial<IUpdateUser>,
-  id: string
-): Promise<User | null> {
+export async function addCulture(access_token: string, serreId: string, data: any) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/${id}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor/add-cultures/${serreId}`,
       {
-        method: "PUT",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${access_token.slice(1, -1)}`,
@@ -21,7 +15,7 @@ export async function updateUser(
     if (!response.ok) {
       const errorResponse = await response.json();
       alert(
-        `Erreur lors de la mise à jours :\n ${
+        `Erreur lors de l'ajout d'une nouvelle culture :\n ${
           errorResponse.message || "Erreur inconnue"
         }`
       );
@@ -33,6 +27,6 @@ export async function updateUser(
     return responseData;
   } catch (err) {
     console.error(err);
-    throw Error("Error while updating user");
+    throw Error("Error while creating user");
   }
 }
