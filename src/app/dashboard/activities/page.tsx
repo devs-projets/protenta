@@ -1,59 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import Spinner from "@/components/Spinner";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Table,
   TableBody,
-  TableHeader,
-  TableHead,
-  TableRow,
   TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-
-interface IJoural {
-  latest: string;
-  message: string;
-  auteur: string;
-  etat: string;
-}
-
-const capteurLogs: IJoural[] = [
-  {
-    latest: "2024-10-01 14:30:00",
-    message: "Température stable",
-    auteur: "Capteur 1",
-    etat: "Normal",
-  },
-  {
-    latest: "2024-10-01 14:45:00",
-    message: "Alerte : Température élevée",
-    auteur: "Capteur 2",
-    etat: "Alerte",
-  },
-  {
-    latest: "2024-10-01 15:00:00",
-    message: "Température normale",
-    auteur: "Capteur 1",
-    etat: "Normal",
-  },
-  {
-    latest: "2024-10-01 15:15:00",
-    message: "Attention : Humidité faible",
-    auteur: "Capteur 3",
-    etat: "Attention",
-  },
-];
+import { fetchCapteurs, fetchLogs, fetchUsers } from "@/lib/logs/fechLogs.service";
+import { handleParamsAction, ICapteurs, ILogsData, IUser } from "@/lib/logs/log.interface";
+import { useEffect, useState } from "react";
+import FieldsModal from "./components/fields.modal";
 
 const getRowColor = (etat: string) => {
   switch (etat) {
@@ -69,85 +30,328 @@ const getRowColor = (etat: string) => {
 };
 
 const ActivitiesPage = () => {
-  const [logs] = useState<IJoural[]>(capteurLogs);
-  const [filterEtat, setFilterEtat] = useState<string | null>(null);
+  const [logs, setLog] = useState<ILogsData[]>([]);
+  const [users, setUsers] = useState<IUser[]>([]);
+  const [actionaire, setActionaire] = useState<string>('');
+  const [userSelect, setUserSelect] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [fieldsSelect, setFieldsSelect] = useState<string | null>(null);
+  const [capteur, setCapteur] = useState<ICapteurs>({
+    id: '123',
+    S1: 'Pollinisateur',
+    S2: 'Electrovanne 1',
+    S3: 'Electrovanne 2',
+    S4: 'Led UV',
+    S5: 'Mag Lock 1',
+    S6: 'Mag Lock 2',
+    S7: 'Pad cooling',
+    S8: 'Extracteur d’humidité',
+    S9: 'Générateur',
+    S10: 'Pompe à eau',
+    S11: 'Moteur de déploiement',
+    S12: 'Moteur de repliement',
+    S13: 'Bipeur',
+    S14: '',
+    S15: '',
+    S16: '',
+  });
+  useEffect(() => {
+    setIsLoading(true)
+    fetchLogs({ page: currentPage }).then((data: ILogsData[] | []) => {
+      setLog(data);
 
-  const filteredLogs = filterEtat
-    ? logs.filter((log) => log.etat === filterEtat)
-    : logs;
+    });
+    fetchUsers().then((data) => {
+      // console.log('data', data);
 
+      setUsers(data)
+    })
+    // if (!localStorage.getItem('capteur')) {
+    fetchCapteurs().then((data) => {
+      setCapteur(data[0])
+      localStorage.setItem('capteurs', JSON.stringify(data[0]))
+    })
+    // } else {
+    // setCapteur(JSON.parse(localStorage.getItem('capteur')))
+    // }
+
+    setIsLoading(false)
+  }, []);
+  const totalPages = Math.ceil(logs.length / rowsPerPage);
+
+  const handlePageChange = (page: number) => {
+    // Bloquer les pages invalides
+    if (page < 1 || (logs.length === 0 && page > currentPage)) return;
+
+    setIsLoading(true);
+    fetchLogs({ page }).then((data: ILogsData[] | []) => {
+      if (data.length > 0 || page < currentPage) {
+        setLog(data);
+        setCurrentPage(page);
+      }
+      setIsLoading(false);
+    });
+  };
+  const renderActionnaireCells = (log: ILogsData) => {
+    const actions = [];
+    for (let i = 1; i <= 16; i++) {
+      const key = `S${i}` as keyof ILogsData;
+      // console.log('log[key]:::', log[key]);
+
+      if (log[key]) {
+        actions.push(
+          <div key={log.id}>
+            <TableCell className="text-center text-gray-500">{String(key)}</TableCell>
+            <TableCell className="text-center text-gray-500">{String(log[key])}</TableCell>
+          </div>
+        );
+      }
+    }
+    return actions;
+  };
+  const renderFloraisonCells = (log: ILogsData) => {
+    const valuesToDisplay = [
+      log.MomentFloraison !== undefined ? `Moment de Pollinisation: ${log.MomentFloraison === true ? 'Activer' : 'Desactiver'}` : null,
+      log.PolStartTime !== undefined ? `Début pollinisation: ${String(log.PolStartTime)} H 00` : null,
+      log.PolEndTime !== undefined ? `Fin pollinisation: ${String(log.PolEndTime)} H 00` : null,
+      log.Periode !== undefined ? `Période de Pollinisation: ${String(log.Periode)} min` : null,
+    ]
+      .filter(Boolean)
+      .join(' <br />');
+
+    if (!valuesToDisplay) {
+      return null;
+    }
+
+    return (
+      <TableRow key={log.id}>
+        <TableCell className="text-center text-gray-500">Mise à jour de la pollinisation</TableCell>
+        <TableCell className="text-center text-gray-500" dangerouslySetInnerHTML={{ __html: valuesToDisplay }} />
+      </TableRow>
+    );
+  };
+  const renderLimitCells = (log: ILogsData) => {
+    const valuesToDisplay = [
+      (log.TemMin !== undefined || log.TemMax !== undefined) && `Température: min:${log.TemMin ?? '-'}°C max:${log.TemMax ?? '-'}°C`,
+      (log.HumMin !== undefined || log.HumMax !== undefined) && `Humidité: min:${log.HumMin ?? '-'}% max:${log.HumMax ?? '-'}%`,
+      (log.Co2Min !== undefined || log.Co2Max !== undefined) && `CO2: min:${log.Co2Min ?? '-'} ppm max:${log.Co2Max ?? '-'} ppm`,
+      (log.LumMin !== undefined || log.LumMax !== undefined) && `Luminosité: min:${log.LumMin ?? '-'} lux max:${log.LumMax ?? '-'} lux`,
+      (log.PressMin !== undefined || log.PressMax !== undefined) && `Pression: min:${log.PressMin ?? '-'} Bar max:${log.PressMax ?? '-'} Bar`,
+    ]
+      .filter(Boolean)
+      .join('<br />');
+
+    if (!valuesToDisplay) {
+      return null;
+    }
+
+    return (
+      <TableRow key={log.id}>
+        <TableCell className="text-center text-gray-500">Mise à jour des limites</TableCell>
+        <TableCell
+          className="text-center text-gray-500"
+          dangerouslySetInnerHTML={{ __html: valuesToDisplay }}
+        />
+      </TableRow>
+    );
+  };
+
+  const renderParamsCells = (log: ILogsData) => {
+    const actions = [];
+    for (let i = 300; i <= 316; i++) {
+      const key = `param${i}` as keyof ILogsData;
+      if (log[key] !== undefined) {
+        const action = handleParamsAction(key, log[key] as boolean);
+        const paramName = key === 'param300' ? 'auto/manuelS1' : key === 'param301' ? 'auto/manuelS2' :
+          key === 'param302' ? 'auto/manuelS3' : key === 'param303' ? 'auto/manuelS4' :
+            key === 'param304' ? 'auto/manuelS5' : key === 'param305' ? 'auto/manuelS6' :
+              key === 'param306' ? 'auto/manuelS7' : key === 'param307' ? 'auto/manuelS8' :
+                key === 'param308' ? 'auto/manuelS9' : key === 'param309' ? 'autoS/manuel10' :
+                  key === 'param310' ? 'auto/manuelS11' : key === 'param311' ? 'auto/manuelS12' :
+                    key === 'param312' ? 'auto/manuelS13' : key === 'param313' ? 'auto/manuelS14' :
+                      key === 'param314' ? 'auto/manuelS15' : key === 'param315' ? 'auto/manuelS16' : 'manuel';
+        actions.push(
+          <div key={log.id}>
+            <TableCell className="text-center text-gray-500">{paramName}</TableCell>
+            <TableCell className="text-center text-gray-500">{action}</TableCell>
+          </div>
+        );
+      }
+    }
+    return actions;
+  };
+  const handleUserChange = (value: string) => {
+    setUserSelect(value)
+    setIsLoading(true);
+    if (value) {
+      fetchLogs({ user: value, field: actionaire }).then((data) => {
+        setLog(data)
+        setIsLoading(false);
+      })
+    }
+  };
+  const handleActionaireChange = (value: string) => {
+    setActionaire(value)
+    setIsLoading(true);
+    if (value) {
+      fetchLogs({ field: value, user: userSelect }).then((data) => {
+        setLog(data)
+        setIsLoading(false);
+      })
+    }
+  }
+  const handleSelectionChange = (selected: string[]) => {
+    setFieldsSelect(selected[0]);
+    if (selected.length > 0) {
+      setIsLoading(true);
+      fetchLogs({ field: selected[0], user: userSelect, selection: selected }).then((data) => {
+        setLog(data)
+        setIsLoading(false);
+      })
+    }
+  };
   return (
     <div className="p-4">
       <h1 className="text-4xl font-bold shadow-lg text-center rounded-lg py-5">
         Journal
       </h1>
-      <div className="border rounded-lg overflow-hidden mt-5 overflow-x-auto">
-        <Table className="min-w-full">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date et Heure</TableHead>
-              <TableHead>Message</TableHead>
-              <TableHead className="hidden md:table-cell">Auteur</TableHead>
-              <TableHead className="hidden md:table-cell">Agent</TableHead>
-              <TableHead>
-                État{" "}
-                <select
-                  id="etat-filter"
-                  value={filterEtat || ""}
-                  onChange={(e) => setFilterEtat(e.target.value || null)}
-                  className="border border-gray-300 rounded-md px-2 py-1"
-                >
-                  <option value="">Tous</option>
-                  <option value="Normal">Normal</option>
-                  <option value="Attention">Attention</option>
-                  <option value="Alerte">Alerte</option>
-                </select>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredLogs.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-gray-500">
-                  Aucune donnée à afficher.
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredLogs.map((log, index) => (
-                <AlertDialog key={index}>
-                  <AlertDialogTrigger asChild>
-                    <TableRow className={getRowColor(log.etat)}>
-                      <TableCell>[{log.latest}]</TableCell>
-                      <TableCell>{log.message}</TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {log.auteur}
+      {
+        isLoading ?
+          <div className="min-w-full flex items-center justify-center">
+            <Spinner />
+          </div>
+          : <>
+            <div className="border rounded-lg overflow-hidden mt-5 overflow-x-auto">
+              <Table className="min-w-full">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>
+                      <Select onValueChange={handleUserChange}>
+                        <SelectTrigger className="w-[280px]">
+                          <SelectValue placeholder="Choisir un agent" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Choisir un agent</SelectLabel>
+                            {
+                              users.map((user, index) => (
+                                <SelectItem key={index} value={user.id}>{user.firstName} {' '} {user.firstName}</SelectItem>
+                              ))
+                            }
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </TableHead>
+                    <TableHead>
+                      <Select onValueChange={handleActionaireChange}>
+                        <SelectTrigger className="w-[280px]">
+                          <SelectValue placeholder="Choisir un capteur" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Choisir un capteur</SelectLabel>
+                            {Object.entries(capteur)
+                              .filter(([key, value]) => key !== 'id' && value)
+                              .map(([key, value]) => (
+                                <SelectItem key={key} value={key}>
+                                  {value}
+                                </SelectItem>
+                              ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </TableHead>
+                    <TableHead className="hidden md:table-cell">
+                      <FieldsModal onSelectionChange={handleSelectionChange} />
+                    </TableHead>
+                  </TableRow>
+                  <TableRow>
+                    <TableHead className="hidden md:table-cell">N</TableHead>
+                    <TableHead className="hidden md:table-cell">Date et Heure</TableHead>
+                    {/* <TableHead>Message</TableHead> */}
+                    <TableHead className="hidden md:table-cell">Auteur</TableHead>
+                    <TableHead className="hidden md:table-cell">Role</TableHead>
+                    <TableHead className="hidden md:table-cell text-start">Action</TableHead>
+                    <TableHead className="hidden md:table-cell text-start">Valeur</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {logs.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center text-gray-500">
+                        Aucune donnée à afficher.
                       </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        Wourichouf
-                      </TableCell>
-                      <TableCell>{log.etat}</TableCell>
                     </TableRow>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Détails du log</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        <p>Date et Heure : {log.latest}</p>
-                        <p>Message : {log.message}</p>
-                        <p>Auteur : {log.auteur}</p>
-                        <p>État : {log.etat}</p>
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Fermer</AlertDialogCancel>
-                      <AlertDialogAction>OK</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              ))
+                  ) : (
+                    logs.map((log, index) => (
+                      <TableRow key={log.id} >
+                        <TableCell className="w-[1px]" colSpan={1} key={log.id}>{index + 1}</TableCell>
+                        <TableCell key={log.id}>{String(log.timestamp)}</TableCell>
+                        <TableCell key={log.id}>{log.UsersLogs?.user.firstName} {' '} {log.UsersLogs?.user.lastName}</TableCell>
+                        <TableCell key={log.id}>{log.UsersLogs?.user.role}</TableCell>
+                        {renderActionnaireCells(log)}
+                        {/* {renderAutoManulCells(log)} */}
+                        {renderParamsCells(log)}
+                        {renderFloraisonCells(log)}
+                        {renderLimitCells(log)}
+                        {/* <TableCell>{log.etat}</TableCell> */}
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </>
+      }
+
+      <div className="mt-4 flex justify-center">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(currentPage - 1);
+                }}
+              />
+            </PaginationItem>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <PaginationItem key={i}>
+                <PaginationLink
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(i + 1);
+                  }}
+                >
+                  {currentPage}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            {totalPages > 5 && (
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
             )}
-          </TableBody>
-        </Table>
+            <div className={`${logs.length === 0 ? 'hidden' : 'flex'}`}>
+              <PaginationItem>
+                <PaginationNext
+
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageChange(currentPage + 1);
+                  }}
+
+                />
+              </PaginationItem>
+            </div>
+
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );
