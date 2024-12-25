@@ -7,7 +7,6 @@ export interface User {
   phoneNumber: string;
   role: string;
   userName: string;
-  // TODO: à mettre à jour !
   allSerre: any;
 }
 

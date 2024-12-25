@@ -51,6 +51,10 @@ const FloraisonComponent = ({
   const handleChangeFloraison = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateTime()) return;
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
 
     const data = {
       PolStartTime: start,

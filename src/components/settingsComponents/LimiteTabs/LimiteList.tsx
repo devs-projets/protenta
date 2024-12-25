@@ -99,6 +99,11 @@ const LimiteList = ({
   };
 
   const submitNewLimites = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+
     const data: any = {};
     limites.map((x) => {
       if (x.code === "SeuilHumidity_") {

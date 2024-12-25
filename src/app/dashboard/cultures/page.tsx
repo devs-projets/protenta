@@ -85,6 +85,11 @@ const Page = () => {
   const { access_token } = useSelector((state: RootState) => state.auth);
 
   const getSerres = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+    
     try {
       const response = await getAllSerres(access_token);
       setSerres(response[0]);

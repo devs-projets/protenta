@@ -107,6 +107,11 @@ const TableRow = ({
   };
 
   const submitNewUserInfos = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+
     try {
       const data: Partial<IUpdateUser> = {
         firstName: newFirstName,
@@ -133,6 +138,11 @@ const TableRow = ({
   };
 
   const submitNewUserRole = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+
     try {
       const data: Partial<IUpdateUser> = {
         role: newRoleSelected,
@@ -162,6 +172,11 @@ const TableRow = ({
   };
 
   const submitNewUserPassWord = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+
     try {
       const data: Partial<IUpdateUser> = {
         passWord: newPassWordGenerated,
@@ -556,6 +571,11 @@ const Page = () => {
   const router = useRouter();
 
   const getUsers = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+    
     try {
       const response = await getAllUsers(access_token);
       setUsers(response);

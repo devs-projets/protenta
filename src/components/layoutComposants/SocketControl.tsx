@@ -24,6 +24,11 @@ export default function SocketControl() {
   }, [isConnected]);
 
   const handleToggleConnection = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+    
     setIsLoading(true);
     restartMonitor(access_token);
     setIsLoading(false);

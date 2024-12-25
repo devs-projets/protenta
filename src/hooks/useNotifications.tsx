@@ -16,6 +16,10 @@ export const useNotifications = (open: boolean) => {
   const fetchNotifications = useCallback(async (pageToFetch: number) => {
     if (isLoading || !hasMore) return;
     setIsLoading(true);
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
 
     try {
       const response = await getNotifications(access_token, pageToFetch, 10);

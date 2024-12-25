@@ -1,11 +1,19 @@
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
-import { authUserService } from "@/lib/auth/userAuth";
+import { User } from "@/types/user";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+export interface AuthState {
+  access_token: string | null;
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+}
+
 
 const storedUser: string | null =
   typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
-const initialState: any = {
+const initialState: AuthState = {
   access_token: storedUser,
   user: null,
   loading: false,

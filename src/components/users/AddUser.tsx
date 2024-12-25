@@ -74,6 +74,11 @@ const AddUser = ({ setNewUser }: { setNewUser: (param: boolean) => void }) => {
   const handleAddUser = async () => {
     if (!handleValidation()) return;
 
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+
     try {
       const data: ICreateUser = {
         firstName,

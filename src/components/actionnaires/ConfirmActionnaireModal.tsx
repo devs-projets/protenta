@@ -65,6 +65,11 @@ export function ConfirmActionnaireModal({
 
 
   const setAutoHandling = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+    
     let code = "";
     Object.entries(modeSwitchCodes).forEach(([key, value]) => {
       const splitedValue = value.split(" ");

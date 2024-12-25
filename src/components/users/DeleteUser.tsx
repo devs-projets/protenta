@@ -27,6 +27,11 @@ const DeleteUser = ({
   const { access_token } = useSelector((state: RootState) => state.auth);
 
   const deleteThisUser = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+    
     try {
       const response = await deleteUser(access_token, user.id);
       setDeleteUser(true);

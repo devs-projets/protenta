@@ -65,6 +65,11 @@ const ActionnaireListItem = ({
   // }, [sensorData])
 
   const submitAction = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+
     // const thisActionCodes = codes[title as keyof typeof codes];
     let thisActionCodes = "";
     if (title != "S12") {
@@ -109,6 +114,10 @@ const ActionnaireListItem = ({
               disabled={modeAuto}
               onValueChange={(value) => {
                 const message = `L'actionnaire "${description}" été ${value} avec succès !`;
+                if (!access_token) {
+                  console.error("Access token is null");
+                  return;
+                }
                 sendCommand({ [title]: value }, message, access_token).then(
                   (result) => {
                     if (result?.success) {
