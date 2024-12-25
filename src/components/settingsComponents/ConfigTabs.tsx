@@ -53,23 +53,24 @@ const ConfigTabs = () => {
         </div>
       )}
       <Tabs defaultValue="limites" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="limites">Limites</TabsTrigger>
-          <TabsTrigger value="actionnaires">Actionnaires</TabsTrigger>
-          <TabsTrigger value="floraison">Floraison</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="limites">
-          <LimiteList newLimites={limitesFetched} setReload={setReload} />
-        </TabsContent>
-
-        <TabsContent value="actionnaires">
-          <ActionnaireList actionnairesFetched={actionnairesFetched} setReload={setReload} />
-        </TabsContent>
-
-        <TabsContent value="floraison">
-          <FloraisonComponent floraisonFetched={floraisonFetched} setReload={setReload} />
-        </TabsContent>
+        <div className="flex flex-col sm:flex-row">
+          <TabsList className="flex flex-row sm:flex-col sm:items-start sm:w-40 mb-4 sm:mb-0 sm:mr-4 sm:mt-10">
+            <TabsTrigger value="limites" className="flex-1 sm:flex-initial">Limites</TabsTrigger>
+            <TabsTrigger value="actionnaires" className="flex-1 sm:flex-initial">Actionnaires</TabsTrigger>
+            <TabsTrigger value="floraison" className="flex-1 sm:flex-initial">Floraison</TabsTrigger>
+          </TabsList>
+          <div className="flex-1">
+            <TabsContent value="limites">
+              <LimiteList newLimites={limitesFetched} setReload={setReload} />
+            </TabsContent>
+            <TabsContent value="actionnaires">
+              <ActionnaireList actionnairesFetched={actionnairesFetched} setReload={setReload} />
+            </TabsContent>
+            <TabsContent value="floraison">
+              <FloraisonComponent floraisonFetched={floraisonFetched} setReload={setReload} />
+            </TabsContent>
+          </div>
+        </div>
       </Tabs>
     </div>
   );

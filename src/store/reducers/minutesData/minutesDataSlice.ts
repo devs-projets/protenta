@@ -11,7 +11,8 @@ const initialState: IMinuteDataState = {
 export const fetchMinuteData = createAsyncThunk(
   "minuteData/fetchMinuteData",
   async () => {
-    const data = await getStoredSensorData("minute");
+    const token = localStorage.getItem("access_token");
+    const data = await getStoredSensorData("minute", token as string);
     return data || [];
   }
 );
