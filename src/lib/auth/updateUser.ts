@@ -12,7 +12,7 @@ export async function updateUser(
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${access_token.slice(1, -1)}`,
+          "Authorization": `Bearer ${access_token.replace(/"/g, '')}`,
         },
         body: JSON.stringify(data),
       }

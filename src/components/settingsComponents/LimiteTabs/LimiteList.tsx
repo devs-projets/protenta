@@ -2,6 +2,8 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import LimiteListItem from "../LimiteTabs/LimiteListItem";
 import { Save, X } from "lucide-react";
 import { sendCommand } from "@/lib/postData/sendCommands";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export interface Limite {
   code: string;
@@ -58,6 +60,7 @@ const LimiteList = ({
 
   const [limites, setLimites] = useState<Limite[]>(initialLimites);
   const [onLimitesChange, setOnLimitesChange] = useState<boolean>(false);
+  const { access_token } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     if (newLimites) {
@@ -121,7 +124,7 @@ const LimiteList = ({
     });
     const message = "Les limites ont été mises à jour avec succès !";
 
-    sendCommand(data, message).then((result) => {
+    sendCommand(data, message, access_token).then((result) => {
       if (result?.success) {
         setReload(true);
         setOnLimitesChange(false);

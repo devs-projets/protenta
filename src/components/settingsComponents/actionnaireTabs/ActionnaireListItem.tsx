@@ -13,6 +13,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useSocket } from "@/context/SocketContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const codes = {
   S1: { active: "101", inactive: "100" },
@@ -51,15 +53,16 @@ const ActionnaireListItem = ({
   const [description, setDescription] = useState<string>("");
   // const { sensorData } = useSocket();
   const [S12Value, setS12Valuee] = useState<string | undefined>(s11andS12);
+  const { access_token } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const itemIndex = parseInt(title.slice(1));
     const desc = ActionnaireDefautlDesctiption[itemIndex - 1];
     setDescription(desc);
   }, []);
-  
-    // useEffect(() => {
-    // }, [sensorData])
+
+  // useEffect(() => {
+  // }, [sensorData])
 
   const submitAction = async () => {
     // const thisActionCodes = codes[title as keyof typeof codes];
@@ -70,14 +73,16 @@ const ActionnaireListItem = ({
       const message = `L'actionnaire "${description}" été ${
         thisActionCodes === "active" ? "Activé" : "Désactivé"
       } avec succès !`;
-      sendCommand({ [title]: thisActionCodes }, message).then((result) => {
-        if (result?.success) {
-          setReload(true);
-          setSwitchStatus(!switchStatus);
-        } else {
-          setSwitchStatus(switchStatus);
+      sendCommand({ [title]: thisActionCodes }, message, access_token).then(
+        (result) => {
+          if (result?.success) {
+            setReload(true);
+            setSwitchStatus(!switchStatus);
+          } else {
+            setSwitchStatus(switchStatus);
+          }
         }
-      });
+      );
     }
   };
 
@@ -104,12 +109,14 @@ const ActionnaireListItem = ({
               disabled={modeAuto}
               onValueChange={(value) => {
                 const message = `L'actionnaire "${description}" été ${value} avec succès !`;
-                sendCommand({ [title]: value }, message).then((result) => {
-                  if (result?.success) {
-                    setReload(true);
-                    setS12Valuee(value);
+                sendCommand({ [title]: value }, message, access_token).then(
+                  (result) => {
+                    if (result?.success) {
+                      setReload(true);
+                      setS12Valuee(value);
+                    }
                   }
-                });
+                );
               }}
             >
               <SelectTrigger>

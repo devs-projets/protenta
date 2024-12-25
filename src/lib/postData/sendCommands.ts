@@ -1,4 +1,4 @@
-export async function sendCommand(data: any, message: string) {
+export async function sendCommand(data: any, message: string, access_token: string) {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/send-commande`,
@@ -6,6 +6,7 @@ export async function sendCommand(data: any, message: string) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${access_token.replace(/"/g, '')}`,
         },
         body: JSON.stringify(data),
       }

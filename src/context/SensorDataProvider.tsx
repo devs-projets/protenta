@@ -3,6 +3,7 @@
 import Spinner from "@/components/Spinner";
 import { fetchDayData } from "@/store/reducers/dayData/dayDataSlice";
 import { fetchHourData } from "@/store/reducers/hourDate/hourDataSlice";
+import { currentUser } from "@/store/reducers/auth/authSlice";
 import { fetchMinuteData } from "@/store/reducers/minutesData/minutesDataSlice";
 import { RootState, useAppDispatch } from "@/store/store";
 import React, { useEffect } from "react";
@@ -16,6 +17,10 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   // const { loading: minuteLoading, error: minuteError } = useSelector(
   //   (state: RootState) => state.minuteData
   // );
+
+  const { user, loading: userLoading, error: userError } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   const { loading: hourLoading, error: hourError } = useSelector(
     (state: RootState) => state.hourData
@@ -40,6 +45,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchDatas = () => {
     // dispatch(fetchMinuteData());
+    dispatch(currentUser());
     dispatch(fetchHourData());
     dispatch(fetchDayData());
   };
@@ -52,7 +58,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
     return () => clearInterval(interval);
   }, [dispatch]);
 
-  if (hourLoading || dayLoading) {
+  if (hourLoading || dayLoading || userLoading) {
     return (
       <div className="h-screen flex justify-center items-center">
         <Spinner />
@@ -62,7 +68,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Gestion des erreurs
   const errorMessage =
-    hourError || dayError
+    hourError || dayError || userError
       ? "Une erreur est survenue lors du chargement des données."
       : null;
 

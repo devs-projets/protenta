@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { sendCommand } from "@/lib/postData/sendCommands";
 import { useSocket } from "@/context/SocketContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const modeSwitchCodes = {
   300: "Désactiver manuelAuto S1",
@@ -46,6 +48,7 @@ export function ConfirmActionnaireModal({
 }) {
   const [modeState, setModeState] = useState<number>();
   const { sensorData } = useSocket();
+  const {access_token} = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
   const mState = sensorData && Object.keys(sensorData)
@@ -69,7 +72,7 @@ export function ConfirmActionnaireModal({
       if (actionnaire == title) code = key;
     });
     const message = `L'actionnaire "${description}" est passé en mode Automatique avec succès !`;
-    sendCommand({ [`param${code}`]: true }, message);
+    sendCommand({ [`param${code}`]: true }, message, access_token);
     setModeAuto(true);
   };
 

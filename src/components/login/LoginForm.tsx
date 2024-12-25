@@ -28,7 +28,8 @@ export function LoginForm() {
   const submitLogin = async () => {
     const data: IUserCredentials = { userName, passWord };
     const response = await authUserService(data);
-    if(response) dispatch(login(response));
+    console.log(response)
+    if(response) dispatch(login(response.replace('"', '')));
   };
 
   if(access_token) {

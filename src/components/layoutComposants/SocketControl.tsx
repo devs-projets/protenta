@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Power } from "lucide-react";
 import { restartMonitor } from "@/lib/postData/restartMonitor";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export default function SocketControl() {
   const {
@@ -15,6 +17,7 @@ export default function SocketControl() {
     disconnect,
   } = useSocket();
   const [isLoading, setIsLoading] = useState(false);
+  const { access_token } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     console.log("Statut de connexion :", isConnected);
@@ -22,7 +25,7 @@ export default function SocketControl() {
 
   const handleToggleConnection = async () => {
     setIsLoading(true);
-    restartMonitor();
+    restartMonitor(access_token);
     setIsLoading(false);
     // try {
     //   if (isConnected) {

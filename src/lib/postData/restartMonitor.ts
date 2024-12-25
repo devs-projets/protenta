@@ -1,4 +1,4 @@
-export async function restartMonitor() {
+export async function restartMonitor(access_token: string) {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor-restart`,
@@ -6,6 +6,7 @@ export async function restartMonitor() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${access_token.replace(/"/g, '')}`,
         },
         body: JSON.stringify({
           status: true,
