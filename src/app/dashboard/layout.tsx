@@ -18,20 +18,37 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { EUserRole } from "@/types/userRole";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  const {
+    user,
+    loading: userLoading,
+    access_token,
+  } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
 
   useEffect(() => {
     if (!access_token) {
       router.push("/login");
     }
-  }, []);
+
+    if (
+      !userLoading &&
+      user &&
+      user.role === EUserRole.SUDO &&
+      user.allSerre &&
+      user.allSerre.length > 0 &&
+      user.allSerre[0].allCulture &&
+      user.allSerre[0].allCulture.length === 0
+    ) {
+      router.push("/culture-config");
+    }
+  }, [userLoading]);
 
   return (
     <SocketProvider>
