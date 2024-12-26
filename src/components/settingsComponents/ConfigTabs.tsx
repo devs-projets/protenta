@@ -12,6 +12,8 @@ import { extractActionnaires } from "@/lib/transformDatas/extractActionnaires";
 import { extractLimites } from "@/lib/transformDatas/extractLimites";
 import { extractFloraison } from "@/lib/transformDatas/extractFloraison";
 import { ILatestData } from "@/types/latestDataState";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const ConfigTabs = () => {
   const [actionnairesFetched, setActionnairesFetched] =
@@ -19,6 +21,7 @@ const ConfigTabs = () => {
   const [limitesFetched, setLimitesFetched] = useState<Partial<ILatestData>>();
   const [floraisonFetched, setFloraisonFetched] =
     useState<Partial<ILatestData>>();
+    const {access_token} = useSelector((state: RootState) => state.auth);
     
   const [loading, setLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false);
@@ -26,9 +29,12 @@ const ConfigTabs = () => {
 
   useEffect(() => {
     const fetchSensorData = async () => {
+      if (!access_token) {
+        throw Error('Token not found !')
+      }
       try {
         if (!loading) setLoading(true);
-        const data = await getLatestData("monitor");
+        const data = await getLatestData(access_token, "monitor",);
         setStoredData(data);
         setActionnairesFetched(extractActionnaires(data));
         // setActionnairesFetched(data);

@@ -10,6 +10,8 @@ import { getLatestData } from "@/lib/fetchData/getLatestData";
 import { ILatestData } from "@/types/latestDataState";
 import Spinner from "@/components/Spinner";
 import { TriangleAlert } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const CapteurId = () => {
   const localName = useParams().capteurId as string;
@@ -17,12 +19,16 @@ const CapteurId = () => {
   const [data, setData] = useState<ILatestData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const {access_token} = useSelector((state: RootState) => state.auth);
 
   const getThisCapteurLastData = async () => {
     setLoading(true);
     setError(null);
+    if (!access_token) {
+      throw Error('Token not found !')
+    }
     try {
-      const response = await getLatestData("capteur", localName);
+      const response = await getLatestData(access_token, "capteur", localName);
       setData(response);
     } catch (err) {
       console.error("An error occurred while fetching capteur data", err);

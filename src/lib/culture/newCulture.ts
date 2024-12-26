@@ -27,6 +27,6 @@ export async function addCulture(access_token: string, serreId: string, data: an
     return responseData;
   } catch (err) {
     console.error(err);
-    throw Error("Error while creating user");
+    throw Error("Error while creating culture");
   }
 }

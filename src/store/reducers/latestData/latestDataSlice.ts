@@ -11,7 +11,11 @@ const initialState: ILatestDataState = {
 export const fetchLatestData = createAsyncThunk(
   "latestData/fetchLatestData",
   async () => {
-    const data = await getLatestData('monitor');
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      throw Error('Token not found !')
+    }
+    const data = await getLatestData(token, 'monitor');
     return data;
   }
 );

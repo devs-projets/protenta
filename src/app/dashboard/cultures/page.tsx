@@ -106,8 +106,6 @@ const Page = () => {
     getSerres();
   }, [newCulture]);
 
-  console.log(serres);
-
   const clearStates = () => {
     setCultureName("");
     setCultureType("");
