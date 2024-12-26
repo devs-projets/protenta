@@ -23,6 +23,7 @@ import { RootState } from "@/store/store";
 import { User } from "@/types/user";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { Plus } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -89,7 +90,7 @@ const Page = () => {
       console.error("Access token is null");
       return;
     }
-    
+
     try {
       const response = await getAllSerres(access_token);
       setSerres(response[0]);
@@ -259,16 +260,17 @@ const Page = () => {
       {/* Cards Container */}
       <div className="flex flex-wrap gap-5 p-5">
         {serres.allCulture.map((culture: any) => {
-          const cultureStartDate = new Date(culture)
+          const cultureStartDate = new Date(culture);
           return (
-            <div
+            <Link
+              href={`/dashboard/cultures/${culture.id}`}
               key={culture.id}
               className="w-[280px] bg-secondary relative p-5 rounded-lg shadow-lg border cursor-pointer hover:shadow-xl"
             >
               {/* Badge */}
               <span
                 className={`absolute top-0 right-0 rounded-lg px-3 py-1 ${
-                  !culture.productionIsEnded 
+                  !culture.productionIsEnded
                     ? "bg-primary text-white"
                     : "bg-gray-300"
                 }`}
@@ -282,7 +284,7 @@ const Page = () => {
                 Début : {new Date(culture.startProduction).toLocaleDateString()}
               </p>
               <p>{culture.productionIsEnded && `Fin : ${culture.end}`}</p>
-            </div>
+            </Link>
           );
         })}
       </div>
