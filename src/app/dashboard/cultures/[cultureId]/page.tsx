@@ -19,8 +19,8 @@ import { updateCulture } from "@/lib/culture/updateCulture";
 import { getAllSerres } from "@/lib/serre/getAllSerres";
 import { RootState } from "@/store/store";
 import { ICulture } from "@/types/culture";
-import { FilePenLine, TriangleAlert } from "lucide-react";
-import { useParams } from "next/navigation";
+import { FilePenLine, TriangleAlert, ArrowLeft } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -36,10 +36,10 @@ const Page = () => {
   const [cultureType, setCultureType] = useState<string>("");
   const [cultureVariety, setCultureVariety] = useState<string>("");
   const [cultureDescription, setCultureDescription] = useState<string>("");
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [newCulture, setNewCulture] = useState<boolean>(false);
 
   const { cultureId } = useParams();
+  const router = useRouter();
   const { access_token } = useSelector((state: RootState) => state.auth);
 
   const fetchSerre = async () => {
@@ -59,6 +59,7 @@ const Page = () => {
         )[0];
 
         setCulture(thisCulture);
+        initUpdateForm(thisCulture);
         const start = new Date(
           thisCulture.startProduction
         ).toLocaleDateString();
@@ -78,6 +79,13 @@ const Page = () => {
     }
   };
 
+  const initUpdateForm = (cultureData: ICulture) => {
+    setCultureName(cultureData.name);
+    setCultureType(cultureData.type);
+    setCultureVariety(cultureData.variety);
+    setCultureDescription(cultureData.description);
+  };
+
   useEffect(() => {
     fetchSerre();
     setNewCulture(false);
@@ -88,7 +96,6 @@ const Page = () => {
     setCultureType("");
     setCultureVariety("");
     setCultureDescription("");
-    setSelectedDate(undefined);
   };
 
   const handleUpdateCulture = async () => {
@@ -156,9 +163,7 @@ const Page = () => {
         setIsDialogOpen(false);
         alert("Culture cloturée avec succès !");
       } else {
-        alert(
-          "Erreur lors de la cloture de la culture.\nVeuillez réessayer !"
-        );
+        alert("Erreur lors de la cloture de la culture.\nVeuillez réessayer !");
       }
     } catch (error) {
       console.error("Erreur lors de la cloture de la culture :", error);
@@ -191,88 +196,103 @@ const Page = () => {
 
   return (
     <div>
-      <h1 className="font-bold text-center text-4xl my-3 shadow-md py-4">
-        Culture details
-      </h1>
+      <div className="relative">
+        <button
+          className="absolute top-6 left-5 flex items-center gap-2"
+          onClick={() => router.back()}
+        >
+          <ArrowLeft />
+          Retour
+        </button>
+        <h1 className="font-bold text-center text-4xl my-3 shadow-md py-4">
+          Culture details
+        </h1>
+      </div>
       <div className="max-w-[700px] border-[1px] mx-auto rounded-lg p-4 shadow-md">
-        <div className="flex justify-end items-center gap-x-4">
-          <div>Modifier la culture</div>
-          <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <AlertDialogTrigger className="bg-primary text-white px-3 py-2 rounded-lg">
-              <FilePenLine />
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Modifier la culture</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Veuillez remplir les informations nécessaires pour modifier la
-                  culture.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <form className="flex flex-col gap-5">
-                <div className="text-xl">
-                  <Label htmlFor="nom" className="text-lg">
-                    Nom
-                  </Label>
-                  <Input
-                    id="nom"
-                    type="text"
-                    placeholder="Nom de la culture"
-                    required
-                    className="text-lg"
-                    onChange={(e) => setCultureName(e.target.value)}
-                  />
-                </div>
-                <div className="">
-                  <Label htmlFor="type" className="text-lg">
-                    Type
-                  </Label>
-                  <Input
-                    id="type"
-                    type="text"
-                    placeholder="Type de la culture"
-                    required
-                    className="text-lg"
-                    onChange={(e) => setCultureType(e.target.value)}
-                  />
-                </div>
-                <div className="">
-                  <Label htmlFor="variete" className="text-lg">
-                    Variété
-                  </Label>
-                  <Input
-                    id="variete"
-                    type="text"
-                    placeholder="Variété de la culture"
-                    required
-                    className="text-lg"
-                    onChange={(e) => setCultureVariety(e.target.value)}
-                  />
-                </div>
-                <div className="">
-                  <Label htmlFor="description" className="text-lg">
-                    Description
-                  </Label>
-                  <Textarea
-                    placeholder="Description de la culture ..."
-                    className="resize-none text-lg"
-                    onChange={(e) => setCultureDescription(e.target.value)}
-                  />
-                </div>
-              </form>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                <button
-                  type="button"
-                  onClick={handleUpdateCulture}
-                  className="bg-primary text-white px-4 py-2 rounded-lg"
-                >
-                  Enregistrer
-                </button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+        {!culture?.productionIsEnded && (
+          <div className="flex justify-end items-center gap-x-4">
+            <div>Modifier la culture</div>
+            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <AlertDialogTrigger className="bg-primary text-white px-3 py-2 rounded-lg">
+                <FilePenLine />
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Modifier la culture</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Veuillez remplir les informations nécessaires pour modifier
+                    la culture.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <form className="flex flex-col gap-5">
+                  <div className="text-xl">
+                    <Label htmlFor="nom" className="text-lg">
+                      Nom
+                    </Label>
+                    <Input
+                      id="nom"
+                      type="text"
+                      value={cultureName}
+                      placeholder="Nom de la culture"
+                      required
+                      className="text-lg"
+                      onChange={(e) => setCultureName(e.target.value)}
+                    />
+                  </div>
+                  <div className="">
+                    <Label htmlFor="type" className="text-lg">
+                      Type
+                    </Label>
+                    <Input
+                      id="type"
+                      type="text"
+                      value={cultureType}
+                      placeholder="Type de la culture"
+                      required
+                      className="text-lg"
+                      onChange={(e) => setCultureType(e.target.value)}
+                    />
+                  </div>
+                  <div className="">
+                    <Label htmlFor="variete" className="text-lg">
+                      Variété
+                    </Label>
+                    <Input
+                      id="variete"
+                      type="text"
+                      value={cultureVariety}
+                      placeholder="Variété de la culture"
+                      required
+                      className="text-lg"
+                      onChange={(e) => setCultureVariety(e.target.value)}
+                    />
+                  </div>
+                  <div className="">
+                    <Label htmlFor="description" className="text-lg">
+                      Description
+                    </Label>
+                    <Textarea
+                      placeholder="Description de la culture ..."
+                      value={cultureDescription}
+                      className="resize-none text-2xl"
+                      onChange={(e) => setCultureDescription(e.target.value)}
+                    />
+                  </div>
+                </form>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <button
+                    type="button"
+                    onClick={handleUpdateCulture}
+                    className="bg-primary text-white px-4 py-2 rounded-lg"
+                  >
+                    Enregistrer
+                  </button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
         <div className="grid grid-cols-2 gap-4 my-2">
           <div className="border-2 rounded-lg p-2">
             <p>
@@ -282,7 +302,7 @@ const Page = () => {
           <div className="border-2 rounded-lg p-2">
             <p>
               Statut :{" "}
-              <span className="font-bold">
+              <span className={`${culture?.productionIsEnded ? "bg-gray-300" : "bg-primary"} px-2 py-1 rounded-full`}>
                 {culture?.productionIsEnded ? "Inactive" : "Active"}
               </span>
             </p>
@@ -322,14 +342,14 @@ const Page = () => {
           )}
         </div>
 
-        <div>
+        {!culture?.productionIsEnded && <div>
           <button
             onClick={handleClotureCulture}
-            className="bg-primary p-2 rounded-lg w-full text-white"
+            className="bg-primary p-2 rounded-lg w-full text-white bg-red-400"
           >
             Cloturé la culture
           </button>
-        </div>
+        </div>}
       </div>
     </div>
   );
