@@ -42,6 +42,7 @@ import { Fragment, useEffect, useState } from "react";
 import FieldsModal from "./components/fields.modal";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { RotateCcw } from "lucide-react";
 
 const getRowColor = (etat: string) => {
   switch (etat) {
@@ -87,6 +88,7 @@ const ActivitiesPage = () => {
   const [initSelectionFieldField, setInitSelectionFieldField] = useState<
     string[]
   >([]);
+  const [reinit, setReinit] = useState<number>(0);
   const { access_token } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
@@ -113,7 +115,8 @@ const ActivitiesPage = () => {
     // }
 
     setIsLoading(false);
-  }, []);
+  }, [reinit]);
+  
   const totalPages = Math.ceil(logs.length / rowsPerPage);
 
   const handlePageChange = (page: number) => {
@@ -358,7 +361,7 @@ const ActivitiesPage = () => {
     if (selected.length > 0) {
       setInitSelectionFieldField(selected);
       if (initSelectionFieldField !== selected) {
-        // setIsLoading(true);
+        setIsLoading(true);
         fetchLogs(
           {
             field: selected[0],
@@ -368,7 +371,7 @@ const ActivitiesPage = () => {
           access_token
         ).then((data) => {
           setLog(data);
-          // setIsLoading(false);
+          setIsLoading(false);
         });
       }
     }
@@ -378,77 +381,95 @@ const ActivitiesPage = () => {
       <h1 className="text-4xl font-bold shadow-lg text-center rounded-lg py-5">
         Journal
       </h1>
-      {isLoading ? (
-        <div className="min-w-full flex items-center justify-center">
-          <Spinner />
+      <div className="flex items-center justify-end gap-3 mt-5">
+        <div>
+          <Select value={userSelect} onValueChange={handleUserChange}>
+            <SelectTrigger className="w-[280px]">
+              <SelectValue placeholder="Choisir un agent" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Choisir un agent</SelectLabel>
+                {users.map((user, index) => (
+                  <SelectItem key={index} value={user.id}>
+                    {user.firstName} {user.lastName}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
-      ) : (
-        <>
-          <div className="flex items-center justify-end gap-3 mt-5">
-            <div>
-              <Select onValueChange={handleUserChange}>
-                <SelectTrigger className="w-[280px]">
-                  <SelectValue placeholder="Choisir un agent" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Choisir un agent</SelectLabel>
-                    {users.map((user, index) => (
-                      <SelectItem key={index} value={user.id}>
-                        {user.firstName} {user.firstName}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Select onValueChange={handleActionaireChange}>
-                <SelectTrigger className="w-[280px]">
-                  <SelectValue placeholder="Choisir un capteur" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Choisir un capteur</SelectLabel>
-                    {Object.entries(capteur)
-                      .filter(([key, value]) => key !== "id" && value)
-                      .map(([key, value]) => (
-                        <SelectItem key={key} value={key}>
-                          {value}
-                        </SelectItem>
-                      ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <FieldsModal onSelectionChange={handleSelectionChange} />
-            </div>
-          </div>
-          <div className="border rounded-lg overflow-hidden mt-5 overflow-x-auto">
-            <Table className="min-w-full">
-              <TableHeader>
-                <TableRow className="bg-gray-200">
-                  <TableHead className="hidden md:table-cell">N</TableHead>
-                  <TableHead className="hidden md:table-cell">
-                    Date et Heure
-                  </TableHead>
-                  {/* <TableHead>Message</TableHead> */}
-                  <TableHead className="hidden md:table-cell">Auteur</TableHead>
-                  <TableHead className="hidden md:table-cell">Role</TableHead>
-                  <TableHead className="hidden md:table-cell text-start">
-                    Action
-                  </TableHead>
-                  <TableHead className="hidden md:table-cell text-start">
-                    Valeur
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+        <div>
+          <Select value={actionaire} onValueChange={handleActionaireChange}>
+            <SelectTrigger className="w-[280px]">
+              <SelectValue placeholder="Choisir un capteur" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Choisir un capteur</SelectLabel>
+                {Object.entries(capteur)
+                  .filter(([key, value]) => key !== "id" && value)
+                  .map(([key, value]) => (
+                    <SelectItem key={key} value={key}>
+                      {value}
+                    </SelectItem>
+                  ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <FieldsModal reinit={reinit} onSelectionChange={handleSelectionChange} />
+        </div>
+        <div>
+          <RotateCcw
+            onClick={() => {
+              setUserSelect("");
+              setActionaire("");
+              // setCapteur()
+              setFieldsSelect(null);
+              setReinit(reinit + 1)
+            }}
+            className="cursor-pointer"
+          />
+        </div>
+      </div>
+
+      <div className="border rounded-lg overflow-hidden mt-5 overflow-x-auto">
+        <Table className="min-w-full">
+          <TableHeader>
+            <TableRow className="bg-gray-200">
+              <TableHead className="hidden md:table-cell">N</TableHead>
+              <TableHead className="hidden md:table-cell">
+                Date et Heure
+              </TableHead>
+              {/* <TableHead>Message</TableHead> */}
+              <TableHead className="hidden md:table-cell">Auteur</TableHead>
+              <TableHead className="hidden md:table-cell">Role</TableHead>
+              <TableHead className="hidden md:table-cell text-start">
+                Action
+              </TableHead>
+              <TableHead className="hidden md:table-cell text-start">
+                Valeur
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <div className="flex justify-center w-full">
+                    <Spinner />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              <>
                 {logs.length === 0 ? (
                   <TableRow>
                     <TableCell
-                      colSpan={5}
+                      colSpan={6}
                       className="text-center text-gray-500"
                     >
                       Aucune donnée à afficher.
@@ -484,11 +505,11 @@ const ActivitiesPage = () => {
                     </TableRow>
                   ))
                 )}
-              </TableBody>
-            </Table>
-          </div>
-        </>
-      )}
+              </>
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
       <div className="mt-4 flex justify-center">
         <Pagination>

@@ -6,7 +6,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const properties = [
   "HumMin",
@@ -26,12 +26,18 @@ const properties = [
 ];
 
 export default function FieldsModal({
+  reinit,
   onSelectionChange,
 }: {
+  reinit: number;
   onSelectionChange: (x: string[]) => void;
 }) {
   const [selected, setSelected] = useState<string[]>([]);
-  console.log(selected)
+
+  useEffect(() => {
+    setSelected([])
+  }, [reinit])
+
   const handleCheckboxChange = (property: string) => {
     setSelected((prevSelected) => {
       const newSelection = prevSelected.includes(property)
