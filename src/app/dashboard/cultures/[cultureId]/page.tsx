@@ -302,8 +302,8 @@ const Page = () => {
           <div className="border-2 rounded-lg p-2">
             <p>
               Statut :{" "}
-              <span className={`${culture?.productionIsEnded ? "bg-gray-300" : "bg-primary"} px-2 py-1 rounded-full`}>
-                {culture?.productionIsEnded ? "Inactive" : "Active"}
+              <span className={`${culture?.productionIsEnded ? "bg-gray-300" : "bg-primary text-white"} px-2 py-1 rounded-full`}>
+                {culture?.productionIsEnded ? "Cloturé" : "Encours"}
               </span>
             </p>
           </div>

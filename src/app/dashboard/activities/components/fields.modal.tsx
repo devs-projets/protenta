@@ -1,4 +1,10 @@
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import { useState } from "react";
 
@@ -13,32 +19,20 @@ const properties = [
   "PressMax",
   "Co2Min",
   "Co2Max",
-  "param300",
-  "param301",
-  "param302",
-  "param303",
-  "param304",
-  "param305",
-  "param306",
-  "param307",
-  "param308",
-  "param309",
-  "param310",
-  "param311",
-  "param313",
-  "param314",
-  "param315",
-  "param316",
   "PolStartTime",
   "PolEndTime",
   "Periode",
   "MomentFloraison",
 ];
 
-export default function FieldsModal({ onSelectionChange }) {
+export default function FieldsModal({
+  onSelectionChange,
+}: {
+  onSelectionChange: (x: string[]) => void;
+}) {
   const [selected, setSelected] = useState<string[]>([]);
+  console.log(selected)
   const handleCheckboxChange = (property: string) => {
-
     setSelected((prevSelected) => {
       const newSelection = prevSelected.includes(property)
         ? prevSelected.filter((item) => item !== property)
@@ -51,7 +45,12 @@ export default function FieldsModal({ onSelectionChange }) {
   const formatPropertyLabel = (property: string) => {
     if (property.startsWith("param")) {
       const number = property.replace("param", "");
-      const formattedNumber = number === "300" ? "S1" : number.startsWith("3") ? `S${parseInt(number) - 300}` : number;
+      const formattedNumber =
+        number === "300"
+          ? "S1"
+          : number.startsWith("3")
+          ? `S${parseInt(number) - 300}`
+          : number;
       return `Auto/Manuel ${formattedNumber}`;
     }
     switch (property) {
@@ -92,12 +91,17 @@ export default function FieldsModal({ onSelectionChange }) {
                     checked={selected.includes(property)}
                     onChange={() => handleCheckboxChange(property)}
                     className="w-4 h-4 checked:text-green-500"
-                    disabled={selected.length > 0 && !selected.includes(property)}
+                    disabled={
+                      selected.length > 0 && !selected.includes(property)
+                    }
                   />
                   <label
                     htmlFor={property}
-                    className={`text-[14px] leading-5 flex items-center justify-center font-medium ${selected.length > 0 && !selected.includes(property) ? "text-gray-400" : ""
-                      }`}
+                    className={`text-[14px] leading-5 flex items-center justify-center font-medium ${
+                      selected.length > 0 && !selected.includes(property)
+                        ? "text-gray-400"
+                        : ""
+                    }`}
                   >
                     {formatPropertyLabel(property)}
                   </label>

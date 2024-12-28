@@ -38,7 +38,7 @@ import {
   ILogsData,
   IUser,
 } from "@/lib/logs/log.interface";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import FieldsModal from "./components/fields.modal";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
@@ -84,6 +84,9 @@ const ActivitiesPage = () => {
     S15: "",
     S16: "",
   });
+  const [initSelectionFieldField, setInitSelectionFieldField] = useState<
+    string[]
+  >([]);
   const { access_token } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
@@ -131,26 +134,39 @@ const ActivitiesPage = () => {
   };
   const renderActionnaireCells = (log: ILogsData) => {
     const actions = [];
+    const hasValidKeys = Object.keys(log).some((key) => key.startsWith("S"));
+    if (!hasValidKeys) {
+      return null;
+    }
     for (let i = 1; i <= 16; i++) {
       const key = `S${i}` as keyof ILogsData;
       // console.log('log[key]:::', log[key]);
 
       if (log[key]) {
         actions.push(
-          <div key={log.id}>
+          <Fragment key={log.id}>
             <TableCell className="text-center text-gray-500">
               {String(key)}
             </TableCell>
             <TableCell className="text-center text-gray-500">
               {String(log[key])}
             </TableCell>
-          </div>
+          </Fragment>
         );
       }
     }
     return actions;
   };
   const renderFloraisonCells = (log: ILogsData) => {
+    const hasRelevantProperties =
+      log.MomentFloraison !== undefined ||
+      log.PolStartTime !== undefined ||
+      log.PolEndTime !== undefined ||
+      log.Periode !== undefined;
+
+    if (!hasRelevantProperties) {
+      return null;
+    }
     const valuesToDisplay = [
       log.MomentFloraison !== undefined
         ? `Moment de Pollinisation: ${
@@ -175,7 +191,7 @@ const ActivitiesPage = () => {
     }
 
     return (
-      <TableRow key={log.id}>
+      <Fragment key={log.id}>
         <TableCell className="text-center text-gray-500">
           Mise à jour de la pollinisation
         </TableCell>
@@ -183,10 +199,26 @@ const ActivitiesPage = () => {
           className="text-center text-gray-500"
           dangerouslySetInnerHTML={{ __html: valuesToDisplay }}
         />
-      </TableRow>
+      </Fragment>
     );
   };
   const renderLimitCells = (log: ILogsData) => {
+    const hasRelevantProperties =
+      log.TemMin !== undefined ||
+      log.TemMax !== undefined ||
+      log.HumMin !== undefined ||
+      log.HumMax !== undefined ||
+      log.Co2Min !== undefined ||
+      log.Co2Max !== undefined ||
+      log.LumMin !== undefined ||
+      log.LumMax !== undefined ||
+      log.PressMin !== undefined ||
+      log.PressMax !== undefined;
+
+    if (!hasRelevantProperties) {
+      return null; // Arrête la fonction si aucune propriété pertinente n'est définie
+    }
+
     const valuesToDisplay = [
       (log.TemMin !== undefined || log.TemMax !== undefined) &&
         `Température: min:${log.TemMin ?? "-"}°C max:${log.TemMax ?? "-"}°C`,
@@ -209,7 +241,7 @@ const ActivitiesPage = () => {
     }
 
     return (
-      <TableRow key={log.id}>
+      <Fragment key={log.id}>
         <TableCell className="text-center text-gray-500">
           Mise à jour des limites
         </TableCell>
@@ -217,11 +249,19 @@ const ActivitiesPage = () => {
           className="text-center text-gray-500"
           dangerouslySetInnerHTML={{ __html: valuesToDisplay }}
         />
-      </TableRow>
+      </Fragment>
     );
   };
 
   const renderParamsCells = (log: ILogsData) => {
+    const hasRelevantProperties = Array.from(
+      { length: 17 },
+      (_, index) => `param${300 + index}`
+    ).some((key) => log[key as keyof ILogsData] !== undefined);
+
+    if (!hasRelevantProperties) {
+      return null; // Arrête la fonction si aucune propriété pertinente n'est définie
+    }
     const actions = [];
     for (let i = 300; i <= 316; i++) {
       const key = `param${i}` as keyof ILogsData;
@@ -261,19 +301,23 @@ const ActivitiesPage = () => {
             : key === "param315"
             ? "auto/manuelS16"
             : "manuel";
-        actions.push(
-          <div key={log.id}>
-            <TableCell className="text-center text-gray-500">
-              {paramName}
-            </TableCell>
-            <TableCell className="text-center text-gray-500">
-              {action}
-            </TableCell>
-          </div>
-        );
+        actions.push({
+          param: paramName,
+          value: action,
+        });
       }
     }
-    return actions;
+
+    return (
+      <Fragment>
+        <TableCell className="text-center text-gray-500">
+          {actions.map((x) => x.param + "\n")}
+        </TableCell>
+        <TableCell className="text-center text-gray-500">
+          {actions.map((x) => x.value + "\n")}
+        </TableCell>
+      </Fragment>
+    );
   };
   const handleUserChange = (value: string) => {
     setUserSelect(value);
@@ -305,24 +349,28 @@ const ActivitiesPage = () => {
       );
     }
   };
+
   const handleSelectionChange = (selected: string[]) => {
     setFieldsSelect(selected[0]);
     if (!access_token) {
       throw Error("Token indisponible !");
     }
     if (selected.length > 0) {
-      setIsLoading(true);
-      fetchLogs(
-        {
-          field: selected[0],
-          user: userSelect,
-          selection: selected,
-        },
-        access_token
-      ).then((data) => {
-        setLog(data);
-        setIsLoading(false);
-      });
+      setInitSelectionFieldField(selected);
+      if (initSelectionFieldField !== selected) {
+        // setIsLoading(true);
+        fetchLogs(
+          {
+            field: selected[0],
+            user: userSelect,
+            selection: selected,
+          },
+          access_token
+        ).then((data) => {
+          setLog(data);
+          // setIsLoading(false);
+        });
+      }
     }
   };
   return (
@@ -336,51 +384,51 @@ const ActivitiesPage = () => {
         </div>
       ) : (
         <>
+          <div className="flex items-center justify-end gap-3 mt-5">
+            <div>
+              <Select onValueChange={handleUserChange}>
+                <SelectTrigger className="w-[280px]">
+                  <SelectValue placeholder="Choisir un agent" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Choisir un agent</SelectLabel>
+                    {users.map((user, index) => (
+                      <SelectItem key={index} value={user.id}>
+                        {user.firstName} {user.firstName}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Select onValueChange={handleActionaireChange}>
+                <SelectTrigger className="w-[280px]">
+                  <SelectValue placeholder="Choisir un capteur" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Choisir un capteur</SelectLabel>
+                    {Object.entries(capteur)
+                      .filter(([key, value]) => key !== "id" && value)
+                      .map(([key, value]) => (
+                        <SelectItem key={key} value={key}>
+                          {value}
+                        </SelectItem>
+                      ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <FieldsModal onSelectionChange={handleSelectionChange} />
+            </div>
+          </div>
           <div className="border rounded-lg overflow-hidden mt-5 overflow-x-auto">
             <Table className="min-w-full">
               <TableHeader>
-                <TableRow>
-                  <TableHead>
-                    <Select onValueChange={handleUserChange}>
-                      <SelectTrigger className="w-[280px]">
-                        <SelectValue placeholder="Choisir un agent" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Choisir un agent</SelectLabel>
-                          {users.map((user, index) => (
-                            <SelectItem key={index} value={user.id}>
-                              {user.firstName} {user.firstName}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </TableHead>
-                  <TableHead>
-                    <Select onValueChange={handleActionaireChange}>
-                      <SelectTrigger className="w-[280px]">
-                        <SelectValue placeholder="Choisir un capteur" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Choisir un capteur</SelectLabel>
-                          {Object.entries(capteur)
-                            .filter(([key, value]) => key !== "id" && value)
-                            .map(([key, value]) => (
-                              <SelectItem key={key} value={key}>
-                                {value}
-                              </SelectItem>
-                            ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </TableHead>
-                  <TableHead className="hidden md:table-cell">
-                    <FieldsModal onSelectionChange={handleSelectionChange} />
-                  </TableHead>
-                </TableRow>
-                <TableRow>
+                <TableRow className="bg-gray-200">
                   <TableHead className="hidden md:table-cell">N</TableHead>
                   <TableHead className="hidden md:table-cell">
                     Date et Heure
@@ -412,10 +460,14 @@ const ActivitiesPage = () => {
                       <TableCell className="w-[1px]" colSpan={1} key={log.id}>
                         {index + 1}
                       </TableCell>
-                      <TableCell key={log.id}>
-                        {String(log.timestamp)}
+                      <TableCell key={log.id} className="text-nowrap">
+                        {new Date(log.timestamp).toLocaleDateString("fr-FR", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
                       </TableCell>
-                      <TableCell key={log.id}>
+                      <TableCell key={log.id} className="text-nowrap">
                         {log.UsersLogs?.user.firstName}{" "}
                         {log.UsersLogs?.user.lastName}
                       </TableCell>
@@ -423,10 +475,11 @@ const ActivitiesPage = () => {
                         {log.UsersLogs?.user.role}
                       </TableCell>
                       {renderActionnaireCells(log)}
-                      {/* {renderAutoManulCells(log)} */}
                       {renderParamsCells(log)}
                       {renderFloraisonCells(log)}
                       {renderLimitCells(log)}
+
+                      {/* {renderAutoManulCells(log)} */}
                       {/* <TableCell>{log.etat}</TableCell> */}
                     </TableRow>
                   ))
