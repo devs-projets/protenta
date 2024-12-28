@@ -1,3 +1,4 @@
+import { ISerre } from "./serre";
 import { EUserRole } from "./userRole";
 
 export interface User {
@@ -7,7 +8,7 @@ export interface User {
   phoneNumber: string;
   role: string;
   userName: string;
-  allSerre: any;
+  allSerre: ISerre[];
 }
 
 export interface ICreateUser {

@@ -50,6 +50,11 @@ export default function DashboardLayout({
     }
   }, [userLoading]);
 
+  console.log(user?.allSerre[0]);
+  const activeCulture = user?.allSerre[0].allCulture.filter(
+    (c) => !c.productionIsEnded
+  )[0];
+
   return (
     <SocketProvider>
       <SocketManager>
@@ -68,6 +73,12 @@ export default function DashboardLayout({
                 <div className="flex items-center">
                   <SidebarTrigger className="-ml-1" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
+                  <div>
+                    <p>
+                      Serre : {user?.allSerre[0].name} | Culture :{" "}
+                      {activeCulture?.name}
+                    </p>
+                  </div>
                 </div>
                 <div className="flex items-center space-x-4">
                   <SocketControl />
