@@ -1,5 +1,6 @@
 "use client";
 
+import InitialConfig from "@/components/cultures/InitialConfig";
 import Spinner from "@/components/Spinner";
 import {
   AlertDialog,
@@ -113,6 +114,8 @@ const Page = () => {
     setCultureDescription("");
     setSelectedDate(undefined);
   };
+
+  console.log(serres)
 
   const handleNewCulture = async () => {
     if (!serres || !access_token) {
@@ -286,6 +289,7 @@ const Page = () => {
           );
         })}
       </div>
+      <InitialConfig serreId={serres.id} cultureId={serres.allCulture[0].id} />
     </div>
   );
 };

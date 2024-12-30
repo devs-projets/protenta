@@ -13,6 +13,44 @@ export interface Limite {
   maxValue: number;
 }
 
+export const initialLimites: Limite[] = [
+  {
+    code: "SeuilTemp_",
+    name: "Température",
+    unit: "°C",
+    minValue: 0,
+    maxValue: 0,
+  },
+  {
+    code: "SeuilHumidity_",
+    name: "Humidité",
+    unit: "%",
+    minValue: 0,
+    maxValue: 0,
+  },
+  {
+    code: "SeuilLum_",
+    name: "Lumière",
+    unit: "lux",
+    minValue: 0,
+    maxValue: 0,
+  },
+  {
+    code: "SeuilPression_",
+    name: "Pression Atmosphérique",
+    unit: "Bar",
+    minValue: 0,
+    maxValue: 0,
+  },
+  {
+    code: "SeuilCo2_",
+    name: "CO₂",
+    unit: "ppm",
+    minValue: 0,
+    maxValue: 0,
+  },
+];
+
 const LimiteList = ({
   newLimites,
   setReload,
@@ -20,44 +58,6 @@ const LimiteList = ({
   newLimites: any;
   setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const initialLimites: Limite[] = [
-    {
-      code: "SeuilTemp_",
-      name: "Température",
-      unit: "°C",
-      minValue: 0,
-      maxValue: 0,
-    },
-    {
-      code: "SeuilHumidity_",
-      name: "Humidité",
-      unit: "%",
-      minValue: 0,
-      maxValue: 0,
-    },
-    {
-      code: "SeuilLum_",
-      name: "Lumière",
-      unit: "lux",
-      minValue: 0,
-      maxValue: 0,
-    },
-    {
-      code: "SeuilPression_",
-      name: "Pression Atmosphérique",
-      unit: "Bar",
-      minValue: 0,
-      maxValue: 0,
-    },
-    {
-      code: "SeuilCo2_",
-      name: "CO₂",
-      unit: "ppm",
-      minValue: 0,
-      maxValue: 0,
-    },
-  ];
-
   const [limites, setLimites] = useState<Limite[]>(initialLimites);
   const [onLimitesChange, setOnLimitesChange] = useState<boolean>(false);
   const { access_token } = useSelector((state: RootState) => state.auth);
@@ -78,7 +78,7 @@ const LimiteList = ({
     }
   }, [newLimites]);
 
-  console.log(limites)
+  console.log(limites);
 
   const handleMinChange = (index: number, value: number) => {
     setLimites((prev) => {
