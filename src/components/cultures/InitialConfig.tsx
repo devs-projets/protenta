@@ -21,6 +21,15 @@ import { InitialConfigData } from "@/types/initialConfigData";
 import { cp } from "fs";
 import React, { SetStateAction, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
 
 interface StepProps {
   step: number;
@@ -78,7 +87,7 @@ const StepOne = ({
           }}
         />
       </div>
-      <div className="flex justify-end gap-5">
+      <div className="flex justify-end gap-5 mt-3">
         <button
           onClick={() => {
             if (!value) {
@@ -151,7 +160,7 @@ const StepTwo = ({
           ))}
         </div>
       </div>
-      <div className="flex justify-end gap-5">
+      <div className="flex justify-end gap-5 mt-3">
         <button
           onClick={() => setStep(step - 1)}
           className="px-4 py-2 bg-gray-200 rounded-lg"
@@ -226,7 +235,7 @@ const StepTree = ({
           </div>
         ))}
       </div>
-      <div className="flex justify-end gap-5">
+      <div className="flex justify-end gap-5 mt-3">
         <button
           onClick={() => setStep(step - 1)}
           className="px-4 py-2 bg-gray-200 rounded-lg"
@@ -252,12 +261,14 @@ const StepFour = ({
   cultureId,
   initialConfig,
   setFloraison,
+  handleDialogClose
 }: StepProps & {
   initialConfig: any;
   floraison: IFloraison;
   serreId: string;
   cultureId: string;
   setFloraison: React.Dispatch<React.SetStateAction<IFloraison>>;
+  handleDialogClose: () => void
 }) => {
   const { access_token } = useSelector((state: RootState) => state.auth);
 
@@ -274,19 +285,23 @@ const StepFour = ({
         initialConfig
       );
 
-      if (response) {
+      if (response.success) {
         alert("Configuration enregistrée avec succès !");
-      } else {
-        alert(
-          "Erreur lors de l'enregistrement de la configuration.\nVeuillez réessayer !"
-        );
       }
+      // else {
+      //   alert(
+      //     "Erreur lors de l'enregistrement de la configuration.\nVeuillez réessayer !"
+      //   );
+      // }
     } catch (error) {
       console.error(
         "Erreur lors de l'enregistrement de la configuration :",
         error
       );
-      alert("Erreur lors de l'enregistrement de la configuration");
+      // alert("Erreur lors de l'enregistrement de la configuration");
+    } finally {
+      // TODO : A corriger !!!!!!!
+        handleDialogClose();
     }
   };
 
@@ -387,7 +402,7 @@ const StepFour = ({
           </div>
         </form>
       </div>
-      <div className="flex justify-end gap-5">
+      <div className="flex justify-end gap-5 mt-3">
         <button
           onClick={() => setStep(step - 1)}
           className="px-4 py-2 bg-gray-200 rounded-lg"
@@ -412,13 +427,19 @@ interface IFloraison {
   floraison: boolean | null;
 }
 
-const InitialConfig = ({serreId, cultureId}: {serreId: string; cultureId: string}) => {
+const InitialConfig = ({
+  serreId,
+  cultureId,
+  setReload
+}: {
+  serreId: string;
+  cultureId: string;
+  setReload: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const [step, setStep] = useState<number>(0);
 
   const [capteursNumber, setCapteursNumber] = useState<any>(null);
-  const [actionnairesList, setActionnairesList] = useState<
-    any
-  >([]);
+  const [actionnairesList, setActionnairesList] = useState<any>([]);
   const [limites, setLimites] = useState<any>(initialLimites);
   const [floraison, setFloraison] = useState<any>({
     start: null,
@@ -427,6 +448,7 @@ const InitialConfig = ({serreId, cultureId}: {serreId: string; cultureId: string
     floraison: null,
   });
   const [initialConfig, setInitialConfig] = useState<any>();
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(true);
 
   useEffect(() => {
     const actionsList = defaulActionnairesData.map((action) => ({
@@ -467,12 +489,15 @@ const InitialConfig = ({serreId, cultureId}: {serreId: string; cultureId: string
       Periode: parseInt(floraison.pollinisation),
       MomentFloraison: floraison.floraison,
     };
-    const actionnaireStates = actionnairesList.reduce((acc: any, actionnaire: any) => {
-      if (actionnaire.name && actionnaire.state !== undefined) {
-        acc[actionnaire.name] = actionnaire.state;
-      }
-      return acc;
-    }, {} as Record<string, boolean>);
+    const actionnaireStates = actionnairesList.reduce(
+      (acc: any, actionnaire: any) => {
+        if (actionnaire.name && actionnaire.state !== undefined) {
+          acc[actionnaire.name] = actionnaire.state;
+        }
+        return acc;
+      },
+      {} as Record<string, boolean>
+    );
     console.log(actionnaireStates);
 
     const data = {
@@ -484,49 +509,73 @@ const InitialConfig = ({serreId, cultureId}: {serreId: string; cultureId: string
     setInitialConfig(data);
   }, [capteursNumber, actionnairesList, limites, floraison]);
 
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+    setReload(true)
+  };
+
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div
-        style={{ boxShadow: "0px 2px 10px 7px rgba(0, 0, 0, 0.2)" }}
-        className="rounded-lg grid w-full max-w-lg h-[500px]"
-      >
-        {step === 0 && <StepZero step={step} setStep={setStep} />}
-        {step === 1 && (
-          <StepOne
-            step={step}
-            setStep={setStep}
-            setCapteursNumber={setCapteursNumber}
-          />
-        )}
-        {step === 2 && (
-          <StepTwo
-            step={step}
-            setStep={setStep}
-            actionnairesList={actionnairesList}
-            setActionnairesList={setActionnairesList}
-          />
-        )}
-        {step === 3 && (
-          <StepTree
-            step={step}
-            setStep={setStep}
-            limites={limites}
-            setLimites={setLimites}
-          />
-        )}
-        {step === 4 && (
-          <StepFour
-            step={step}
-            setStep={setStep}
-            floraison={floraison}
-            serreId={serreId}
-            cultureId={cultureId}
-            initialConfig={initialConfig}
-            setFloraison={setFloraison}
-          />
-        )}
-      </div>
-    </div>
+    <>
+      {/* <AlertDialog> */}
+      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <AlertDialogContent className="min-h-[600px]">
+          {/* <div className="flex justify-center items-center">
+            <div
+              style={{ boxShadow: "0px 2px 10px 7px rgba(0, 0, 0, 0.2)" }}
+              className="rounded-lg grid w-full max-w-lg h-[500px]"
+            > */}
+              {step === 0 && <StepZero step={step} setStep={setStep} />}
+              {step === 1 && (
+                <StepOne
+                  step={step}
+                  setStep={setStep}
+                  setCapteursNumber={setCapteursNumber}
+                />
+              )}
+              {step === 2 && (
+                <StepTwo
+                  step={step}
+                  setStep={setStep}
+                  actionnairesList={actionnairesList}
+                  setActionnairesList={setActionnairesList}
+                />
+              )}
+              {step === 3 && (
+                <StepTree
+                  step={step}
+                  setStep={setStep}
+                  limites={limites}
+                  setLimites={setLimites}
+                />
+              )}
+              {step === 4 && (
+                <StepFour
+                  step={step}
+                  setStep={setStep}
+                  floraison={floraison}
+                  serreId={serreId}
+                  cultureId={cultureId}
+                  initialConfig={initialConfig}
+                  setFloraison={setFloraison}
+                  handleDialogClose={handleDialogClose}
+                />
+              )}
+            {/* </div>
+          </div> */}
+
+          {/* <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <button
+              type="button"
+              // onClick={handleNewCulture}
+              className="bg-primary text-white px-4 py-2 rounded-lg"
+            >
+              Ajouter
+            </button>
+          </AlertDialogFooter> */}
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 

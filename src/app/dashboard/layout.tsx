@@ -16,15 +16,17 @@ import { Toaster } from "@/components/ui/sonner";
 import SensorDataProvider from "@/context/SensorDataProvider";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EUserRole } from "@/types/userRole";
+import { ICulture } from "@/types/culture";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [activeCulture, setActiveCulture] = useState<ICulture | null>(null);
   const {
     user,
     loading: userLoading,
@@ -37,6 +39,12 @@ export default function DashboardLayout({
       router.push("/login");
     }
 
+    const thisSerreAactiveCulture = user?.allSerre[0].allCulture.filter(
+      (c) => !c.productionIsEnded
+    )[0];
+
+    if (thisSerreAactiveCulture) setActiveCulture(thisSerreAactiveCulture);
+
     if (
       !userLoading &&
       user &&
@@ -47,13 +55,13 @@ export default function DashboardLayout({
       user.allSerre[0].allCulture.length === 0
     ) {
       router.push("/culture-config");
+    } else if (
+      thisSerreAactiveCulture &&
+      !thisSerreAactiveCulture?.initialConfigId
+    ) {
+      router.push("/dashboard/cultures");
     }
   }, [userLoading]);
-
-  console.log(user?.allSerre[0]);
-  const activeCulture = user?.allSerre[0].allCulture.filter(
-    (c) => !c.productionIsEnded
-  )[0];
 
   return (
     <SocketProvider>

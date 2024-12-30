@@ -21,6 +21,7 @@ import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { addCulture } from "@/lib/culture/newCulture";
 import { getAllSerres } from "@/lib/serre/getAllSerres";
 import { RootState } from "@/store/store";
+import { ICulture } from "@/types/culture";
 import { User } from "@/types/user";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { Plus } from "lucide-react";
@@ -83,6 +84,8 @@ const Page = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [serres, setSerres] = useState<any>();
   const [error, setError] = useState<string | null>(null);
+  const [allCulture, setAllCulture] = useState<ICulture[]>([]);
+  const [reload, setReload] = useState<boolean>(false);
 
   const { access_token } = useSelector((state: RootState) => state.auth);
 
@@ -95,6 +98,7 @@ const Page = () => {
     try {
       const response = await getAllSerres(access_token);
       setSerres(response[0]);
+      setAllCulture(response[0].allCulture);
     } catch (err) {
       console.error("An error occurred while fetching serres data", err);
       setError(
@@ -105,7 +109,8 @@ const Page = () => {
 
   useEffect(() => {
     getSerres();
-  }, [newCulture]);
+    setReload(false)
+  }, [newCulture, reload]);
 
   const clearStates = () => {
     setCultureName("");
@@ -115,7 +120,7 @@ const Page = () => {
     setSelectedDate(undefined);
   };
 
-  console.log(serres)
+  console.log(serres);
 
   const handleNewCulture = async () => {
     if (!serres || !access_token) {
@@ -161,6 +166,16 @@ const Page = () => {
     );
   }
 
+  const hasInitConfig = () => {
+    const lastCulture = allCulture[allCulture.length - 1];
+    if (lastCulture) {
+      const state = lastCulture.productionIsEnded;
+      if (!state && lastCulture.initialConfigId) {
+        return true;
+      }
+    }
+  };
+
   return (
     <div>
       {/* Header */}
@@ -169,7 +184,14 @@ const Page = () => {
         <div className="flex items-center gap-3">
           <span>Ajouter une culture</span>
           <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <AlertDialogTrigger className="bg-primary text-white px-3 py-2 rounded-lg">
+            <AlertDialogTrigger
+              disabled={allCulture[allCulture.length - 1].productionIsEnded}
+              className={`${
+                !allCulture[allCulture.length - 1].productionIsEnded
+                  ? "bg-primary"
+                  : "bg-gray-300 cursor-not-allowed"
+              } text-white px-3 py-2 rounded-lg`}
+            >
               <Plus />
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -259,37 +281,45 @@ const Page = () => {
       </div>
 
       {/* Cards Container */}
-      <div className="flex flex-wrap gap-5 p-5">
-        {serres.allCulture.map((culture: any) => {
-          const cultureStartDate = new Date(culture);
-          return (
-            <Link
-              href={`/dashboard/cultures/${culture.id}`}
-              key={culture.id}
-              className="w-[280px] bg-secondary relative p-5 rounded-lg shadow-lg border cursor-pointer hover:shadow-xl"
-            >
-              {/* Badge */}
-              <span
-                className={`absolute top-0 right-0 rounded-lg px-3 py-1 ${
-                  !culture.productionIsEnded
-                    ? "bg-primary text-white"
-                    : "bg-gray-300"
-                }`}
+      {hasInitConfig() ? (
+        <div className="flex flex-wrap gap-5 p-5">
+          {serres.allCulture.map((culture: any) => {
+            const cultureStartDate = new Date(culture);
+            return (
+              <Link
+                href={`/dashboard/cultures/${culture.id}`}
+                key={culture.id}
+                className="w-[280px] bg-secondary relative p-5 rounded-lg shadow-lg border cursor-pointer hover:shadow-xl"
               >
-                {!culture.productionIsEnded ? "Encours" : "Cloturé"}
-              </span>
+                {/* Badge */}
+                <span
+                  className={`absolute top-0 right-0 rounded-lg px-3 py-1 ${
+                    !culture.productionIsEnded
+                      ? "bg-primary text-white"
+                      : "bg-gray-300"
+                  }`}
+                >
+                  {!culture.productionIsEnded ? "Encours" : "Cloturé"}
+                </span>
 
-              {/* Card Content */}
-              <h2 className="text-2xl font-bold mt-4">{culture.name}</h2>
-              <p>
-                Début : {new Date(culture.startProduction).toLocaleDateString()}
-              </p>
-              <p>{culture.productionIsEnded && `Fin : ${culture.end}`}</p>
-            </Link>
-          );
-        })}
-      </div>
-      <InitialConfig serreId={serres.id} cultureId={serres.allCulture[0].id} />
+                {/* Card Content */}
+                <h2 className="text-2xl font-bold mt-4">{culture.name}</h2>
+                <p>
+                  Début :{" "}
+                  {new Date(culture.startProduction).toLocaleDateString()}
+                </p>
+                <p>{culture.productionIsEnded && `Fin : ${culture.end}`}</p>
+              </Link>
+            );
+          })}
+        </div>
+      ) : (
+        <InitialConfig
+          serreId={serres.id}
+          cultureId={serres.allCulture[0].id}
+          setReload={setReload}
+        />
+      )}
     </div>
   );
 };
