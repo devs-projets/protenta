@@ -1,4 +1,6 @@
-export async function getAllSerres(access_token: string) {
+import { ISerre } from "@/types/serre";
+
+export async function getAllSerres(access_token: string): Promise<ISerre[]> {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor/serres`,

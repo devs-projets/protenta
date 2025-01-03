@@ -15,7 +15,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { initialConfiguration } from "@/lib/configuration/initialConfig";
 import { defaulActionnairesData } from "@/mockData/defaultActionnairesData";
-import { RootState } from "@/store/store";
+import { RootState, useAppDispatch } from "@/store/store";
 import { IActionnaire } from "@/types/actionnaire";
 import { InitialConfigData } from "@/types/initialConfigData";
 import { cp } from "fs";
@@ -30,6 +30,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
+import { currentSerre } from "@/store/reducers/serre/serreSlice";
 
 interface StepProps {
   step: number;
@@ -261,14 +262,14 @@ const StepFour = ({
   cultureId,
   initialConfig,
   setFloraison,
-  handleDialogClose
+  handleDialogClose,
 }: StepProps & {
   initialConfig: any;
   floraison: IFloraison;
   serreId: string;
   cultureId: string;
   setFloraison: React.Dispatch<React.SetStateAction<IFloraison>>;
-  handleDialogClose: () => void
+  handleDialogClose: () => void;
 }) => {
   const { access_token } = useSelector((state: RootState) => state.auth);
 
@@ -301,7 +302,7 @@ const StepFour = ({
       // alert("Erreur lors de l'enregistrement de la configuration");
     } finally {
       // TODO : A corriger !!!!!!!
-        handleDialogClose();
+      handleDialogClose();
     }
   };
 
@@ -430,11 +431,9 @@ interface IFloraison {
 const InitialConfig = ({
   serreId,
   cultureId,
-  setReload
 }: {
   serreId: string;
   cultureId: string;
-  setReload: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [step, setStep] = useState<number>(0);
 
@@ -449,6 +448,8 @@ const InitialConfig = ({
   });
   const [initialConfig, setInitialConfig] = useState<any>();
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(true);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const actionsList = defaulActionnairesData.map((action) => ({
@@ -484,10 +485,10 @@ const InitialConfig = ({
       };
     }, {});
     const pol = {
-      PolStartTime: parseInt(floraison.start),
-      PolEndTime: parseInt(floraison.end),
-      Periode: parseInt(floraison.pollinisation),
-      MomentFloraison: floraison.floraison,
+      PolStartTime: parseInt(floraison.start) || 0,
+      PolEndTime: parseInt(floraison.end) || 0,
+      Periode: parseInt(floraison.pollinisation) || 0,
+      MomentFloraison: floraison.floraison || false,
     };
     const actionnaireStates = actionnairesList.reduce(
       (acc: any, actionnaire: any) => {
@@ -498,7 +499,6 @@ const InitialConfig = ({
       },
       {} as Record<string, boolean>
     );
-    console.log(actionnaireStates);
 
     const data = {
       ...extractedValues,
@@ -511,7 +511,7 @@ const InitialConfig = ({
 
   const handleDialogClose = () => {
     setIsDialogOpen(false);
-    setReload(true)
+    dispatch(currentSerre());
   };
 
   return (
@@ -524,43 +524,43 @@ const InitialConfig = ({
               style={{ boxShadow: "0px 2px 10px 7px rgba(0, 0, 0, 0.2)" }}
               className="rounded-lg grid w-full max-w-lg h-[500px]"
             > */}
-              {step === 0 && <StepZero step={step} setStep={setStep} />}
-              {step === 1 && (
-                <StepOne
-                  step={step}
-                  setStep={setStep}
-                  setCapteursNumber={setCapteursNumber}
-                />
-              )}
-              {step === 2 && (
-                <StepTwo
-                  step={step}
-                  setStep={setStep}
-                  actionnairesList={actionnairesList}
-                  setActionnairesList={setActionnairesList}
-                />
-              )}
-              {step === 3 && (
-                <StepTree
-                  step={step}
-                  setStep={setStep}
-                  limites={limites}
-                  setLimites={setLimites}
-                />
-              )}
-              {step === 4 && (
-                <StepFour
-                  step={step}
-                  setStep={setStep}
-                  floraison={floraison}
-                  serreId={serreId}
-                  cultureId={cultureId}
-                  initialConfig={initialConfig}
-                  setFloraison={setFloraison}
-                  handleDialogClose={handleDialogClose}
-                />
-              )}
-            {/* </div>
+          {step === 0 && <StepZero step={step} setStep={setStep} />}
+          {step === 1 && (
+            <StepOne
+              step={step}
+              setStep={setStep}
+              setCapteursNumber={setCapteursNumber}
+            />
+          )}
+          {step === 2 && (
+            <StepTwo
+              step={step}
+              setStep={setStep}
+              actionnairesList={actionnairesList}
+              setActionnairesList={setActionnairesList}
+            />
+          )}
+          {step === 3 && (
+            <StepTree
+              step={step}
+              setStep={setStep}
+              limites={limites}
+              setLimites={setLimites}
+            />
+          )}
+          {step === 4 && (
+            <StepFour
+              step={step}
+              setStep={setStep}
+              floraison={floraison}
+              serreId={serreId}
+              cultureId={cultureId}
+              initialConfig={initialConfig}
+              setFloraison={setFloraison}
+              handleDialogClose={handleDialogClose}
+            />
+          )}
+          {/* </div>
           </div> */}
 
           {/* <AlertDialogFooter>

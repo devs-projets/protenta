@@ -10,17 +10,22 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { TriangleAlert } from "lucide-react";
 import { fetchLatestData } from "@/store/reducers/latestData/latestDataSlice";
+import { currentSerre } from "@/store/reducers/serre/serreSlice";
 
 const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
 
-  // const { loading: minuteLoading, error: minuteError } = useSelector(
-  //   (state: RootState) => state.minuteData
-  // );
+  const {
+    user,
+    loading: userLoading,
+    error: userError,
+  } = useSelector((state: RootState) => state.auth);
 
-  const { user, loading: userLoading, error: userError } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const {
+    serre,
+    loading: serreLoading,
+    error: serreError,
+  } = useSelector((state: RootState) => state.serre);
 
   const { loading: hourLoading, error: hourError } = useSelector(
     (state: RootState) => state.hourData
@@ -44,8 +49,8 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const fetchDatas = () => {
-    // dispatch(fetchMinuteData());
     dispatch(currentUser());
+    dispatch(currentSerre());
     dispatch(fetchHourData());
     dispatch(fetchDayData());
   };
@@ -58,7 +63,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
     return () => clearInterval(interval);
   }, [dispatch]);
 
-  if (hourLoading || dayLoading || userLoading) {
+  if (hourLoading || dayLoading || userLoading || serreLoading) {
     return (
       <div className="h-screen flex justify-center items-center">
         <Spinner />
@@ -68,7 +73,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Gestion des erreurs
   const errorMessage =
-    hourError || dayError || userError
+    hourError || dayError || userError || serreError
       ? "Une erreur est survenue lors du chargement des données."
       : null;
 

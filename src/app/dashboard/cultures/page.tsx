@@ -4,7 +4,6 @@ import InitialConfig from "@/components/cultures/InitialConfig";
 import Spinner from "@/components/Spinner";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -12,67 +11,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SimpleDatePiker } from "@/components/view/SimpleDatePicker";
-import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { addCulture } from "@/lib/culture/newCulture";
-import { getAllSerres } from "@/lib/serre/getAllSerres";
-import { RootState } from "@/store/store";
+import { currentSerre } from "@/store/reducers/serre/serreSlice";
+import { RootState, useAppDispatch } from "@/store/store";
 import { ICulture } from "@/types/culture";
-import { User } from "@/types/user";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-
-const cultures = [
-  {
-    id: 1,
-    name: "Culture A",
-    start: "01-01-2024",
-    end: "01-06-2024",
-    status: "Cloturé",
-  },
-  {
-    id: 2,
-    name: "Culture B",
-    start: "05-01-2023",
-    end: "05-06-2023",
-    status: "Cloturé",
-  },
-  {
-    id: 3,
-    name: "Culture C",
-    start: "02-02-2024",
-    end: "02-07-2024",
-    status: "Cloturé",
-  },
-  {
-    id: 4,
-    name: "Culture D",
-    start: "03-01-2023",
-    end: "03-06-2023",
-    status: "Cloturé",
-  },
-  {
-    id: 5,
-    name: "Culture E",
-    start: "04-01-2024",
-    end: "04-06-2024",
-    status: "Cloturé",
-  },
-  {
-    id: 6,
-    name: "Culture F",
-    start: "06-01-2023",
-    end: "06-06-2023",
-    status: "Encours",
-  },
-];
 
 const Page = () => {
   const [cultureName, setCultureName] = useState<string>("");
@@ -80,37 +31,33 @@ const Page = () => {
   const [cultureVariety, setCultureVariety] = useState<string>("");
   const [cultureDescription, setCultureDescription] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [newCulture, setNewCulture] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [serres, setSerres] = useState<any>();
-  const [error, setError] = useState<string | null>(null);
   const [allCulture, setAllCulture] = useState<ICulture[]>([]);
-  const [reload, setReload] = useState<boolean>(false);
+  const [activeCulture, setActiveCulture] = useState<ICulture | null>(null);
+  const [hasInitConfig, setHasInitConfig] = useState<boolean | null>(null);
 
   const { access_token } = useSelector((state: RootState) => state.auth);
-
-  const getSerres = async () => {
-    if (!access_token) {
-      console.error("Access token is null");
-      return;
-    }
-
-    try {
-      const response = await getAllSerres(access_token);
-      setSerres(response[0]);
-      setAllCulture(response[0].allCulture);
-    } catch (err) {
-      console.error("An error occurred while fetching serres data", err);
-      setError(
-        "Une erreur est survenue lors de la récupération des données de la serre."
-      );
-    }
-  };
+  const { serre: thisSerre, allCulture: thisSerreAllCulture } = useSelector(
+    (state: RootState) => state.serre
+  );
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    getSerres();
-    setReload(false)
-  }, [newCulture, reload]);
+    setSerres(thisSerre);
+    if (thisSerreAllCulture && thisSerreAllCulture.length > 0) {
+      setAllCulture(thisSerreAllCulture);
+      const active = thisSerreAllCulture.find((c) => !c.productionIsEnded);
+      if (active) {
+        setActiveCulture(active);
+        setHasInitConfig(active.initialConfigId === null);
+      } else {
+        setHasInitConfig(false);
+      }
+    } else {
+      setHasInitConfig(false);
+    }
+  }, [thisSerre, thisSerreAllCulture]);
 
   const clearStates = () => {
     setCultureName("");
@@ -119,8 +66,6 @@ const Page = () => {
     setCultureDescription("");
     setSelectedDate(undefined);
   };
-
-  console.log(serres);
 
   const handleNewCulture = async () => {
     if (!serres || !access_token) {
@@ -143,7 +88,7 @@ const Page = () => {
       const response = await addCulture(access_token, serreId, data);
 
       if (response) {
-        setNewCulture(true);
+        dispatch(currentSerre());
         clearStates();
         setIsDialogOpen(false);
         alert("Culture ajoutée avec succès !");
@@ -166,16 +111,6 @@ const Page = () => {
     );
   }
 
-  const hasInitConfig = () => {
-    const lastCulture = allCulture[allCulture.length - 1];
-    if (lastCulture) {
-      const state = lastCulture.productionIsEnded;
-      if (!state && lastCulture.initialConfigId) {
-        return true;
-      }
-    }
-  };
-
   return (
     <div>
       {/* Header */}
@@ -185,11 +120,11 @@ const Page = () => {
           <span>Ajouter une culture</span>
           <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <AlertDialogTrigger
-              disabled={allCulture[allCulture.length - 1].productionIsEnded}
+              disabled={!allCulture[allCulture.length - 1]?.productionIsEnded}
               className={`${
-                !allCulture[allCulture.length - 1].productionIsEnded
-                  ? "bg-primary"
-                  : "bg-gray-300 cursor-not-allowed"
+                !allCulture[allCulture.length - 1]?.productionIsEnded
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-primary"
               } text-white px-3 py-2 rounded-lg`}
             >
               <Plus />
@@ -281,10 +216,10 @@ const Page = () => {
       </div>
 
       {/* Cards Container */}
-      {hasInitConfig() ? (
+      {!hasInitConfig ? (
         <div className="flex flex-wrap gap-5 p-5">
-          {serres.allCulture.map((culture: any) => {
-            const cultureStartDate = new Date(culture);
+          {allCulture.map((culture: ICulture) => {
+            // const cultureStartDate = new Date(culture);
             return (
               <Link
                 href={`/dashboard/cultures/${culture.id}`}
@@ -305,10 +240,15 @@ const Page = () => {
                 {/* Card Content */}
                 <h2 className="text-2xl font-bold mt-4">{culture.name}</h2>
                 <p>
-                  Début :{" "}
+                  Débutée le :{" "}
                   {new Date(culture.startProduction).toLocaleDateString()}
                 </p>
-                <p>{culture.productionIsEnded && `Fin : ${culture.end}`}</p>
+                {culture.productionIsEnded && (
+                  <p>
+                    Cloturée le :{" "}
+                    {new Date(culture.endProduction).toLocaleDateString()}
+                  </p>
+                )}
               </Link>
             );
           })}
@@ -316,8 +256,7 @@ const Page = () => {
       ) : (
         <InitialConfig
           serreId={serres.id}
-          cultureId={serres.allCulture[0].id}
-          setReload={setReload}
+          cultureId={activeCulture?.id as string}
         />
       )}
     </div>

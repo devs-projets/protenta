@@ -14,10 +14,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { SimpleDatePiker } from "@/components/view/SimpleDatePicker";
 import { updateCulture } from "@/lib/culture/updateCulture";
-import { getAllSerres } from "@/lib/serre/getAllSerres";
-import { RootState } from "@/store/store";
+import { currentSerre } from "@/store/reducers/serre/serreSlice";
+import { RootState, useAppDispatch } from "@/store/store";
 import { ICulture } from "@/types/culture";
 import { FilePenLine, TriangleAlert, ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -27,7 +26,6 @@ import { useSelector } from "react-redux";
 const Page = () => {
   const [culture, setCulture] = useState<ICulture | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
 
@@ -36,48 +34,12 @@ const Page = () => {
   const [cultureType, setCultureType] = useState<string>("");
   const [cultureVariety, setCultureVariety] = useState<string>("");
   const [cultureDescription, setCultureDescription] = useState<string>("");
-  const [newCulture, setNewCulture] = useState<boolean>(false);
 
   const { cultureId } = useParams();
   const router = useRouter();
+  const dispatch = useAppDispatch()
   const { access_token } = useSelector((state: RootState) => state.auth);
-
-  const fetchSerre = async () => {
-    if (!access_token) {
-      throw Error("No access token found");
-    }
-
-    try {
-      setLoading(true);
-      if (error) {
-        setError(null);
-      }
-      const response = await getAllSerres(access_token);
-      if (response) {
-        const thisCulture = response[0].allCulture.filter(
-          (x: ICulture) => x.id === cultureId
-        )[0];
-
-        setCulture(thisCulture);
-        initUpdateForm(thisCulture);
-        const start = new Date(
-          thisCulture.startProduction
-        ).toLocaleDateString();
-        setStartDate(start);
-        const end =
-          thisCulture.endProduction &&
-          new Date(thisCulture.endProduction).toLocaleDateString();
-        setEndDate(end);
-      }
-    } catch (error) {
-      console.error("Faild to fetch serres");
-      setError(
-        "Une erreur s'est produite lors de la récupération de la culture \nVeuillez Réessayer"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { serre: thisSerre } = useSelector((state: RootState) => state.serre);
 
   const initUpdateForm = (cultureData: ICulture) => {
     setCultureName(cultureData.name);
@@ -87,9 +49,22 @@ const Page = () => {
   };
 
   useEffect(() => {
-    fetchSerre();
-    setNewCulture(false);
-  }, [access_token, newCulture]);
+    if (thisSerre) {
+      const thisCulture = thisSerre.allCulture.filter(
+        (x: ICulture) => x.id === cultureId
+      )[0];
+
+      setCulture(thisCulture);
+      initUpdateForm(thisCulture);
+      const start = new Date(thisCulture.startProduction).toLocaleDateString();
+      setStartDate(start);
+      const end =
+        thisCulture.endProduction &&
+        new Date(thisCulture.endProduction).toLocaleDateString();
+      setEndDate(end);
+      setLoading(false);
+    }
+  }, [access_token, thisSerre]);
 
   const clearStates = () => {
     setCultureName("");
@@ -120,7 +95,7 @@ const Page = () => {
       );
 
       if (response) {
-        setNewCulture(true);
+        dispatch(currentSerre());
         clearStates();
         setIsDialogOpen(false);
         alert("Culture mis à jour avec succès !");
@@ -158,7 +133,7 @@ const Page = () => {
       );
 
       if (response) {
-        setNewCulture(true);
+        dispatch(currentSerre());
         clearStates();
         setIsDialogOpen(false);
         alert("Culture cloturée avec succès !");
@@ -179,20 +154,20 @@ const Page = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="h-screen flex flex-col justify-center items-center">
-        <TriangleAlert size={40} />
-        <p className="text-lg font-semibold my-4 text-center">{error}</p>
-        <button
-          className="bg-primary text-white px-4 py-2 rounded"
-          onClick={fetchSerre}
-        >
-          Réessayer
-        </button>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="h-screen flex flex-col justify-center items-center">
+  //       <TriangleAlert size={40} />
+  //       <p className="text-lg font-semibold my-4 text-center">{error}</p>
+  //       <button
+  //         className="bg-primary text-white px-4 py-2 rounded"
+  //         onClick={fetchSerre}
+  //       >
+  //         Réessayer
+  //       </button>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div>
@@ -302,7 +277,13 @@ const Page = () => {
           <div className="border-2 rounded-lg p-2">
             <p>
               Statut :{" "}
-              <span className={`${culture?.productionIsEnded ? "bg-gray-300" : "bg-primary text-white"} px-2 py-1 rounded-full`}>
+              <span
+                className={`${
+                  culture?.productionIsEnded
+                    ? "bg-gray-300"
+                    : "bg-primary text-white"
+                } px-2 py-1 rounded-full`}
+              >
                 {culture?.productionIsEnded ? "Cloturé" : "Encours"}
               </span>
             </p>
@@ -342,14 +323,16 @@ const Page = () => {
           )}
         </div>
 
-        {!culture?.productionIsEnded && <div>
-          <button
-            onClick={handleClotureCulture}
-            className="bg-primary p-2 rounded-lg w-full text-white bg-red-400"
-          >
-            Cloturé la culture
-          </button>
-        </div>}
+        {!culture?.productionIsEnded && (
+          <div>
+            <button
+              onClick={handleClotureCulture}
+              className="bg-primary p-2 rounded-lg w-full text-white bg-red-400"
+            >
+              Cloturé la culture
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -6,9 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SimpleDatePiker } from "@/components/view/SimpleDatePicker";
 import { addCulture } from "@/lib/culture/newCulture";
-import { getAllSerres } from "@/lib/serre/getAllSerres";
-import { RootState } from "@/store/store";
-import Link from "next/link";
+import { currentSerre } from "@/store/reducers/serre/serreSlice";
+import { RootState, useAppDispatch } from "@/store/store";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -20,31 +19,15 @@ const Page = () => {
   const [cultureDescription, setCultureDescription] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [serres, setSerres] = useState<any>();
-  const [error, setError] = useState<string | null>(null);
 
   const { access_token } = useSelector((state: RootState) => state.auth);
+  const { serre: thisSerre } = useSelector((state: RootState) => state.serre);
   const router = useRouter();
-
-  const getSerres = async () => {
-    if (!access_token) {
-      console.error("Access token is null");
-      return;
-    }
-
-    try {
-      const response = await getAllSerres(access_token);
-      setSerres(response[0]);
-    } catch (err) {
-      console.error("An error occurred while fetching serres data", err);
-      setError(
-        "Une erreur est survenue lors de la récupération des données de la serre."
-      );
-    }
-  };
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    getSerres();
-  }, []);
+    setSerres(thisSerre);
+  }, [thisSerre]);
 
   useEffect(() => {
     if (serres && serres.allCulture.length > 0) {
@@ -82,6 +65,7 @@ const Page = () => {
       const response = await addCulture(access_token, serreId, data);
 
       if (response) {
+        dispatch(currentSerre());
         clearStates();
         alert("Culture ajoutée avec succès !");
         router.push("/dashboard");
@@ -103,6 +87,7 @@ const Page = () => {
       </div>
     );
   }
+
   return (
     <div className="flex justify-center items-center h-screen bg-slate-100">
       <div
