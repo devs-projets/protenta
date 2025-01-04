@@ -153,7 +153,7 @@ const Chart = ({
 
   useEffect(() => {
     if (MonitorLastData) {
-      const actionnairesList = Object.keys(MonitorLastData)
+      const limitesList = Object.keys(MonitorLastData)
         .filter((key) => key.startsWith("Seuil"))
         .reduce<{ [key: string]: number }>((obj, key) => {
           const value = MonitorLastData[key as keyof ILatestData];
@@ -163,7 +163,34 @@ const Chart = ({
           return obj;
         }, {});
 
-      console.log("Actionnaires List:", actionnairesList);
+      console.log("List des limites:", limitesList);
+
+      switch (dataKey) {
+        case "Temperature":
+          setMin(limitesList["Temp_min"]);
+          setMax(limitesList["Temp_max"]);
+          break;
+        case "Humidité":
+          setMin(limitesList["Humidity_min"]);
+          setMax(limitesList["Humidity_max"]);
+          break;
+        case "Lumière":
+          setMin(limitesList["Lum_min"]);
+          setMax(limitesList["Lum_max"]);
+          break;
+        case "Pression atmosphérique":
+          setMin(limitesList["Pression_min"]);
+          setMax(limitesList["Pression_max"]);
+          break;
+        case "Co2":
+          setMin(limitesList["Co2_min"]);
+          setMax(limitesList["Co2_max"]);
+          break;
+        default:
+          setMin(0);
+          setMax(0);
+          break;
+      }
     }
   }, [MonitorLastData]);
 
@@ -207,13 +234,13 @@ const Chart = ({
               stroke="#ccc"
             />
             <ReferenceLine
-              y={30}
+              y={max}
               label="Plafond"
               stroke="#FF0000"
               strokeDasharray="4 4"
             />
             <ReferenceLine
-              y={20}
+              y={min}
               label="Seuil Minimal"
               stroke="#00FF00"
               strokeDasharray="4 4"

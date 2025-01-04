@@ -28,10 +28,16 @@ const CapteurId = () => {
     if (!access_token) {
       throw Error("Token not found !");
     }
+
+    if (!serre) {
+      console.error('Serre not found !');
+      return;
+    }
+
     try {
       const response = await getLatestData(
         access_token,
-        serre?.id as string,
+        serre.id,
         "capteur",
         localName
       );
