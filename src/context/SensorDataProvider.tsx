@@ -6,13 +6,14 @@ import { fetchHourData } from "@/store/reducers/hourDate/hourDataSlice";
 import { currentUser } from "@/store/reducers/auth/authSlice";
 import { fetchMinuteData } from "@/store/reducers/minutesData/minutesDataSlice";
 import { RootState, useAppDispatch } from "@/store/store";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { TriangleAlert } from "lucide-react";
 import { fetchLatestData } from "@/store/reducers/latestData/latestDataSlice";
 import { currentSerre } from "@/store/reducers/serre/serreSlice";
 
 const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
+  const [serreLoaded, setSerreLoaded] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
   const {
@@ -36,8 +37,13 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const fetchLatestDataWithBackup = async () => {
+    if (!serre) {
+      console.error("No serre found !");
+      return;
+    }
+
     try {
-      const data = await dispatch(fetchLatestData()).unwrap();
+      const data = await dispatch(fetchLatestData(serre.id)).unwrap();
       localStorage.setItem("latestData", JSON.stringify(data));
     } catch {
       const localData = localStorage.getItem("latestData");
@@ -51,17 +57,28 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchDatas = () => {
     dispatch(currentUser());
     dispatch(currentSerre());
-    dispatch(fetchHourData());
-    dispatch(fetchDayData());
   };
 
+  // Fetch serre and user information
+  useEffect(() => {
+    fetchDatas();
+  }, [dispatch]);
+
+  // Fetch hour and day data when serre is ready
+  useEffect(() => {
+    if (serre && serre.id) {
+      dispatch(fetchHourData(serre.id));
+      dispatch(fetchDayData(serre.id));
+    }
+  }, [serre, dispatch]);
+
+  // Fetch latest data periodically
   useEffect(() => {
     fetchLatestDataWithBackup();
-    fetchDatas();
 
     const interval = setInterval(fetchLatestDataWithBackup, 1000);
     return () => clearInterval(interval);
-  }, [dispatch]);
+  }, [dispatch, serre]);
 
   if (hourLoading || dayLoading || userLoading || serreLoading) {
     return (

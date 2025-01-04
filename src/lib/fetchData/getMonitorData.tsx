@@ -3,10 +3,12 @@ import { ISensorStoredData } from "@/types/storedData";
 export async function getStoredSensorData(
   period: string,
   access_token: string,
+  serreId: string
 ): Promise<ISensorStoredData[]> {
   try {
+    console.log(serreId);
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor?period=${period}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor/aggregation-data/${serreId}/?period=${period}`,
       {
         method: "GET",
         headers: {

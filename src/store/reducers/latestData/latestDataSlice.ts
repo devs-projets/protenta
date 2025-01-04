@@ -10,12 +10,12 @@ const initialState: ILatestDataState = {
 
 export const fetchLatestData = createAsyncThunk(
   "latestData/fetchLatestData",
-  async () => {
-    const token = localStorage.getItem('access_token');
+  async (serreId: string) => {
+    const token = localStorage.getItem("access_token");
     if (!token) {
-      throw Error('Token not found !')
+      throw Error("Token not found !");
     }
-    const data = await getLatestData(token, 'monitor');
+    const data = await getLatestData(token, serreId, "monitor");
     return data;
   }
 );
@@ -31,7 +31,7 @@ const latestDataSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-    .addCase(fetchLatestData.pending, (state) => {
+      .addCase(fetchLatestData.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
@@ -43,7 +43,7 @@ const latestDataSlice = createSlice({
         state.error = action.error.message ?? "An unknown error occurred";
         state.loading = false;
       });
-  }
+  },
 });
 
 export const { loadLocalData } = latestDataSlice.actions;
