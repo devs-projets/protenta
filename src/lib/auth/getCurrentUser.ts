@@ -1,4 +1,5 @@
 import { User } from "@/types/user";
+import { defineCurrentSerre } from "../serre/currentSerre";
 
 export async function getCurrentUser(access_token: string): Promise<User> {
   try {
@@ -8,7 +9,7 @@ export async function getCurrentUser(access_token: string): Promise<User> {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${access_token.replace(/"/g, '')}`
+          Authorization: `Bearer ${access_token.replace(/"/g, "")}`,
         },
       }
     );
@@ -18,6 +19,9 @@ export async function getCurrentUser(access_token: string): Promise<User> {
     }
 
     const data = await response.json();
+    console.log("From /me :", data);
+    const serreId = data.allSerre[0].id;
+    await defineCurrentSerre(access_token, serreId);
     return data;
   } catch (error) {
     console.error(error);
