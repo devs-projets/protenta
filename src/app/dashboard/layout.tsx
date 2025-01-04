@@ -40,7 +40,7 @@ export default function DashboardLayout({
     }
 
     const thisSerreAactiveCulture = user?.allSerre[0].allCulture.filter(
-      (c) => !c.productionIsEnded
+      (c: ICulture) => !c.productionIsEnded
     )[0];
 
     if (thisSerreAactiveCulture) setActiveCulture(thisSerreAactiveCulture);

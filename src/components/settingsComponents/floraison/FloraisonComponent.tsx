@@ -29,6 +29,7 @@ const FloraisonComponent = ({
   const [floraison, setFloraison] = useState<boolean | undefined>(false);
   const [error, setError] = useState<string | null>(null);
   const { access_token } = useSelector((state: RootState) => state.auth);
+  const { serre } = useSelector((state: RootState) => state.serre);
 
   useEffect(() => {
     setStart(floraisonFetched?.PolStartTime ?? null);
@@ -56,6 +57,11 @@ const FloraisonComponent = ({
       return;
     }
 
+    if (!serre) {
+      console.error("Serre is undefined");
+      return;
+    }
+
     const data = {
       PolStartTime: start,
       PolEndTime: end,
@@ -63,7 +69,7 @@ const FloraisonComponent = ({
       MomentFloraison: floraison ? 1 : 0,
     };
     const message = "La floraison a été mis à jour avec succès !";
-    sendCommand(data, message, access_token).then((result) => {
+    sendCommand(serre.id, data, message, access_token).then((result) => {
       if (result?.success) {
         setReload(true);
       }

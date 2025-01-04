@@ -1,12 +1,17 @@
-export async function sendCommand(data: any, message: string, access_token: string) {
+export async function sendCommand(
+  serreId: string,
+  data: any,
+  message: string,
+  access_token: string
+) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/send-commande`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/send-commande?serre=${serreId}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${access_token.replace(/"/g, '')}`,
+          Authorization: `Bearer ${access_token.replace(/"/g, "")}`,
         },
         body: JSON.stringify(data),
       }
@@ -21,9 +26,7 @@ export async function sendCommand(data: any, message: string, access_token: stri
         return { success: true, data: parsedResponse };
       } else {
         alert(
-          `Une erreur s'est produite : \nStatus Code = ${
-            parsedResponse?.statusCode
-          }\nVeuillez réessayer...`
+          `Une erreur s'est produite : \nStatus Code = ${parsedResponse?.statusCode}\nVeuillez réessayer...`
         );
         return { success: false, error: parsedResponse };
       }

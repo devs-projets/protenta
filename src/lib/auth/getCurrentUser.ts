@@ -19,7 +19,6 @@ export async function getCurrentUser(access_token: string): Promise<User> {
     }
 
     const data = await response.json();
-    console.log("From /me :", data);
     const serreId = data.allSerre[0].id;
     await defineCurrentSerre(access_token, serreId);
     return data;

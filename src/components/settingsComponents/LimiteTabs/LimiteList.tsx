@@ -61,6 +61,7 @@ const LimiteList = ({
   const [limites, setLimites] = useState<Limite[]>(initialLimites);
   const [onLimitesChange, setOnLimitesChange] = useState<boolean>(false);
   const { access_token } = useSelector((state: RootState) => state.auth);
+  const { serre } = useSelector((state: RootState) => state.serre);
 
   useEffect(() => {
     if (newLimites) {
@@ -104,6 +105,11 @@ const LimiteList = ({
       return;
     }
 
+    if (!serre) {
+      console.error("Serre is undefined");
+      return;
+    }
+
     const data: any = {};
     limites.map((x) => {
       if (x.code === "SeuilHumidity_") {
@@ -129,7 +135,7 @@ const LimiteList = ({
     });
     const message = "Les limites ont été mises à jour avec succès !";
 
-    sendCommand(data, message, access_token).then((result) => {
+    sendCommand(serre.id, data, message, access_token).then((result) => {
       if (result?.success) {
         setReload(true);
         setOnLimitesChange(false);

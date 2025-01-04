@@ -54,6 +54,7 @@ const ActionnaireListItem = ({
   // const { sensorData } = useSocket();
   const [S12Value, setS12Valuee] = useState<string | undefined>(s11andS12);
   const { access_token } = useSelector((state: RootState) => state.auth);
+  const { serre } = useSelector((state: RootState) => state.serre);
 
   useEffect(() => {
     const itemIndex = parseInt(title.slice(1));
@@ -70,6 +71,11 @@ const ActionnaireListItem = ({
       return;
     }
 
+    if (!serre) {
+      console.error("Serre is undefined");
+      return;
+    }
+
     // const thisActionCodes = codes[title as keyof typeof codes];
     let thisActionCodes = "";
     if (title != "S12") {
@@ -78,16 +84,19 @@ const ActionnaireListItem = ({
       const message = `L'actionnaire "${description}" été ${
         thisActionCodes === "active" ? "Activé" : "Désactivé"
       } avec succès !`;
-      sendCommand({ [title]: thisActionCodes }, message, access_token).then(
-        (result) => {
-          if (result?.success) {
-            setReload(true);
-            setSwitchStatus(!switchStatus);
-          } else {
-            setSwitchStatus(switchStatus);
-          }
+      sendCommand(
+        serre.id,
+        { [title]: thisActionCodes },
+        message,
+        access_token
+      ).then((result) => {
+        if (result?.success) {
+          setReload(true);
+          setSwitchStatus(!switchStatus);
+        } else {
+          setSwitchStatus(switchStatus);
         }
-      );
+      });
     }
   };
 
@@ -118,7 +127,12 @@ const ActionnaireListItem = ({
                   console.error("Access token is null");
                   return;
                 }
-                sendCommand({ [title]: value }, message, access_token).then(
+                if (!serre) {
+                  console.error("Serre is undefined");
+                  return;
+                }
+
+                sendCommand(serre.id, { [title]: value }, message, access_token).then(
                   (result) => {
                     if (result?.success) {
                       setReload(true);

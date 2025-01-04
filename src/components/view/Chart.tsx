@@ -1,6 +1,13 @@
 "use client";
 
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ReferenceLine,
+  XAxis,
+  YAxis,
+} from "recharts";
 import {
   Card,
   CardContent,
@@ -17,6 +24,10 @@ import {
 } from "@/components/ui/chart";
 import { ISensorStoredData } from "@/types/storedData";
 import { units } from "./Table";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { useEffect, useState } from "react";
+import { ILatestData } from "@/types/latestDataState";
 
 // Configuration des métriques
 export const metrics = [
@@ -134,6 +145,28 @@ const Chart = ({
   unit: string;
   displayDateRange: string;
 }) => {
+  const [min, setMin] = useState<number>(0);
+  const [max, setMax] = useState<number>(0);
+  const { data: MonitorLastData } = useSelector(
+    (state: RootState) => state.latestData
+  );
+
+  useEffect(() => {
+    if (MonitorLastData) {
+      const actionnairesList = Object.keys(MonitorLastData)
+        .filter((key) => key.startsWith("Seuil"))
+        .reduce<{ [key: string]: number }>((obj, key) => {
+          const value = MonitorLastData[key as keyof ILatestData];
+          if (typeof value === "number") {
+            obj[key.replace("Seuil", "")] = value;
+          }
+          return obj;
+        }, {});
+
+      console.log("Actionnaires List:", actionnairesList);
+    }
+  }, [MonitorLastData]);
+
   const chartConfig = {
     [dataKey]: {
       label: title,
@@ -172,6 +205,18 @@ const Chart = ({
               tickLine={false}
               axisLine={{ stroke: "#ccc" }}
               stroke="#ccc"
+            />
+            <ReferenceLine
+              y={30}
+              label="Plafond"
+              stroke="#FF0000"
+              strokeDasharray="4 4"
+            />
+            <ReferenceLine
+              y={20}
+              label="Seuil Minimal"
+              stroke="#00FF00"
+              strokeDasharray="4 4"
             />
             <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
             <Area
