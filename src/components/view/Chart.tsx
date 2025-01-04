@@ -16,19 +16,41 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { ISensorStoredData } from "@/types/storedData";
+import { units } from "./Table";
 
 // Configuration des métriques
-const metrics = [
-  { key: "Temperature", title: "Graphe de Température", unit: "°C" },
-  { key: "Humidité", title: "Graphe d'Humidité", unit: "%" },
-  { key: "Lumière", title: "Graphe de la Lumière", unit: "lux" },
+export const metrics = [
+  {
+    key: "Temperature",
+    title: "Graphe de Température",
+    unit: "°C",
+    graphDomain: [10, 40],
+  },
+  {
+    key: "Humidité",
+    title: "Graphe d'Humidité",
+    unit: "%",
+    graphDomain: [30, 100],
+  },
+  {
+    key: "Lumière",
+    title: "Graphe de la Lumière",
+    unit: "lux",
+    graphDomain: [0, 60000],
+  },
   {
     key: "Pression atmosphérique",
     title: "Graphe de Pression Atmosphérique",
     unit: "bar",
+    graphDomain: [950, 1050],
   },
-  { key: "Humidite du sol", title: "Graphe de l'Humidité du Sol", unit: "" },
-  { key: "Co2", title: "Graphe de CO2", unit: "ppm" },
+  {
+    key: "Humidite du sol",
+    title: "Graphe de l'Humidité du Sol",
+    unit: "",
+    graphDomain: [0, 0],
+  },
+  { key: "Co2", title: "Graphe de CO2", unit: "ppm", graphDomain: [300, 2000] },
 ];
 
 // Fonction pour transformer les données de `sensorData` en format graphique
@@ -38,7 +60,9 @@ const generateHourlyTimeRange = () => {
   for (let i = 0; i < 24; i++) {
     const hour = new Date();
     hour.setHours(i, 0, 0, 0);
-    hours.push(hour.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }));
+    hours.push(
+      hour.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+    );
   }
   return hours;
 };
@@ -81,7 +105,9 @@ const transformSensorData = (
 
   if (visualPeriod === "Heures") {
     const fullTimeRange = generateHourlyTimeRange();
-    const dataMap = new Map(formattedData.map((item) => [item.date, item.value]));
+    const dataMap = new Map(
+      formattedData.map((item) => [item.date, item.value])
+    );
 
     return fullTimeRange.map((time) => ({
       date: time,
@@ -92,16 +118,21 @@ const transformSensorData = (
   return formattedData;
 };
 
-
 // Composant pour afficher un graphique
 const Chart = ({
   title,
   dataKey,
   data,
+  graphDomain,
+  unit,
+  displayDateRange,
 }: {
   title: string;
   dataKey: string;
   data: { date: string; value: number }[];
+  graphDomain: number[];
+  unit: string;
+  displayDateRange: string;
 }) => {
   const chartConfig = {
     [dataKey]: {
@@ -112,10 +143,10 @@ const Chart = ({
 
   return (
     <Card className="my-2">
-      <CardHeader className="space-y-0 pb-0">
+      <CardHeader className="space-y-0 pb-3">
         <CardTitle>{title}</CardTitle>
         <CardDescription>
-          {title} enregistrée pour les 7 derniers jours
+          {title} enregistrée {displayDateRange} en {unit === "" ? "N/A" : unit}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -136,6 +167,7 @@ const Chart = ({
               tickMargin={8}
             />
             <YAxis
+              domain={graphDomain}
               tickFormatter={(value) => `${value}`}
               tickLine={false}
               axisLine={{ stroke: "#ccc" }}
@@ -179,22 +211,34 @@ const Chart = ({
 // Composant principal
 export function ChartComponent({
   visualisationPeriode,
+  displayDateRange,
   sensorData,
 }: {
   visualisationPeriode: string;
+  displayDateRange: string;
   sensorData: ISensorStoredData[];
 }) {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-y-auto">
         <div className="flex flex-col px-5">
-          {metrics.map(({ key, title }) => {
+          {metrics.map(({ key, title, graphDomain, unit }) => {
             const data = transformSensorData(
               sensorData,
               key,
               visualisationPeriode
             );
-            return <Chart key={key} title={title} dataKey={key} data={data} />;
+            return (
+              <Chart
+                key={key}
+                title={title}
+                dataKey={key}
+                data={data}
+                graphDomain={graphDomain}
+                unit={unit}
+                displayDateRange={displayDateRange}
+              />
+            );
           })}
         </div>
       </div>

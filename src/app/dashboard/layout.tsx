@@ -83,8 +83,8 @@ export default function DashboardLayout({
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <div>
                     <p>
-                      Serre : {user?.allSerre[0].name} | Culture :{" "}
-                      {activeCulture?.name}
+                      Serre : <span className="font-bold">{user?.allSerre[0].name}</span> | Culture :{" "}
+                      <span className="font-bold">{activeCulture?.name}</span>
                     </p>
                   </div>
                 </div>

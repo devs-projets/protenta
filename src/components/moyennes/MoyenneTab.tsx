@@ -104,6 +104,15 @@ export function MoyenneTabs({
       <TabsContent value="Graphique">
         <ChartComponent
           visualisationPeriode={visualisationPeriode}
+          displayDateRange={
+            visualisationPeriode === "Heures"
+              ? `le ${selectedDate?.toLocaleDateString("fr-FR") || ""}`
+              : selectedRange
+              ? `du ${
+                  selectedRange.from?.toLocaleDateString("fr-FR") || ""
+                } au ${selectedRange.to?.toLocaleDateString("fr-FR") || ""}`
+              : ""
+          }
           sensorData={filteredData}
         />
       </TabsContent>

@@ -1,5 +1,12 @@
 import React from "react";
-import { CartesianGrid, Line, LineChart, YAxis, ReferenceLine } from "recharts";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  YAxis,
+  ReferenceLine,
+  XAxis,
+} from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
@@ -7,6 +14,17 @@ import {
 } from "@/components/ui/chart";
 
 const MAX_DATA_POINTS = 60;
+
+interface RealTimeChartProps {
+  label: string; // Nom de la mesure (ex: Température, Humidité)
+  unit: string; // Unité de mesure (ex: °C, %, lx)
+  color: string; // Couleur de la ligne
+  minThreshold: number; // Seuil minimum
+  maxThreshold: number; // Seuil maximum
+  graphDomain: number[]; // Limites des axes Y
+  generateRandomData: () => number; // Fonction pour générer des données
+}
+
 const chartConfig = {
   views: {
     label: "Page Views",
@@ -21,30 +39,13 @@ const chartConfig = {
   },
 };
 
-const chartDomain: any = {
-  Temperature: { min: 0, max: 40 },
-  Humidité: { min: 0, max: 100 },
-  Lumière: { min: 0, max: 1000 },
-  "Pression_Atm": { min: 0, max: 1050 },
-  "Humidité_Sol": { min: 0, max: 100 },
-  Co2: { min: 0, max: 500 },
-};
-
-interface RealTimeChartProps {
-  label: string; // Nom de la mesure (ex: Température, Humidité)
-  unit: string; // Unité de mesure (ex: °C, %, lx)
-  color: string; // Couleur de la ligne
-  minThreshold: number; // Seuil minimum
-  maxThreshold: number; // Seuil maximum
-  generateRandomData: () => number; // Fonction pour générer des données
-}
-
 const RealTimeChart: React.FC<RealTimeChartProps> = ({
   label,
   unit,
   color,
   minThreshold,
   maxThreshold,
+  graphDomain,
   generateRandomData,
 }) => {
   const [chartData, setChartData] = React.useState<
@@ -55,10 +56,6 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({
       value: 0,
     }))
   );
-
-  // Obtenir les seuils depuis le label
-  const { min: minChartDomain = 0, max: maxChartDomain = 100 } =
-    chartDomain[label] || {};
 
   React.useEffect(() => {
     const intervalId = setInterval(() => {
@@ -81,13 +78,14 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({
     >
       <LineChart
         data={chartData}
-        margin={{ left: 20, right: 20 }}
+        margin={{ left: 12, right: 12 }}
         className="bg-gray-100 rounded-lg"
       >
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
+        <XAxis tick={false} tickLine={false} />
         <YAxis
           tickFormatter={(value) => `${value} ${unit}`}
-          domain={[minChartDomain, maxChartDomain]}
+          domain={graphDomain}
           allowDataOverflow
           tickCount={6}
           tickLine={false}
@@ -112,7 +110,7 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({
               className="w-[150px]"
               nameKey="value"
               labelFormatter={(value) =>
-                new Date(value).toLocaleTimeString("en-US", {
+                new Date(value).toLocaleTimeString("fr-FR", {
                   hour: "2-digit",
                   minute: "2-digit",
                   second: "2-digit",
