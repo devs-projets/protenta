@@ -134,13 +134,15 @@ const ActivitiesPage = () => {
     if (!serre) {
       throw Error("Serre indisponible !");
     }
-    fetchLogs({ page }, access_token, serre.id).then((data: ILogsData[] | []) => {
-      if (data.length > 0 || page < currentPage) {
-        setLog(data);
-        setCurrentPage(page);
+    fetchLogs({ page }, access_token, serre.id).then(
+      (data: ILogsData[] | []) => {
+        if (data.length > 0 || page < currentPage) {
+          setLog(data);
+          setCurrentPage(page);
+        }
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
+    );
   };
   const renderActionnaireCells = (log: ILogsData) => {
     const actions = [];
@@ -202,11 +204,11 @@ const ActivitiesPage = () => {
 
     return (
       <Fragment key={log.id}>
-        <TableCell className="text-center text-gray-500">
+        <TableCell className="text-gray-500">
           Mise à jour de la pollinisation
         </TableCell>
         <TableCell
-          className="text-center text-gray-500"
+          className="text-gray-500"
           dangerouslySetInnerHTML={{ __html: valuesToDisplay }}
         />
       </Fragment>
@@ -252,11 +254,9 @@ const ActivitiesPage = () => {
 
     return (
       <Fragment key={log.id}>
-        <TableCell className="text-center text-gray-500">
-          Mise à jour des limites
-        </TableCell>
+        <TableCell className="text-gray-500">Mise à jour des limites</TableCell>
         <TableCell
-          className="text-center text-gray-500"
+          className="text-gray-500"
           dangerouslySetInnerHTML={{ __html: valuesToDisplay }}
         />
       </Fragment>
@@ -320,10 +320,10 @@ const ActivitiesPage = () => {
 
     return (
       <Fragment>
-        <TableCell className="text-center text-gray-500">
+        <TableCell className="text-gray-500">
           {actions.map((x) => x.param + "\n")}
         </TableCell>
-        <TableCell className="text-center text-gray-500">
+        <TableCell className="text-gray-500">
           {actions.map((x) => x.value + "\n")}
         </TableCell>
       </Fragment>
@@ -339,12 +339,14 @@ const ActivitiesPage = () => {
       throw Error("Serre indisponible !");
     }
     if (value) {
-      fetchLogs({ user: value, field: actionaire }, access_token, serre.id).then(
-        (data) => {
-          setLog(data);
-          setIsLoading(false);
-        }
-      );
+      fetchLogs(
+        { user: value, field: actionaire },
+        access_token,
+        serre.id
+      ).then((data) => {
+        setLog(data);
+        setIsLoading(false);
+      });
     }
   };
   const handleActionaireChange = (value: string) => {
@@ -357,12 +359,14 @@ const ActivitiesPage = () => {
       throw Error("Serre indisponible !");
     }
     if (value) {
-      fetchLogs({ field: value, user: userSelect }, access_token, serre.id).then(
-        (data) => {
-          setLog(data);
-          setIsLoading(false);
-        }
-      );
+      fetchLogs(
+        { field: value, user: userSelect },
+        access_token,
+        serre.id
+      ).then((data) => {
+        setLog(data);
+        setIsLoading(false);
+      });
     }
   };
 
@@ -393,6 +397,17 @@ const ActivitiesPage = () => {
       }
     }
   };
+
+  const handleResetFilterParams = () => {
+    setUserSelect("");
+    setActionaire("");
+    // setCapteur()
+    setFieldsSelect(null);
+    setReinit(reinit + 1);
+  };
+
+  const shouldDisplayReset = userSelect !== "" || actionaire !== "" || fieldsSelect;
+
   return (
     <div className="p-4">
       <h1 className="text-4xl font-bold shadow-lg text-center rounded-lg py-5">
@@ -441,18 +456,14 @@ const ActivitiesPage = () => {
             onSelectionChange={handleSelectionChange}
           />
         </div>
-        <div>
-          <RotateCcw
-            onClick={() => {
-              setUserSelect("");
-              setActionaire("");
-              // setCapteur()
-              setFieldsSelect(null);
-              setReinit(reinit + 1);
-            }}
-            className="cursor-pointer"
-          />
-        </div>
+        {shouldDisplayReset &&
+            <div>
+              <RotateCcw
+                 onClick={handleResetFilterParams}
+                className="cursor-pointer"
+              />
+            </div>
+          }
       </div>
 
       <div className="border rounded-lg overflow-hidden mt-5 overflow-x-auto">
