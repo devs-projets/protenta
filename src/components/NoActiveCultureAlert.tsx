@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 const NoActiveCultureAlert = () => {
   const { activeCulture } = useSelector((state: RootState) => state.serre);
 
-  if (!activeCulture) {
+  if (activeCulture) {
     return null
   }
 
