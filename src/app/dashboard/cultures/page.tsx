@@ -70,10 +70,6 @@ const Page = () => {
       throw Error("Information  sur la serre ou l'utilisateur manquant !");
     }
 
-    if (!activeCulture) {
-      throw Error("Une culture active");
-    }
-
     try {
       const data = {
         name: cultureName,
