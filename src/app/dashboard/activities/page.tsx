@@ -90,13 +90,17 @@ const ActivitiesPage = () => {
   >([]);
   const [reinit, setReinit] = useState<number>(0);
   const { access_token } = useSelector((state: RootState) => state.auth);
+  const { serre } = useSelector((state: RootState) => state.serre);
 
   useEffect(() => {
     setIsLoading(true);
     if (!access_token) {
       throw Error("Token indisponible !");
     }
-    fetchLogs({ page: currentPage }, access_token).then(
+    if (!serre) {
+      throw Error("Serre indisponible !");
+    }
+    fetchLogs({ page: currentPage }, access_token, serre.id).then(
       (data: ILogsData[] | []) => {
         setLog(data);
       }
@@ -116,7 +120,7 @@ const ActivitiesPage = () => {
 
     setIsLoading(false);
   }, [reinit]);
-  
+
   const totalPages = Math.ceil(logs.length / rowsPerPage);
 
   const handlePageChange = (page: number) => {
@@ -127,7 +131,10 @@ const ActivitiesPage = () => {
     if (!access_token) {
       throw Error("Token indisponible !");
     }
-    fetchLogs({ page }, access_token).then((data: ILogsData[] | []) => {
+    if (!serre) {
+      throw Error("Serre indisponible !");
+    }
+    fetchLogs({ page }, access_token, serre.id).then((data: ILogsData[] | []) => {
       if (data.length > 0 || page < currentPage) {
         setLog(data);
         setCurrentPage(page);
@@ -328,8 +335,11 @@ const ActivitiesPage = () => {
     if (!access_token) {
       throw Error("Token indisponible !");
     }
+    if (!serre) {
+      throw Error("Serre indisponible !");
+    }
     if (value) {
-      fetchLogs({ user: value, field: actionaire }, access_token).then(
+      fetchLogs({ user: value, field: actionaire }, access_token, serre.id).then(
         (data) => {
           setLog(data);
           setIsLoading(false);
@@ -343,8 +353,11 @@ const ActivitiesPage = () => {
     if (!access_token) {
       throw Error("Token indisponible !");
     }
+    if (!serre) {
+      throw Error("Serre indisponible !");
+    }
     if (value) {
-      fetchLogs({ field: value, user: userSelect }, access_token).then(
+      fetchLogs({ field: value, user: userSelect }, access_token, serre.id).then(
         (data) => {
           setLog(data);
           setIsLoading(false);
@@ -358,6 +371,9 @@ const ActivitiesPage = () => {
     if (!access_token) {
       throw Error("Token indisponible !");
     }
+    if (!serre) {
+      throw Error("Serre indisponible !");
+    }
     if (selected.length > 0) {
       setInitSelectionFieldField(selected);
       if (initSelectionFieldField !== selected) {
@@ -368,7 +384,8 @@ const ActivitiesPage = () => {
             user: userSelect,
             selection: selected,
           },
-          access_token
+          access_token,
+          serre.id
         ).then((data) => {
           setLog(data);
           setIsLoading(false);
@@ -419,7 +436,10 @@ const ActivitiesPage = () => {
           </Select>
         </div>
         <div>
-          <FieldsModal reinit={reinit} onSelectionChange={handleSelectionChange} />
+          <FieldsModal
+            reinit={reinit}
+            onSelectionChange={handleSelectionChange}
+          />
         </div>
         <div>
           <RotateCcw
@@ -428,7 +448,7 @@ const ActivitiesPage = () => {
               setActionaire("");
               // setCapteur()
               setFieldsSelect(null);
-              setReinit(reinit + 1)
+              setReinit(reinit + 1);
             }}
             className="cursor-pointer"
           />
