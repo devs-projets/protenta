@@ -6,6 +6,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 export interface ISerreState {
   serre: ISerre | null;
   allCulture: ICulture[] | null;
+  activeCulture: ICulture | null;
   loading: boolean;
   error: string | null;
 }
@@ -16,6 +17,7 @@ const storedUser: string | null =
 const initialState: ISerreState = {
   serre: null,
   allCulture: null,
+  activeCulture: null,
   loading: false,
   error: null,
 };
@@ -36,8 +38,13 @@ const serreSlice = createSlice({
         state.error = null;
       })
       .addCase(currentSerre.fulfilled, (state, action) => {
+        const thisActiveCulture = action.payload.allCulture?.find(
+          (c: ICulture) => !c.productionIsEnded
+        ) ?? null;
+
         state.serre = action.payload;
         state.allCulture = action.payload.allCulture;
+        state.activeCulture = thisActiveCulture;
         state.loading = false;
       })
       .addCase(currentSerre.rejected, (state, action) => {

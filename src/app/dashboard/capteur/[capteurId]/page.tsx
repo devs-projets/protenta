@@ -20,7 +20,7 @@ const CapteurId = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre } = useSelector((state: RootState) => state.serre);
+  const { serre, activeCulture } = useSelector((state: RootState) => state.serre);
 
   const getThisCapteurLastData = async () => {
     setLoading(true);
@@ -34,10 +34,15 @@ const CapteurId = () => {
       return;
     }
 
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
+
     try {
       const response = await getLatestData(
         access_token,
         serre.id,
+        activeCulture.id,
         "capteur",
         localName
       );
@@ -82,7 +87,7 @@ const CapteurId = () => {
     return (
       <div className="h-full flex flex-col justify-center items-center">
         <TriangleAlert size={40} />
-        <p className="text-lg font-semibold my-4">{error}</p>
+        <p className="text-lg text-center font-semibold my-4">{error}</p>
         <button
           className="bg-primary text-white px-4 py-2 rounded"
           onClick={getThisCapteurLastData}

@@ -3,14 +3,15 @@ import { ILatestData } from "@/types/latestDataState";
 export async function getLatestData(
   access_token: string,
   serreId: string,
+  cultureId: string,
   dataType: string,
-  capteurName?: string
+  capteurName?: string,
 ): Promise<ILatestData> {
   try {
     const response = await fetch(
       `${
         process.env.NEXT_PUBLIC_API_BASE_URL
-      }/monitor/latest-data/${serreId}/?dataType=${dataType}${
+      }/monitor/latest-data/${serreId}/cultures/${cultureId}?dataType=${dataType}${
         capteurName ? `&capteurName=${capteurName}` : ""
       }`,
       {

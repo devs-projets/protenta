@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EUserRole } from "@/types/userRole";
 import { ICulture } from "@/types/culture";
+import NoActiveCultureAlert from "@/components/NoActiveCultureAlert";
 
 export default function DashboardLayout({
   children,
@@ -67,6 +68,9 @@ export default function DashboardLayout({
     <SocketProvider>
       <SocketManager>
         <SensorDataProvider>
+          
+          <NoActiveCultureAlert />
+          
           <SidebarProvider
             style={
               {

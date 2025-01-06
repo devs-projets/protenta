@@ -49,7 +49,7 @@ export function ConfirmActionnaireModal({
   const [modeState, setModeState] = useState<number>();
   const { sensorData } = useSocket();
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre } = useSelector((state: RootState) => state.serre);
+  const { serre, activeCulture } = useSelector((state: RootState) => state.serre);
 
   useEffect(() => {
     const mState =
@@ -76,6 +76,10 @@ export function ConfirmActionnaireModal({
       return;
     }
 
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
+
     let code = "";
     Object.entries(modeSwitchCodes).forEach(([key, value]) => {
       const splitedValue = value.split(" ");
@@ -83,7 +87,7 @@ export function ConfirmActionnaireModal({
       if (actionnaire == title) code = key;
     });
     const message = `L'actionnaire "${description}" est passé en mode Automatique avec succès !`;
-    sendCommand(serre.id, { [`param${code}`]: true }, message, access_token);
+    sendCommand(serre.id, activeCulture.id, { [`param${code}`]: true }, message, access_token);
     setModeAuto(true);
   };
 

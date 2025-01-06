@@ -10,9 +10,9 @@ const initialState: IMinuteDataState = {
 
 export const fetchMinuteData = createAsyncThunk(
   "minuteData/fetchMinuteData",
-  async (serreId: string) => {
+  async ({ serreId, cultureId }: { serreId: string; cultureId: string }) => {
     const token = localStorage.getItem("access_token");
-    const data = await getStoredSensorData("minute", token as string, serreId);
+    const data = await getStoredSensorData("minute", token as string, serreId, cultureId);
     return data || [];
   }
 );

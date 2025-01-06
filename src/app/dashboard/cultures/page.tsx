@@ -34,11 +34,10 @@ const Page = () => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [serres, setSerres] = useState<any>();
   const [allCulture, setAllCulture] = useState<ICulture[]>([]);
-  const [activeCulture, setActiveCulture] = useState<ICulture | null>(null);
   const [hasInitConfig, setHasInitConfig] = useState<boolean | null>(null);
 
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre: thisSerre, allCulture: thisSerreAllCulture } = useSelector(
+  const { serre: thisSerre, allCulture: thisSerreAllCulture, activeCulture } = useSelector(
     (state: RootState) => state.serre
   );
   const dispatch = useAppDispatch();
@@ -49,15 +48,14 @@ const Page = () => {
       setAllCulture(thisSerreAllCulture);
       const active = thisSerreAllCulture.find((c) => !c.productionIsEnded);
       if (active) {
-        setActiveCulture(active);
-        setHasInitConfig(active.initialConfigId === null);
+        setHasInitConfig(activeCulture?.initialConfigId === null);
       } else {
         setHasInitConfig(false);
       }
     } else {
       setHasInitConfig(false);
     }
-  }, [thisSerre, thisSerreAllCulture]);
+  }, [thisSerre, thisSerreAllCulture, activeCulture]);
 
   const clearStates = () => {
     setCultureName("");
@@ -70,6 +68,10 @@ const Page = () => {
   const handleNewCulture = async () => {
     if (!serres || !access_token) {
       throw Error("Information  sur la serre ou l'utilisateur manquant !");
+    }
+
+    if (!activeCulture) {
+      throw Error("Une culture active");
     }
 
     try {

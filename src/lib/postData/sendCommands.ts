@@ -1,12 +1,13 @@
 export async function sendCommand(
   serreId: string,
+  cultureId: string,
   data: any,
   message: string,
   access_token: string
 ) {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/send-commande?serre=${serreId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/send-commande?serre=${serreId}&culture=${cultureId}`,
       {
         method: "POST",
         headers: {

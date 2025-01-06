@@ -24,6 +24,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
 
   const {
     serre,
+    activeCulture,
     loading: serreLoading,
     error: serreError,
   } = useSelector((state: RootState) => state.serre);
@@ -42,8 +43,13 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
+    if (!activeCulture) {
+      console.error("No serre found !");
+      return;
+    }
+
     try {
-      const data = await dispatch(fetchLatestData(serre.id)).unwrap();
+      const data = await dispatch(fetchLatestData({serreId: serre.id, cultureId: activeCulture?.id})).unwrap();
       localStorage.setItem("latestData", JSON.stringify(data));
     } catch {
       const localData = localStorage.getItem("latestData");
@@ -66,9 +72,13 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Fetch hour and day data when serre is ready
   useEffect(() => {
-    if (serre && serre.id) {
-      dispatch(fetchHourData(serre.id));
-      dispatch(fetchDayData(serre.id));
+    if (serre && serre.id && activeCulture && activeCulture.id) {
+      dispatch(
+        fetchHourData({ serreId: serre.id, cultureId: activeCulture.id })
+      );
+      dispatch(
+        fetchDayData({ serreId: serre.id, cultureId: activeCulture.id })
+      );
     }
   }, [serre, dispatch]);
 

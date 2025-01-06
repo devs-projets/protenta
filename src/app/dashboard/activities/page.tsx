@@ -90,7 +90,7 @@ const ActivitiesPage = () => {
   >([]);
   const [reinit, setReinit] = useState<number>(0);
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre } = useSelector((state: RootState) => state.serre);
+  const { serre, activeCulture } = useSelector((state: RootState) => state.serre);
 
   useEffect(() => {
     setIsLoading(true);
@@ -100,7 +100,10 @@ const ActivitiesPage = () => {
     if (!serre) {
       throw Error("Serre indisponible !");
     }
-    fetchLogs({ page: currentPage }, access_token, serre.id).then(
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
+    fetchLogs({ page: currentPage }, access_token, serre.id, activeCulture.id).then(
       (data: ILogsData[] | []) => {
         setLog(data);
       }
@@ -134,7 +137,10 @@ const ActivitiesPage = () => {
     if (!serre) {
       throw Error("Serre indisponible !");
     }
-    fetchLogs({ page }, access_token, serre.id).then(
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
+    fetchLogs({ page }, access_token, serre.id, activeCulture.id).then(
       (data: ILogsData[] | []) => {
         if (data.length > 0 || page < currentPage) {
           setLog(data);
@@ -338,11 +344,15 @@ const ActivitiesPage = () => {
     if (!serre) {
       throw Error("Serre indisponible !");
     }
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
     if (value) {
       fetchLogs(
         { user: value, field: actionaire },
         access_token,
-        serre.id
+        serre.id,
+        activeCulture.id
       ).then((data) => {
         setLog(data);
         setIsLoading(false);
@@ -358,11 +368,15 @@ const ActivitiesPage = () => {
     if (!serre) {
       throw Error("Serre indisponible !");
     }
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
     if (value) {
       fetchLogs(
         { field: value, user: userSelect },
         access_token,
-        serre.id
+        serre.id,
+        activeCulture.id
       ).then((data) => {
         setLog(data);
         setIsLoading(false);
@@ -378,6 +392,9 @@ const ActivitiesPage = () => {
     if (!serre) {
       throw Error("Serre indisponible !");
     }
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
     if (selected.length > 0) {
       setInitSelectionFieldField(selected);
       if (initSelectionFieldField !== selected) {
@@ -389,7 +406,8 @@ const ActivitiesPage = () => {
             selection: selected,
           },
           access_token,
-          serre.id
+          serre.id,
+          activeCulture.id
         ).then((data) => {
           setLog(data);
           setIsLoading(false);

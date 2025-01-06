@@ -24,7 +24,7 @@ const ConfigTabs = () => {
   const [floraisonFetched, setFloraisonFetched] =
     useState<Partial<ILatestData>>();
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre } = useSelector((state: RootState) => state.serre);
+  const { serre, activeCulture } = useSelector((state: RootState) => state.serre);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false);
@@ -35,11 +35,17 @@ const ConfigTabs = () => {
       if (!access_token) {
         throw Error("Token not found !");
       }
+
+      if (!activeCulture) {
+        throw Error("Une culture active");
+      }
+      
       try {
         if (!loading) setLoading(true);
         const data = await getLatestData(
           access_token,
           serre?.id as string,
+          activeCulture.id,
           "monitor"
         );
         setStoredData(data);

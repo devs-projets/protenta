@@ -54,7 +54,9 @@ const ActionnaireListItem = ({
   // const { sensorData } = useSocket();
   const [S12Value, setS12Valuee] = useState<string | undefined>(s11andS12);
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre } = useSelector((state: RootState) => state.serre);
+  const { serre, activeCulture } = useSelector(
+    (state: RootState) => state.serre
+  );
 
   useEffect(() => {
     const itemIndex = parseInt(title.slice(1));
@@ -76,6 +78,10 @@ const ActionnaireListItem = ({
       return;
     }
 
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
+
     // const thisActionCodes = codes[title as keyof typeof codes];
     let thisActionCodes = "";
     if (title != "S12") {
@@ -86,6 +92,7 @@ const ActionnaireListItem = ({
       } avec succès !`;
       sendCommand(
         serre.id,
+        activeCulture.id,
         { [title]: thisActionCodes },
         message,
         access_token
@@ -132,14 +139,22 @@ const ActionnaireListItem = ({
                   return;
                 }
 
-                sendCommand(serre.id, { [title]: value }, message, access_token).then(
-                  (result) => {
-                    if (result?.success) {
-                      setReload(true);
-                      setS12Valuee(value);
-                    }
+                if (!activeCulture) {
+                  throw Error("Une culture active");
+                }
+
+                sendCommand(
+                  serre.id,
+                  activeCulture.id,
+                  { [title]: value },
+                  message,
+                  access_token
+                ).then((result) => {
+                  if (result?.success) {
+                    setReload(true);
+                    setS12Valuee(value);
                   }
-                );
+                });
               }}
             >
               <SelectTrigger>

@@ -10,9 +10,9 @@ const initialState: IHourDataState = {
 
 export const fetchHourData = createAsyncThunk(
   "hourData/fetchHourData",
-  async (serreId: string) => {
+  async ({ serreId, cultureId }: { serreId: string; cultureId: string }) => {
     const token = localStorage.getItem("access_token");
-    const data = await getStoredSensorData("hour", token as string, serreId);
+    const data = await getStoredSensorData("hour", token as string, serreId, cultureId);
     return data || [];
   }
 );
