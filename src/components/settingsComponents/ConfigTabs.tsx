@@ -24,7 +24,7 @@ const ConfigTabs = () => {
   const [floraisonFetched, setFloraisonFetched] =
     useState<Partial<ILatestData>>();
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre, activeCulture } = useSelector((state: RootState) => state.serre);
+  const { currentSerre, activeCulture } = useSelector((state: RootState) => state.serre);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false);
@@ -44,7 +44,7 @@ const ConfigTabs = () => {
         if (!loading) setLoading(true);
         const data = await getLatestData(
           access_token,
-          serre?.id as string,
+          currentSerre?.id as string,
           activeCulture.id,
           "monitor"
         );

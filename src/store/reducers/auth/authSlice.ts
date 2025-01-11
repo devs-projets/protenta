@@ -32,7 +32,7 @@ const authSlice = createSlice({
     login: (state, action: PayloadAction<any>) => {
       const token = action.payload;
       state.access_token = token;
-      localStorage.setItem("access_token", JSON.stringify(token));
+      localStorage.setItem("access_token", token);
     },
     logout: (state) => {
       state.access_token = null;

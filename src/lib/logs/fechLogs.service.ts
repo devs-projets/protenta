@@ -5,7 +5,7 @@ export const fetchLogs = async (params = {}, access_token: string, serreId: stri
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${access_token.replace(/"/g, '')}`,
+      Authorization: `Bearer ${access_token}`,
     },
   });
   if (!response.ok) {
@@ -18,7 +18,7 @@ export const fetchUsers = async (access_token: string) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${access_token.replace(/"/g, '')}`,
+      Authorization: `Bearer ${access_token}`,
     },
   });
   if (!response.ok) {
@@ -31,7 +31,7 @@ export const fetchCapteurs = async (access_token: string) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${access_token.replace(/"/g, '')}`,
+      Authorization: `Bearer ${access_token}`,
     },
   });
   if (!response.ok) {

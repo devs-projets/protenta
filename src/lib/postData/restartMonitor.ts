@@ -6,7 +6,7 @@ export async function restartMonitor(access_token: string) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${access_token.replace(/"/g, '')}`,
+          "Authorization": `Bearer ${access_token}`,
         },
         body: JSON.stringify({
           status: true,

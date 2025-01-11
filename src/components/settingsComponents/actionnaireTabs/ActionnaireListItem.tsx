@@ -54,7 +54,7 @@ const ActionnaireListItem = ({
   // const { sensorData } = useSocket();
   const [S12Value, setS12Valuee] = useState<string | undefined>(s11andS12);
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre, activeCulture } = useSelector(
+  const { currentSerre, activeCulture } = useSelector(
     (state: RootState) => state.serre
   );
 
@@ -73,7 +73,7 @@ const ActionnaireListItem = ({
       return;
     }
 
-    if (!serre) {
+    if (!currentSerre) {
       console.error("Serre is undefined");
       return;
     }
@@ -91,7 +91,7 @@ const ActionnaireListItem = ({
         thisActionCodes === "active" ? "Activé" : "Désactivé"
       } avec succès !`;
       sendCommand(
-        serre.id,
+        currentSerre.id,
         activeCulture.id,
         { [title]: thisActionCodes },
         message,
@@ -134,7 +134,7 @@ const ActionnaireListItem = ({
                   console.error("Access token is null");
                   return;
                 }
-                if (!serre) {
+                if (!currentSerre) {
                   console.error("Serre is undefined");
                   return;
                 }
@@ -144,7 +144,7 @@ const ActionnaireListItem = ({
                 }
 
                 sendCommand(
-                  serre.id,
+                  currentSerre.id,
                   activeCulture.id,
                   { [title]: value },
                   message,

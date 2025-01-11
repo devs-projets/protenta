@@ -11,7 +11,7 @@ export async function createNewUser(
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${access_token.replace(/"/g, '')}`,
+          "Authorization": `Bearer ${access_token}`,
         },
         body: JSON.stringify(data),
       }

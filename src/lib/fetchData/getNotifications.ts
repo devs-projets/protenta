@@ -12,7 +12,7 @@ export async function getNotifications(
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${access_token.replace(/"/g, '')}`,
+          "Authorization": `Bearer ${access_token}`,
         },
       }
     );

@@ -90,20 +90,20 @@ const ActivitiesPage = () => {
   >([]);
   const [reinit, setReinit] = useState<number>(0);
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre, activeCulture } = useSelector((state: RootState) => state.serre);
+  const { currentSerre, activeCulture } = useSelector((state: RootState) => state.serre);
 
   useEffect(() => {
     setIsLoading(true);
     if (!access_token) {
       throw Error("Token indisponible !");
     }
-    if (!serre) {
+    if (!currentSerre) {
       throw Error("Serre indisponible !");
     }
     if (!activeCulture) {
       throw Error("Une culture active");
     }
-    fetchLogs({ page: currentPage }, access_token, serre.id, activeCulture.id).then(
+    fetchLogs({ page: currentPage }, access_token, currentSerre.id, activeCulture.id).then(
       (data: ILogsData[] | []) => {
         setLog(data);
       }
@@ -134,13 +134,13 @@ const ActivitiesPage = () => {
     if (!access_token) {
       throw Error("Token indisponible !");
     }
-    if (!serre) {
+    if (!currentSerre) {
       throw Error("Serre indisponible !");
     }
     if (!activeCulture) {
       throw Error("Une culture active");
     }
-    fetchLogs({ page }, access_token, serre.id, activeCulture.id).then(
+    fetchLogs({ page }, access_token, currentSerre.id, activeCulture.id).then(
       (data: ILogsData[] | []) => {
         if (data.length > 0 || page < currentPage) {
           setLog(data);
@@ -341,7 +341,7 @@ const ActivitiesPage = () => {
     if (!access_token) {
       throw Error("Token indisponible !");
     }
-    if (!serre) {
+    if (!currentSerre) {
       throw Error("Serre indisponible !");
     }
     if (!activeCulture) {
@@ -351,7 +351,7 @@ const ActivitiesPage = () => {
       fetchLogs(
         { user: value, field: actionaire },
         access_token,
-        serre.id,
+        currentSerre.id,
         activeCulture.id
       ).then((data) => {
         setLog(data);
@@ -365,7 +365,7 @@ const ActivitiesPage = () => {
     if (!access_token) {
       throw Error("Token indisponible !");
     }
-    if (!serre) {
+    if (!currentSerre) {
       throw Error("Serre indisponible !");
     }
     if (!activeCulture) {
@@ -375,7 +375,7 @@ const ActivitiesPage = () => {
       fetchLogs(
         { field: value, user: userSelect },
         access_token,
-        serre.id,
+        currentSerre.id,
         activeCulture.id
       ).then((data) => {
         setLog(data);
@@ -389,7 +389,7 @@ const ActivitiesPage = () => {
     if (!access_token) {
       throw Error("Token indisponible !");
     }
-    if (!serre) {
+    if (!currentSerre) {
       throw Error("Serre indisponible !");
     }
     if (!activeCulture) {
@@ -406,7 +406,7 @@ const ActivitiesPage = () => {
             selection: selected,
           },
           access_token,
-          serre.id,
+          currentSerre.id,
           activeCulture.id
         ).then((data) => {
           setLog(data);

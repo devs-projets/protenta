@@ -29,7 +29,7 @@ const FloraisonComponent = ({
   const [floraison, setFloraison] = useState<boolean | undefined>(false);
   const [error, setError] = useState<string | null>(null);
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre, activeCulture } = useSelector(
+  const { currentSerre, activeCulture } = useSelector(
     (state: RootState) => state.serre
   );
 
@@ -59,7 +59,7 @@ const FloraisonComponent = ({
       return;
     }
 
-    if (!serre) {
+    if (!currentSerre) {
       console.error("Serre is undefined");
       return;
     }
@@ -75,7 +75,7 @@ const FloraisonComponent = ({
       MomentFloraison: floraison ? 1 : 0,
     };
     const message = "La floraison a été mis à jour avec succès !";
-    sendCommand(serre.id, activeCulture.id, data, message, access_token).then(
+    sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
       (result) => {
         if (result?.success) {
           setReload(true);

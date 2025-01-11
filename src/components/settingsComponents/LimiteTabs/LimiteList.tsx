@@ -61,7 +61,7 @@ const LimiteList = ({
   const [limites, setLimites] = useState<Limite[]>(initialLimites);
   const [onLimitesChange, setOnLimitesChange] = useState<boolean>(false);
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre, activeCulture } = useSelector(
+  const { currentSerre, activeCulture } = useSelector(
     (state: RootState) => state.serre
   );
 
@@ -107,7 +107,7 @@ const LimiteList = ({
       return;
     }
 
-    if (!serre) {
+    if (!currentSerre) {
       console.error("Serre is undefined");
       return;
     }
@@ -141,7 +141,7 @@ const LimiteList = ({
     });
     const message = "Les limites ont été mises à jour avec succès !";
 
-    sendCommand(serre.id, activeCulture.id, data, message, access_token).then(
+    sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
       (result) => {
         if (result?.success) {
           setReload(true);

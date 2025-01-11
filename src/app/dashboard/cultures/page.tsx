@@ -37,7 +37,7 @@ const Page = () => {
   const [hasInitConfig, setHasInitConfig] = useState<boolean | null>(null);
 
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre: thisSerre, allCulture: thisSerreAllCulture, activeCulture } = useSelector(
+  const { currentSerre: thisSerre, allCulture: thisSerreAllCulture, activeCulture } = useSelector(
     (state: RootState) => state.serre
   );
   const dispatch = useAppDispatch();

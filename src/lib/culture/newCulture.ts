@@ -6,7 +6,7 @@ export async function addCulture(access_token: string, serreId: string, data: an
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${access_token.replace(/"/g, '')}`,
+          "Authorization": `Bearer ${access_token}`,
         },
         body: JSON.stringify(data),
       }

@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { TriangleAlert } from "lucide-react";
 import { fetchLatestData } from "@/store/reducers/latestData/latestDataSlice";
-import { currentSerre } from "@/store/reducers/serre/serreSlice";
+import { currentSerre as fetchCurrentSerre } from "@/store/reducers/serre/serreSlice";
 
 const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   const [serreLoaded, setSerreLoaded] = useState<boolean>(false);
@@ -23,7 +23,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   } = useSelector((state: RootState) => state.auth);
 
   const {
-    serre,
+    currentSerre,
     activeCulture,
     loading: serreLoading,
     error: serreError,
@@ -38,7 +38,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const fetchLatestDataWithBackup = async () => {
-    if (!serre) {
+    if (!currentSerre) {
       console.error("No serre found !");
       return;
     }
@@ -49,7 +49,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     try {
-      const data = await dispatch(fetchLatestData({serreId: serre.id, cultureId: activeCulture?.id})).unwrap();
+      const data = await dispatch(fetchLatestData({serreId: currentSerre.id, cultureId: activeCulture?.id})).unwrap();
       localStorage.setItem("latestData", JSON.stringify(data));
     } catch {
       const localData = localStorage.getItem("latestData");
@@ -62,7 +62,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchDatas = () => {
     dispatch(currentUser());
-    dispatch(currentSerre());
+    dispatch(fetchCurrentSerre());
   };
 
   // Fetch serre and user information
@@ -72,15 +72,15 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Fetch hour and day data when serre is ready
   useEffect(() => {
-    if (serre && serre.id && activeCulture && activeCulture.id) {
+    if (currentSerre && currentSerre.id && activeCulture && activeCulture.id) {
       dispatch(
-        fetchHourData({ serreId: serre.id, cultureId: activeCulture.id })
+        fetchHourData({ serreId: currentSerre.id, cultureId: activeCulture.id })
       );
       dispatch(
-        fetchDayData({ serreId: serre.id, cultureId: activeCulture.id })
+        fetchDayData({ serreId: currentSerre.id, cultureId: activeCulture.id })
       );
     }
-  }, [serre, dispatch]);
+  }, [currentSerre, dispatch]);
 
   // Fetch latest data periodically
   useEffect(() => {
@@ -88,7 +88,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
 
     const interval = setInterval(fetchLatestDataWithBackup, 1000);
     return () => clearInterval(interval);
-  }, [dispatch, serre]);
+  }, [dispatch, currentSerre]);
 
   if (hourLoading || dayLoading || userLoading || serreLoading) {
     return (

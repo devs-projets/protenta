@@ -21,7 +21,7 @@ const Page = () => {
   const [serres, setSerres] = useState<any>();
 
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre: thisSerre, activeCulture } = useSelector((state: RootState) => state.serre);
+  const { currentSerre: thisSerre, activeCulture } = useSelector((state: RootState) => state.serre);
   const router = useRouter();
   const dispatch = useAppDispatch();
 

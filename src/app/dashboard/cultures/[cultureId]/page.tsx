@@ -39,7 +39,7 @@ const Page = () => {
   const router = useRouter();
   const dispatch = useAppDispatch()
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre: thisSerre, activeCulture } = useSelector((state: RootState) => state.serre);
+  const { currentSerre: thisSerre, activeCulture } = useSelector((state: RootState) => state.serre);
 
   const initUpdateForm = (cultureData: ICulture) => {
     setCultureName(cultureData.name);

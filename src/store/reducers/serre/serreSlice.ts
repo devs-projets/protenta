@@ -4,7 +4,8 @@ import { ISerre } from "@/types/serre";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export interface ISerreState {
-  serre: ISerre | null;
+  serres: ISerre[] | null;
+  currentSerre: ISerre | null;
   allCulture: ICulture[] | null;
   activeCulture: ICulture | null;
   loading: boolean;
@@ -14,8 +15,14 @@ export interface ISerreState {
 const storedUser: string | null =
   typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
+const lastSelectedSerre: string | null =
+  typeof window !== "undefined"
+    ? localStorage.getItem("lastSelectedSerre")
+    : null;
+
 const initialState: ISerreState = {
-  serre: null,
+  serres: null,
+  currentSerre: null,
   allCulture: null,
   activeCulture: null,
   loading: false,
@@ -24,7 +31,7 @@ const initialState: ISerreState = {
 
 export const currentSerre = createAsyncThunk("serre/cultures", async () => {
   const data = await getAllSerres(storedUser as string);
-  return data[0] || null;
+  return data || null;
 });
 
 const serreSlice = createSlice({
@@ -38,12 +45,21 @@ const serreSlice = createSlice({
         state.error = null;
       })
       .addCase(currentSerre.fulfilled, (state, action) => {
-        const thisActiveCulture = action.payload.allCulture?.find(
-          (c: ICulture) => !c.productionIsEnded
-        ) ?? null;
+        const payload = action.payload;
 
-        state.serre = action.payload;
-        state.allCulture = action.payload.allCulture;
+        const selectedSerre =
+          payload.find((s: ISerre) => s.id === lastSelectedSerre) ?? payload[0];
+
+        localStorage.setItem('lastSelectedSerre', selectedSerre.id) 
+
+        const thisActiveCulture =
+          selectedSerre.allCulture?.find(
+            (c: ICulture) => !c.productionIsEnded
+          ) ?? null;
+
+        state.serres = payload;
+        state.currentSerre = selectedSerre;
+        state.allCulture = selectedSerre.allCulture;
         state.activeCulture = thisActiveCulture;
         state.loading = false;
       })

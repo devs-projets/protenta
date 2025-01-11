@@ -21,6 +21,8 @@ import { useRouter } from "next/navigation";
 import { EUserRole } from "@/types/userRole";
 import { ICulture } from "@/types/culture";
 import NoActiveCultureAlert from "@/components/NoActiveCultureAlert";
+import { SerresComboBox } from "@/components/serre/Combobox";
+import { CultureComboBox } from "@/components/cultures/Combobox";
 
 export default function DashboardLayout({
   children,
@@ -82,14 +84,27 @@ export default function DashboardLayout({
             <Toaster />
             <SidebarInset className="h-screen">
               <header className="flex items-center justify-between gap-2 p-4 sticky top-0 bg-white z-100">
-                <div className="flex items-center">
+                <div className="flex items-center gap-3">
                   <SidebarTrigger className="-ml-1" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
-                  <div>
-                    <p>
+                  {/* <div className="flex items-center gap-3">
+                    <p className="block">
                       Serre : <span className="font-bold">{user?.allSerre[0].name}</span> | Culture :{" "}
                       <span className="font-bold">{activeCulture?.name}</span>
                     </p>
+                    <SerresComboBox />
+                  </div> */}
+                  <div className="flex items-center gap-3">
+                    <p className="block font-bold">
+                      Serre :
+                    </p>
+                    <SerresComboBox />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <p className="block font-bold">
+                      Culture :
+                    </p>
+                    <CultureComboBox />
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">

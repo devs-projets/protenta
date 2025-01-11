@@ -20,7 +20,7 @@ const CapteurId = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { serre, activeCulture } = useSelector((state: RootState) => state.serre);
+  const { currentSerre, activeCulture } = useSelector((state: RootState) => state.serre);
 
   const getThisCapteurLastData = async () => {
     setLoading(true);
@@ -29,7 +29,7 @@ const CapteurId = () => {
       throw Error("Token not found !");
     }
 
-    if (!serre) {
+    if (!currentSerre) {
       console.error('Serre not found !');
       return;
     }
@@ -41,7 +41,7 @@ const CapteurId = () => {
     try {
       const response = await getLatestData(
         access_token,
-        serre.id,
+        currentSerre.id,
         activeCulture.id,
         "capteur",
         localName
