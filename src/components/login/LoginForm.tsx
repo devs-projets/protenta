@@ -29,11 +29,12 @@ export function LoginForm() {
     const data: IUserCredentials = { userName, passWord };
     const response = await authUserService(data);
     console.log(response)
-    if(response) dispatch(login(response.replace('"', '')));
+    if(response) dispatch(login(response));
   };
 
   if(access_token) {
-    router.push('/culture-config');
+    // router.push('/culture-config');
+    router.push('/subscription');
   }
 
   return (
