@@ -10,6 +10,7 @@ import {
   ChevronDown,
   Sprout
 } from "lucide-react";
+import serreIcon from "@/assets/icons/serre.svg";
 
 import {
   Sidebar,
@@ -36,6 +37,11 @@ const data = {
     {
       title: "Dashboard",
       url: "/dashboard",
+      items: [],
+    },
+    {
+      title: "Serres",
+      url: "/dashboard/serres",
       items: [],
     },
     {
@@ -167,6 +173,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {item.title === "Données" && <CircleGauge />}
                         {item.title === "Capteurs" && <Cable />}
                         {item.title === "Cultures" && <Sprout />}
+                        {item.title === "Serres" && <img src={serreIcon.src} className="w-6 h-6" />}
                         {item.title}
                       </div>
 
