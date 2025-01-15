@@ -58,13 +58,13 @@ const transformSensorData = (
     value: (() => {
       switch (key) {
         case "Temperature":
-          return entry.averageTemp ? entry.averageTemp / 100 : 0;
+          return entry.averageTemp || 0;
         case "Humidité":
-          return entry.averageHumidity ? entry.averageHumidity / 100 : 0;
+          return entry.averageHumidity || 0;
         case "Lumière":
-          return entry.averageLightA ? entry.averageLightA / 1000 : 0;
+          return entry.averageLightA || 0;
         case "Pression atmosphérique":
-          return entry.averagePressure ? entry.averagePressure / 1000 : 0;
+          return entry.averagePressure || 0;
         case "Humidite du sol":
           return entry.averageSol || 0;
         case "Co2":

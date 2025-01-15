@@ -43,12 +43,12 @@ const Serres = () => {
               <form className="flex flex-col gap-5">
                 <div className="text-xl">
                   <Label htmlFor="nom" className="text-lg">
-                    Nom
+                    Identifiant de la serre
                   </Label>
                   <Input
                     id="nom"
                     type="text"
-                    placeholder="Nom de la serre"
+                    placeholder="serreId"
                     required
                     className="text-lg"
                     // onChange={(e) => setCultureName(e.target.value)}
@@ -56,12 +56,12 @@ const Serres = () => {
                 </div>
                 <div className="">
                   <Label htmlFor="type" className="text-lg">
-                    Type
+                    Identifiant des capteurs
                   </Label>
                   <Input
                     id="type"
                     type="text"
-                    placeholder="Type de la serre"
+                    placeholder="capteurId"
                     required
                     className="text-lg"
                     // onChange={(e) => setCultureType(e.target.value)}
@@ -69,32 +69,29 @@ const Serres = () => {
                 </div>
                 <div className="">
                   <Label htmlFor="variete" className="text-lg">
-                    Variété
+                    Identifiant de la protenta
                   </Label>
                   <Input
                     id="variete"
                     type="text"
-                    placeholder="Variété de la serre"
+                    placeholder="protentaId"
                     required
                     className="text-lg"
                     // onChange={(e) => setCultureVariety(e.target.value)}
                   />
                 </div>
                 <div className="">
-                  <Label htmlFor="description" className="text-lg">
-                    Description
+                  <Label htmlFor="variete" className="text-lg">
+                    Nom de la serre
                   </Label>
-                  <Textarea
-                    placeholder="Description de la serre ..."
-                    className="resize-none text-lg"
-                    // onChange={(e) => setCultureDescription(e.target.value)}
+                  <Input
+                    id="variete"
+                    type="text"
+                    placeholder="Nom de la serre"
+                    required
+                    className="text-lg"
+                    // onChange={(e) => setCultureVariety(e.target.value)}
                   />
-                </div>
-                <div className="flex items-center">
-                  <Label htmlFor="description" className="text-lg">
-                    Date de Début
-                  </Label>
-                  {/* <SimpleDatePiker onDateChange={setSelectedDate} /> */}
                 </div>
               </form>
               <AlertDialogFooter>

@@ -7,11 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TriangleAlert } from "lucide-react";
 
-const LICENSE_LENGTH = 20; // 5 groupes de 5 caractères
-const GROUP_SIZE = 5;
+const LICENSE_LENGTH = 18; // 5 groupes de 5 caractères
+const GROUP_SIZE = 6;
 
 async function validateLicense(licenseKey: string) {
-  if (licenseKey === "ABCDEFGHIJKLMNOPQRST") {
+  if (licenseKey === "ABCDEFGHIJKLMNOPQR") {
     return { success: true };
   } else {
     return { success: false, message: "Clé de licence invalide" };
@@ -131,7 +131,7 @@ export default function SubscriptionPage() {
                         />
                       );
                     })}
-                    {groupIndex < 3 && (
+                    {groupIndex < 2 && (
                       <div className="flex items-center justify-center">
                         <span className="block">-</span>
                       </div>
