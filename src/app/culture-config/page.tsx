@@ -21,7 +21,9 @@ const Page = () => {
   const [serres, setSerres] = useState<any>();
 
   const { access_token } = useSelector((state: RootState) => state.auth);
-  const { currentSerre: thisSerre, activeCulture } = useSelector((state: RootState) => state.serre);
+  const { currentSerre: thisSerre, activeCulture } = useSelector(
+    (state: RootState) => state.serre
+  );
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -47,10 +49,6 @@ const Page = () => {
     e.preventDefault();
     if (!serres || !access_token) {
       throw Error("Information  sur la serre ou l'utilisateur manquant !");
-    }
-
-    if (!activeCulture) {
-      throw Error("Une culture active");
     }
 
     try {

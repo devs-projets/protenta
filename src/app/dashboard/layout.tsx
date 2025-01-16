@@ -29,12 +29,16 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [activeCulture, setActiveCulture] = useState<ICulture | null>(null);
   const {
     user,
     loading: userLoading,
     access_token,
   } = useSelector((state: RootState) => state.auth);
+  const {
+    activeCulture,
+    allCulture,
+    loading: serreLoading,
+  } = useSelector((state: RootState) => state.serre);
   const router = useRouter();
 
   useEffect(() => {
@@ -42,37 +46,28 @@ export default function DashboardLayout({
       router.push("/login");
     }
 
-    const thisSerreAactiveCulture = user?.allSerre[0].allCulture.filter(
-      (c: ICulture) => !c.productionIsEnded
-    )[0];
-
-    if (thisSerreAactiveCulture) setActiveCulture(thisSerreAactiveCulture);
-
     if (
       !userLoading &&
+      !serreLoading &&
       user &&
+      allCulture &&
       user.role === EUserRole.SUDO &&
-      user.allSerre &&
-      user.allSerre.length > 0 &&
-      user.allSerre[0].allCulture &&
-      user.allSerre[0].allCulture.length === 0
+      allCulture.length === 0
     ) {
+      console.log(user);
+      console.log(allCulture);
       router.push("/culture-config");
-    } else if (
-      thisSerreAactiveCulture &&
-      !thisSerreAactiveCulture?.initialConfigId
-    ) {
+    } else if (activeCulture && !activeCulture.initialConfigId) {
       router.push("/dashboard/cultures");
     }
-  }, [userLoading]);
+  }, [userLoading, serreLoading]);
 
   return (
     <SocketProvider>
       <SocketManager>
         <SensorDataProvider>
-          
           <NoActiveCultureAlert />
-          
+
           <SidebarProvider
             style={
               {
@@ -87,23 +82,12 @@ export default function DashboardLayout({
                 <div className="flex items-center gap-3">
                   <SidebarTrigger className="-ml-1" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
-                  {/* <div className="flex items-center gap-3">
-                    <p className="block">
-                      Serre : <span className="font-bold">{user?.allSerre[0].name}</span> | Culture :{" "}
-                      <span className="font-bold">{activeCulture?.name}</span>
-                    </p>
-                    <SerresComboBox />
-                  </div> */}
                   <div className="flex items-center gap-3">
-                    <p className="block font-bold">
-                      Serre :
-                    </p>
+                    <p className="block font-bold">Serre :</p>
                     <SerresComboBox />
                   </div>
                   <div className="flex items-center gap-3">
-                    <p className="block font-bold">
-                      Culture :
-                    </p>
+                    <p className="block font-bold">Culture :</p>
                     <CultureComboBox />
                   </div>
                 </div>
