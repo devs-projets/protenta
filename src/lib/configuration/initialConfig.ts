@@ -17,21 +17,14 @@ export async function initialConfiguration(
       }
     );
 
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      alert(
-        `Erreur lors de la configuration de la serre :\n ${
-          errorResponse.message || "Erreur inconnue"
-        }`
-      );
-      return null;
+    if (!response) {
+      const errorResponse = response;
+      throw new Error(errorResponse)
     }
 
-    const responseData = await response.json();
-
-    return responseData;
+    return response;
   } catch (error) {
     console.error(error);
-    throw Error("Error while creating initial config");
+    throw new Error("Error while creating initial config");
   }
 }

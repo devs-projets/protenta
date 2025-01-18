@@ -11,6 +11,7 @@ import { RootState, useAppDispatch } from "@/store/store";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const Page = () => {
   const [cultureName, setCultureName] = useState<string>("");
@@ -64,19 +65,22 @@ const Page = () => {
       const serreId = serres.id;
 
       // TODO: Passer le bon id de la serre
-      const response = await addCulture(access_token, serreId, data);
+      const response = toast.promise(
+        addCulture(access_token, serreId, data),
+        {
+          loading: "Ajout de la culture en cours...",
+          success: "La culture a été ajoutée avec succès !",
+        }
+      );
 
-      if (response) {
-        dispatch(currentSerre());
-        clearStates();
-        alert("Culture ajoutée avec succès !");
-        router.push("/dashboard");
-      } else {
-        alert("Erreur lors de l'ajout de la culture.\nVeuillez réessayer !");
-      }
+      await response.unwrap();
+
+      dispatch(currentSerre());
+      clearStates();
+      router.push("/dashboard");
     } catch (error) {
       console.error("Erreur lors de l'ajout de la culture :", error);
-      alert("Erreur lors de l'ajout de la culture.");
+      toast.error("Une erreur est survenue lors de l'ajout de la culture. Veuillez réessayer.")
     }
 
     clearStates();

@@ -76,7 +76,7 @@ export default function DashboardLayout({
             }
           >
             <AppSidebar />
-            <Toaster />
+            {/* <Toaster /> */}
             <SidebarInset className="h-screen">
               <header className="flex items-center justify-between gap-2 p-4 sticky top-0 bg-white z-100">
                 <div className="flex items-center gap-3">

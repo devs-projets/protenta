@@ -31,6 +31,7 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 import { currentSerre } from "@/store/reducers/serre/serreSlice";
+import { toast } from "sonner";
 
 interface StepProps {
   step: number;
@@ -65,6 +66,7 @@ const StepOne = ({
   setCapteursNumber: React.Dispatch<SetStateAction<number | null>>;
 }) => {
   const [value, setValue] = useState<number | null>(null);
+  const [error, setError] = useState<boolean>(false);
   return (
     <div className="flex flex-col justify-between p-2">
       <div>
@@ -85,14 +87,16 @@ const StepOne = ({
           onChange={(e) => {
             setValue(parseInt(e.target.value));
             setCapteursNumber(parseInt(e.target.value));
+            setError(false);
           }}
         />
+        {error && <p className="text-red-400">Champs obligatoire</p>}
       </div>
       <div className="flex justify-end gap-5 mt-3">
         <button
           onClick={() => {
             if (!value) {
-              alert("Champs obligatoire");
+              setError(true);
               return;
             }
             setStep(step + 1);
@@ -279,30 +283,29 @@ const StepFour = ({
     }
 
     try {
-      const response = await initialConfiguration(
-        access_token,
-        serreId,
-        cultureId,
-        initialConfig
-      );
+      const response = toast.promise(
+        initialConfiguration(
+          access_token,
+          serreId,
+          cultureId,
+          initialConfig
+        ),
+        {
+          loading: "Configuration en cours...",
+          success: "Configuration enregistrée avec succès !",
+          error: "Erreur lors de de la configuration"
+        }
+      ).unwrap();
 
-      if (response.success) {
-        alert("Configuration enregistrée avec succès !");
-      }
-      // else {
-      //   alert(
-      //     "Erreur lors de l'enregistrement de la configuration.\nVeuillez réessayer !"
-      //   );
-      // }
+      const result = await response;
+      
+      // TODO : A corriger !!!!!!!
+      if (result.status === 200) handleDialogClose();
     } catch (error) {
       console.error(
         "Erreur lors de l'enregistrement de la configuration :",
         error
       );
-      // alert("Erreur lors de l'enregistrement de la configuration");
-    } finally {
-      // TODO : A corriger !!!!!!!
-      handleDialogClose();
     }
   };
 
@@ -510,7 +513,7 @@ const InitialConfig = ({
   }, [capteursNumber, actionnairesList, limites, floraison]);
 
   const handleDialogClose = () => {
-    setIsDialogOpen(false);
+    // setIsDialogOpen(false);
     dispatch(currentSerre());
   };
 
@@ -519,11 +522,6 @@ const InitialConfig = ({
       {/* <AlertDialog> */}
       <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <AlertDialogContent className="min-h-[600px]">
-          {/* <div className="flex justify-center items-center">
-            <div
-              style={{ boxShadow: "0px 2px 10px 7px rgba(0, 0, 0, 0.2)" }}
-              className="rounded-lg grid w-full max-w-lg h-[500px]"
-            > */}
           {step === 0 && <StepZero step={step} setStep={setStep} />}
           {step === 1 && (
             <StepOne
@@ -560,19 +558,6 @@ const InitialConfig = ({
               handleDialogClose={handleDialogClose}
             />
           )}
-          {/* </div>
-          </div> */}
-
-          {/* <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <button
-              type="button"
-              // onClick={handleNewCulture}
-              className="bg-primary text-white px-4 py-2 rounded-lg"
-            >
-              Ajouter
-            </button>
-          </AlertDialogFooter> */}
         </AlertDialogContent>
       </AlertDialog>
     </>

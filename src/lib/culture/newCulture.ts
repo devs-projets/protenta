@@ -14,12 +14,7 @@ export async function addCulture(access_token: string, serreId: string, data: an
 
     if (!response.ok) {
       const errorResponse = await response.json();
-      alert(
-        `Erreur lors de l'ajout d'une nouvelle culture :\n ${
-          errorResponse.message || "Erreur inconnue"
-        }`
-      );
-      return null;
+      throw new Error(errorResponse)
     }
 
     const responseData = await response.json();
@@ -27,6 +22,6 @@ export async function addCulture(access_token: string, serreId: string, data: an
     return responseData;
   } catch (err) {
     console.error(err);
-    throw Error("Error while creating culture");
+    throw new Error("Error while creating culture");
   }
 }
