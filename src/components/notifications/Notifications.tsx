@@ -22,7 +22,7 @@ import alertSoundFile from "@/assets/audio/alertSound.mp3";
 const Notifications = () => {
   const [open, setOpen] = useState(false);
   const { notifications, loadMore, isLoading, hasMore, reset } = useNotifications(open);
-  const { sensorNotification, sensorData } = useSocket();
+  const { sensorNotification } = useSocket();
 
   const notificationQueue = useRef<Array<any>>([]);
   const [isDisplaying, setIsDisplaying] = useState(false);
@@ -35,7 +35,7 @@ const Notifications = () => {
         displayNextNotification();
       }
     }
-  }, [sensorNotification, sensorData, open]);
+  }, [sensorNotification, open]);
 
   useEffect(() => {
     if (!open) {
