@@ -163,10 +163,10 @@ const ActivitiesPage = () => {
       if (log[key]) {
         actions.push(
           <Fragment key={log.id}>
-            <TableCell className="text-center text-gray-500">
+            <TableCell className="text-gray-500">
               {String(key)}
             </TableCell>
-            <TableCell className="text-center text-gray-500">
+            <TableCell className="text-gray-500">
               {String(log[key])}
             </TableCell>
           </Fragment>
