@@ -24,6 +24,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const Page = () => {
   const [cultureName, setCultureName] = useState<string>("");
@@ -46,7 +47,7 @@ const Page = () => {
     setSerres(thisSerre);
     if (thisSerreAllCulture && thisSerreAllCulture.length > 0) {
       setAllCulture(thisSerreAllCulture);
-      const active = thisSerreAllCulture.find((c) => !c.productionIsEnded);
+      const active = thisSerreAllCulture.find((c: any) => !c.productionIsEnded);
       if (active) {
         setHasInitConfig(activeCulture?.initialConfigId === null);
       } else {
@@ -83,19 +84,22 @@ const Page = () => {
       const serreId = serres.id;
 
       // TODO: Passer le bon id de la serre
-      const response = await addCulture(access_token, serreId, data);
-
-      if (response) {
-        dispatch(currentSerre());
-        clearStates();
-        setIsDialogOpen(false);
-        alert("Culture ajoutée avec succès !");
-      } else {
-        alert("Erreur lors de l'ajout de la culture.\nVeuillez réessayer !");
-      }
+      toast.promise(
+        addCulture(access_token, serreId, data),
+        {
+          loading: "Ajout de la culture en cours...",
+          success: () => {
+            dispatch(currentSerre());
+            clearStates();
+            setIsDialogOpen(false);
+            return "Culture ajoutée avec succès !"
+          },
+          error: "Erreur lors de l'ajout de la culture."
+        }
+      )
     } catch (error) {
       console.error("Erreur lors de l'ajout de la culture :", error);
-      alert("Erreur lors de l'ajout de la culture.");
+      toast.error("Erreur lors de l'ajout de la culture.");
     }
 
     clearStates();

@@ -18,8 +18,7 @@ export interface IUserCredentials {
   
       if (!res.ok) {
         const errorResponse = await res.json();
-        alert(`Erreur lors de l'authentification :\n ${errorResponse.message || "Erreur inconnue"}`);
-        return null;
+        throw new Error("Auth error")
       }
   
       const responseData = await res.json();

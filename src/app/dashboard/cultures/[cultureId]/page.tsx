@@ -22,6 +22,7 @@ import { FilePenLine, TriangleAlert, ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 const Page = () => {
   const [culture, setCulture] = useState<ICulture | null>(null);
@@ -91,29 +92,28 @@ const Page = () => {
       };
 
       // TODO: Passer le bon id de la serre
-      const response = await updateCulture(
-        access_token,
-        culture.id,
-        culture.serreId,
-        data
+      toast.promise(
+        updateCulture(
+          access_token,
+          culture.id,
+          culture.serreId,
+          data
+        ),
+        {
+          loading: "Modification de la culture en cours...",
+          success: () => {
+            dispatch(currentSerre());
+            clearStates();
+            setIsDialogOpen(false);
+            return "Culture mis à jour avec succès !"
+          },
+          error: "Erreur lors de la mise à jour de la culture.\nVeuillez réessayer !"
+        }
       );
-
-      if (response) {
-        dispatch(currentSerre());
-        clearStates();
-        setIsDialogOpen(false);
-        alert("Culture mis à jour avec succès !");
-      } else {
-        alert(
-          "Erreur lors de la mise à jour de la culture.\nVeuillez réessayer !"
-        );
-      }
     } catch (error) {
       console.error("Erreur lors de la mise à jour de la culture :", error);
-      alert("Erreur lors de l'ajout de la culture.");
+      toast.error("Erreur lors de l'ajout de la culture.");
     }
-
-    clearStates();
   };
 
   const handleClotureCulture = async () => {
@@ -128,25 +128,27 @@ const Page = () => {
         productionIsEnded: true,
       };
 
-      // TODO: Passer le bon id de la serre
-      const response = await updateCulture(
-        access_token,
-        culture.id,
-        culture.serreId,
-        data
-      );
-
-      if (response) {
-        dispatch(currentSerre());
-        clearStates();
-        setIsDialogOpen(false);
-        alert("Culture cloturée avec succès !");
-      } else {
-        alert("Erreur lors de la cloture de la culture.\nVeuillez réessayer !");
-      }
+      toast.promise(
+        updateCulture(
+          access_token,
+          culture.id,
+          culture.serreId,
+          data
+        ),
+        {
+          loading: "Cloture de la culture en cours...",
+          success: () => {
+            dispatch(currentSerre());
+            clearStates();
+            setIsDialogOpen(false);
+            return "Culture cloturée avec succès !"
+          },
+          error: "Erreur lors de l'ajout de la culture."
+        }
+      )
     } catch (error) {
       console.error("Erreur lors de la cloture de la culture :", error);
-      alert("Erreur lors de l'ajout de la culture.");
+      toast.error("Erreur lors de l'ajout de la culture.");
     }
   };
 

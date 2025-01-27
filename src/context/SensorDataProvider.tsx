@@ -119,6 +119,10 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
+  if (!user || !currentSerre) {
+    return null;
+  }
+
   return <div>{children}</div>;
 };
 

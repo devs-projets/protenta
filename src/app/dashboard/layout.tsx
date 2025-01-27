@@ -66,8 +66,6 @@ export default function DashboardLayout({
     <SocketProvider>
       <SocketManager>
         <SensorDataProvider>
-          <NoActiveCultureAlert />
-
           <SidebarProvider
             style={
               {
@@ -98,9 +96,12 @@ export default function DashboardLayout({
                 </div>
               </header>
               <div
-                className="flex-1"
+                className="flex-1 overflow-auto"
                 style={{ maxHeight: "calc(100vh - 4rem)" }}
               >
+                <div className="sticky top-0">
+                  <NoActiveCultureAlert />
+                </div>
                 {children}
               </div>
             </SidebarInset>

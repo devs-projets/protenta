@@ -15,6 +15,7 @@ import { User } from "@/types/user";
 import { deleteUser } from "@/lib/auth/deleteUser";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 const DeleteUser = ({
   user,
@@ -33,13 +34,21 @@ const DeleteUser = ({
     }
     
     try {
-      const response = await deleteUser(access_token, user.id);
-      setDeleteUser(true);
-      setIsDeleteDialogOpen(false);
-      alert(response.message);
+      toast.promise(
+        deleteUser(access_token, user.id),
+        {
+          loading: "Suspension de l'utilisateur...",
+          success: () => {
+            setDeleteUser(true);
+            setIsDeleteDialogOpen(false);
+            return "Utilisateur suspendu avec success !"
+          },
+          error: "Une erreur est survenue lors de la suppression des données de l'utilisateur."
+        }
+      )
     } catch (err) {
       console.error("An error occurred while fetching user data", err);
-      alert(
+      toast.error(
         "Une erreur est survenue lors de la suppression des données de l'utilisateur."
       );
     }

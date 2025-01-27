@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/store/reducers/auth/authSlice";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const {access_token} = useSelector((state: RootState) => state.auth);
@@ -28,8 +29,12 @@ export function LoginForm() {
   const submitLogin = async () => {
     const data: IUserCredentials = { userName, passWord };
     const response = await authUserService(data);
-    console.log(response)
-    if(response) dispatch(login(response));
+    if (response) {
+      toast.success("Connecté !");
+      dispatch(login(response));
+    } else {
+      toast.error('Erreur lors de la connexion !')
+    }
   };
 
   if(access_token) {

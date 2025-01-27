@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 export async function sendCommand(
   serreId: string,
   cultureId: string,
@@ -23,10 +25,10 @@ export async function sendCommand(
       const parsedResponse = responseText ? JSON.parse(responseText) : null;
 
       if (response.ok) {
-        alert(message);
+        toast.success(message);
         return { success: true, data: parsedResponse };
       } else {
-        alert(
+        toast.error(
           `Une erreur s'est produite : \nStatus Code = ${parsedResponse?.statusCode}\nVeuillez réessayer...`
         );
         return { success: false, error: parsedResponse };
@@ -37,7 +39,7 @@ export async function sendCommand(
     }
   } catch (error) {
     console.error("Erreur réseau ou serveur :", error);
-    alert(
+    toast.error(
       "Une erreur s'est produite lors de la communication avec le serveur. Vérifiez votre connexion."
     );
     return { success: false, error };

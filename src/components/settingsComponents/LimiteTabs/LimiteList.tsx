@@ -4,6 +4,7 @@ import { Save, X } from "lucide-react";
 import { sendCommand } from "@/lib/postData/sendCommands";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 export interface Limite {
   code: string;
@@ -141,14 +142,26 @@ const LimiteList = ({
     });
     const message = "Les limites ont été mises à jour avec succès !";
 
-    sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
-      (result) => {
-        if (result?.success) {
-          setReload(true);
-          setOnLimitesChange(false);
+    toast.promise(
+      sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
+        (result) => {
+          if (result?.success) {
+            setReload(true);
+            setOnLimitesChange(false);
+          }
         }
-      }
-    );
+      ),
+      {loading: "Envoie de la commande en cours..."}
+    )
+
+    // sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
+    //   (result) => {
+    //     if (result?.success) {
+    //       setReload(true);
+    //       setOnLimitesChange(false);
+    //     }
+    //   }
+    // );
   };
 
   return (

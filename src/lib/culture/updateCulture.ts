@@ -18,13 +18,7 @@ export const updateCulture = async (
     );
 
     if (!response.ok) {
-      const errorResponse = await response.json();
-      alert(
-        `Erreur lors de la mise à jour de la culture :\n ${
-          errorResponse.message || "Erreur inconnue"
-        }`
-      );
-      return null;
+      throw Error("Erreur lors de la mise à jour de la culture.")
     }
 
     const responseData = await response.json();

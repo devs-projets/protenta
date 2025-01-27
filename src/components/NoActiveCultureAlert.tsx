@@ -13,7 +13,7 @@ const NoActiveCultureAlert = () => {
   }
 
   return (
-    <div className="p-3 bg-red-200 flex justify-center items-center w-full gap-3">
+    <div className="p-3 bg-red-200 flex justify-center items-center w-full gap-3 rounded-lg">
       <TriangleAlert size={20} /><p>Pas de culture en cours</p>
     </div>
   );

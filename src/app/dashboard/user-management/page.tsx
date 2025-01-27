@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/select";
 import { EUserRole } from "@/types/userRole";
 import { generateStrongPassword } from "@/lib/auth/generateRandomPassWord";
+import { toast } from "sonner";
 
 const users = [
   {
@@ -119,21 +120,23 @@ const TableRow = ({
         phoneNumber: newPhone,
       };
 
-      const response = await updateUser(access_token, data, user.id);
+      toast.promise(
+        updateUser(access_token, data, user.id),
+        {
 
-      if (response) {
-        reinitUserInfo();
-        setOnUpdateUser(true);
-        setUpdateInfos(false);
-        alert("Utilisateur mis à jour avec succès !");
-      } else {
-        alert(
-          "Erreur lors de la mise à jour de l'utilisateur.\nVeuillez réessayer !"
-        );
-      }
+          loading: "Mise à jour de l'utilisateur en cours...",
+          success: () => {
+            reinitUserInfo();
+            setOnUpdateUser(true);
+            setUpdateInfos(false);
+            return "Utilisateur mis à jour avec succès !"
+          },
+          error: "Erreur lors de la mise à jour de l'utilisateur."
+        }
+      )
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
-      alert("Erreur lors de la mise à jour de l'utilisateur.");
+      toast.error("Erreur lors de la mise à jour de l'utilisateur.");
     }
   };
 
@@ -148,21 +151,22 @@ const TableRow = ({
         role: newRoleSelected,
       };
 
-      const response = await updateUser(access_token, data, user.id);
-
-      if (response) {
-        reinitUserInfo();
-        setOnUpdateUserRole(true);
-        setUpdateRole(false);
-        alert("Rôle de l'utilisateur mis à jour avec succès !");
-      } else {
-        alert(
-          "Erreur lors de la mise à jour du rôle l'utilisateur.\nVeuillez réessayer !"
-        );
-      }
+      toast.promise(
+        updateUser(access_token, data, user.id),
+        {
+          loading: "Mise à jour de l'utilisateur en cours...",
+          success: () => {
+            reinitUserInfo();
+            setOnUpdateUserRole(true);
+            setUpdateRole(false);
+            return "Rôle de l'utilisateur mis à jour avec succès !"
+          },
+          error: "Erreur lors de la mise à jour du Rôle."
+        }
+      )
     } catch (error) {
       console.error("Erreur lors de la mise à jour du Rôle :", error);
-      alert("Erreur lors de la mise à jour du Rôle.");
+      toast.error("Erreur lors de la mise à jour du Rôle.");
     }
   };
 
@@ -182,21 +186,20 @@ const TableRow = ({
         passWord: newPassWordGenerated,
       };
 
-      const response = await updateUser(access_token, data, user.id);
-
-      if (response) {
-        setUpdatePassWord(false);
-        alert(
-          `Mode de passe de l'utilisateur mis à jour avec succès !\nNoueau mot de passe = ${data.passWord}`
-        );
-      } else {
-        alert(
-          "Erreur lors de la mise à jour du mot de passe de l'utilisateur.\nVeuillez réessayer !"
-        );
-      }
+      toast.promise(
+        updateUser(access_token, data, user.id),
+        {
+          loading: "Mise à jour de l'utilisateur en cours...",
+          success: () => {
+            setUpdatePassWord(false);
+            return "Mode de passe de l'utilisateur mis à jour avec succès"
+          },
+          error: "Erreur lors de la mise à jour du mot de passe."
+        }
+      )
     } catch (error) {
       console.error("Erreur lors de la mise à jour du mot de passe :", error);
-      alert("Erreur lors de la mise à jour du mot de passe.");
+      toast.error("Erreur lors de la mise à jour du mot de passe.");
     }
   };
 
@@ -210,11 +213,6 @@ const TableRow = ({
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <div className="flex-shrink-0 h-10 w-10">
-            {/* <img
-            className="h-10 w-10 rounded-full"
-            src={user.image}
-            alt={user.name}
-          /> */}
             <UserCircle2Icon className="h-10 w-10" />
           </div>
           <div className="ml-4">
@@ -266,7 +264,7 @@ const TableRow = ({
             <Tabs defaultValue="Profil" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="Profil">Profil</TabsTrigger>
-                <TabsTrigger value="Permissions">Permissions</TabsTrigger>
+                <TabsTrigger value="Gestion">Gestion</TabsTrigger>
               </TabsList>
 
               <TabsContent value="Profil">
@@ -322,7 +320,7 @@ const TableRow = ({
                 </ul>
               </TabsContent>
 
-              <TabsContent value="Permissions">
+              <TabsContent value="Gestion">
                 <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="item-1">
                     <AccordionTrigger>Informations</AccordionTrigger>

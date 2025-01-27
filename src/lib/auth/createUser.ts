@@ -19,12 +19,7 @@ export async function createNewUser(
 
     if (!response.ok) {
       const errorResponse = await response.json();
-      alert(
-        `Erreur lors de l'authentification :\n ${
-          errorResponse.message || "Erreur inconnue"
-        }`
-      );
-      return null;
+      throw new Error(errorResponse.message)
     }
 
     const responseData = await response.json();

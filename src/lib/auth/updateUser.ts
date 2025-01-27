@@ -20,12 +20,7 @@ export async function updateUser(
 
     if (!response.ok) {
       const errorResponse = await response.json();
-      alert(
-        `Erreur lors de la mise à jours :\n ${
-          errorResponse.message || "Erreur inconnue"
-        }`
-      );
-      return null;
+      throw new Error(errorResponse.message);
     }
 
     const responseData = await response.json();

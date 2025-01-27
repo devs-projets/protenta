@@ -14,6 +14,7 @@ import {
 import { ILatestData } from "@/types/latestDataState";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 const FloraisonComponent = ({
   floraisonFetched,
@@ -75,13 +76,23 @@ const FloraisonComponent = ({
       MomentFloraison: floraison ? 1 : 0,
     };
     const message = "La floraison a été mis à jour avec succès !";
-    sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
-      (result) => {
-        if (result?.success) {
-          setReload(true);
+    toast.promise(
+      sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
+        (result) => {
+          if (result?.success) {
+            setReload(true);
+          }
         }
-      }
-    );
+      ),
+      {loading: "Envoi de la commande en cours..."}
+    )
+    // sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
+    //   (result) => {
+    //     if (result?.success) {
+    //       setReload(true);
+    //     }
+    //   }
+    // );
 
     setDisableEditMode(true);
   };

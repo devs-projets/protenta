@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 export async function restartMonitor(access_token: string) {
   try {
     const response = await fetch(
@@ -15,18 +17,13 @@ export async function restartMonitor(access_token: string) {
     );
 
     if (response.ok) {
-      alert("Monitor restarted !");
+      return response.ok;
     } else {
-      const errorMessage = await response.json();
-      alert(
-        `Une erreur s'est produite : \nStatus Code = ${
-          errorMessage && errorMessage.statusCode
-        }\nVeuillez réessayer...`
-      );
+      throw new Error("Une erreur s'est produite, veuillez réessayer !")
     }
   } catch (error) {
     console.error("Erreur réseau ou serveur :", error);
-    alert(
+    toast.error(
       "Une erreur s'est produite lors de la communication avec le serveur. Vérifiez votre connexion."
     );
   }

@@ -27,6 +27,7 @@ import { ICreateUser } from "@/types/user";
 import { createNewUser } from "@/lib/auth/createUser";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 const AddUser = ({ setNewUser }: { setNewUser: (param: boolean) => void }) => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -88,19 +89,22 @@ const AddUser = ({ setNewUser }: { setNewUser: (param: boolean) => void }) => {
         passWord: generatedPassWord,
       };
 
-      const response = await createNewUser(access_token, data);
-
-      if (response) {
-        setNewUser(true);
-        clearStates();
-        setIsDialogOpen(false);
-        alert("Utilisateur ajouté avec succès !");
-      } else {
-        alert("Erreur lors de l'ajout de l'utilisateur.\nVeuillez réessayer !");
-      }
+      toast.promise(
+        createNewUser(access_token, data),
+        {
+          loading: "Ajout de l'utilisateur en cours...",
+          success: () => {
+            setNewUser(true);
+            clearStates();
+            setIsDialogOpen(false);
+            return "Utilisateur ajouté avec succès !"
+          },
+          error: "Erreur lors de l'ajout de l'utilisateur."
+        }
+      )
     } catch (error) {
       console.error("Erreur lors de l'ajout de l'utilisateur :", error);
-      alert("Erreur lors de l'ajout de l'utilisateur.");
+      toast.error("Erreur lors de l'ajout de l'utilisateur.");
     }
   };
 

@@ -15,6 +15,7 @@ import {
 import { useSocket } from "@/context/SocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 const codes = {
   S1: { active: "101", inactive: "100" },
@@ -90,20 +91,37 @@ const ActionnaireListItem = ({
       const message = `L'actionnaire "${description}" été ${
         thisActionCodes === "active" ? "Activé" : "Désactivé"
       } avec succès !`;
-      sendCommand(
-        currentSerre.id,
-        activeCulture.id,
-        { [title]: thisActionCodes },
-        message,
-        access_token
-      ).then((result) => {
-        if (result?.success) {
-          setReload(true);
-          setSwitchStatus(!switchStatus);
-        } else {
-          setSwitchStatus(switchStatus);
-        }
-      });
+      toast.promise(
+        sendCommand(
+          currentSerre.id,
+          activeCulture.id,
+          { [title]: thisActionCodes },
+          message,
+          access_token
+        ).then((result) => {
+          if (result?.success) {
+            setReload(true);
+            setSwitchStatus(!switchStatus);
+          } else {
+            setSwitchStatus(switchStatus);
+          }
+        }),
+        {loading: "Envoi de la commande en cours..."}
+      )
+      // sendCommand(
+      //   currentSerre.id,
+      //   activeCulture.id,
+      //   { [title]: thisActionCodes },
+      //   message,
+      //   access_token
+      // ).then((result) => {
+      //   if (result?.success) {
+      //     setReload(true);
+      //     setSwitchStatus(!switchStatus);
+      //   } else {
+      //     setSwitchStatus(switchStatus);
+      //   }
+      // })
     }
   };
 
@@ -143,18 +161,33 @@ const ActionnaireListItem = ({
                   throw Error("Une culture active");
                 }
 
-                sendCommand(
-                  currentSerre.id,
-                  activeCulture.id,
-                  { [title]: value },
-                  message,
-                  access_token
-                ).then((result) => {
-                  if (result?.success) {
-                    setReload(true);
-                    setS12Valuee(value);
-                  }
-                });
+                toast.promise(
+                  sendCommand(
+                    currentSerre.id,
+                    activeCulture.id,
+                    { [title]: value },
+                    message,
+                    access_token
+                  ).then((result) => {
+                    if (result?.success) {
+                      setReload(true);
+                      setS12Valuee(value);
+                    }
+                  }),
+                  {loading: "Envoi de la commande en cours..."}
+                )
+                // sendCommand(
+                //   currentSerre.id,
+                //   activeCulture.id,
+                //   { [title]: value },
+                //   message,
+                //   access_token
+                // ).then((result) => {
+                //   if (result?.success) {
+                //     setReload(true);
+                //     setS12Valuee(value);
+                //   }
+                // });
               }}
             >
               <SelectTrigger>
