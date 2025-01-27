@@ -92,8 +92,9 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
 
   if (hourLoading || dayLoading || userLoading || serreLoading) {
     return (
-      <div className="h-screen flex justify-center items-center">
+      <div className="h-screen flex flex-col gap-3 justify-center items-center">
         <Spinner />
+        <p>Chargement des données de la serre ...</p>
       </div>
     );
   }
