@@ -12,10 +12,13 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useSocket } from "@/context/SocketContext";
+import { useParams } from "next/navigation";
 
 const MAX_DATA_POINTS = 60;
 
 interface RealTimeChartProps {
+  code: string;
   label: string; // Nom de la mesure (ex: Température, Humidité)
   unit: string; // Unité de mesure (ex: °C, %, lx)
   color: string; // Couleur de la ligne
@@ -40,6 +43,7 @@ const chartConfig = {
 };
 
 const RealTimeChart: React.FC<RealTimeChartProps> = ({
+  code,
   label,
   unit,
   color,
@@ -57,19 +61,20 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({
     }))
   );
 
+  const { sensorData } = useSocket();
+  const localName = useParams().capteurId as string;
+
   React.useEffect(() => {
-    const intervalId = setInterval(() => {
+    if (sensorData && sensorData.localName === localName) {
       setChartData((prevData) => {
         const newData = {
           date: new Date().toISOString(),
-          value: generateRandomData(),
+          value: sensorData[code],
         };
         return [...prevData.slice(1), newData];
       });
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [generateRandomData]);
+    }
+  }, [sensorData]);
 
   return (
     <ChartContainer
@@ -109,13 +114,16 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({
             <ChartTooltipContent
               className="w-[150px]"
               nameKey="value"
-              labelFormatter={(value) =>
-                new Date(value).toLocaleTimeString("fr-FR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                })
-              }
+              labelFormatter={() => (
+                <div>
+                  Heure :{" "}
+                  {new Date().toLocaleTimeString("fr-FR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  })}
+                </div>
+              )}
             />
           }
         />
