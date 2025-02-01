@@ -9,3 +9,9 @@ export interface ISerre {
   users: User[];
   allCulture: ICulture[];
 }
+
+export interface INewSerre {
+  serreId: string | null;
+  capteurId: string | null;
+  protentaName: string | null;
+}

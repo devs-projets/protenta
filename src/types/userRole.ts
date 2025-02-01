@@ -3,4 +3,5 @@ export enum EUserRole {
   USER = "USER",
   SUDO = "SUDO",
   EXPERT = "EXPERT",
+  DEV = "DEV"
 }

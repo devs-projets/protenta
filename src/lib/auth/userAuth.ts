@@ -24,7 +24,6 @@ export interface IUserCredentials {
       const responseData = await res.json();
       
       return responseData.access_token;
-  
     } catch (error) {
       console.error("Erreur réseau ou serveur :", error);
       return null;
