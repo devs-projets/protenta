@@ -13,9 +13,7 @@ const isTokenExpired = (token: string): boolean => {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     const exp = payload.exp;
-    console.log(exp)
     if (!exp) return false;
-    console.log(exp * 1000)
     return Date.now() >= exp * 1000;
   } catch (error) {
     console.error("Failed to decode token", error);

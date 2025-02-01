@@ -54,8 +54,6 @@ export default function DashboardLayout({
       user.role === EUserRole.SUDO &&
       allCulture.length === 0
     ) {
-      console.log(user);
-      console.log(allCulture);
       router.push("/culture-config");
     } else if (activeCulture && !activeCulture.initialConfigId) {
       router.push("/dashboard/cultures");

@@ -6,17 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TriangleAlert } from "lucide-react";
+import { activateSouscription } from "@/lib/souscription/activateSouscription";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
-const LICENSE_LENGTH = 18; // 5 groupes de 5 caractères
+const LICENSE_LENGTH = 18;
 const GROUP_SIZE = 6;
-
-async function validateLicense(licenseKey: string) {
-  if (licenseKey === "ABCDEFGHIJKLMNOPQR") {
-    return { success: true };
-  } else {
-    return { success: false, message: "Clé de licence invalide" };
-  }
-}
 
 export default function SubscriptionPage() {
   const [licenseKey, setLicenseKey] = useState(Array(LICENSE_LENGTH).fill(""));
@@ -25,9 +21,10 @@ export default function SubscriptionPage() {
   const router = useRouter();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+  const {access_token} = useSelector((state: RootState) => state.auth)
+
   useEffect(() => {
     inputRefs.current = inputRefs.current.slice(0, LICENSE_LENGTH);
-    // Place le focus sur le premier input au chargement de la page
     inputRefs.current[0]?.focus();
   }, []);
 
@@ -79,18 +76,28 @@ export default function SubscriptionPage() {
     setIsLoading(true);
     setError("");
 
-    const fullLicenseKey = licenseKey.join("");
-
+    const fullLicenseKey = licenseKey.join("").replace(/(.{6})/g, "$1-").replace(/-$/, "");
+  
     try {
-      const result = await validateLicense(fullLicenseKey);
-      if (result.success) {
-        router.push("/dashboard");
-      } else {
-        setError(
-          result.message ||
-            "Une erreur est survenue lors de la validation de la clé de licence."
-        );
+      if (!access_token) {
+        throw new Error("Access Token invalid !");
       }
+  
+      toast.promise(
+        activateSouscription(access_token, fullLicenseKey)
+          .then((result) => {
+            if (result) {
+              router.push("/dashboard");
+            } else {
+              throw new Error("Une erreur s'est produite lors de l'activation de la souscription.");
+            }
+          }),
+        {
+          loading: "Activation en cours ...",
+          success: "Souscription activée avec succès !",
+          error: (err) => err.message || "Une erreur est survenue. Veuillez réessayer.",
+        }
+      );
     } catch (err) {
       setError("Une erreur est survenue. Veuillez réessayer.");
     } finally {
