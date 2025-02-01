@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TableComponent } from "../view/Table";
 import { ChartComponent } from "../view/Chart";
@@ -12,11 +10,15 @@ import { RootState } from "@/store/store";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
-export function MoyenneTabs({
-  visualisationPeriode,
-}: {
+export interface IMoyenneTabsProps {
+  type?: string;
   visualisationPeriode: string;
-}) {
+}
+
+export function MoyenneTabs({
+  type,
+  visualisationPeriode,
+}: IMoyenneTabsProps) {
   const [data, setData] = useState<any>();
   const [filteredData, setFilteredData] = useState<any>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -102,7 +104,7 @@ export function MoyenneTabs({
         />
       </TabsContent>
       <TabsContent value="Graphique">
-        {<ChartComponent
+        <ChartComponent
           visualisationPeriode={visualisationPeriode}
           displayDateRange={
             visualisationPeriode === "Heures"
@@ -115,7 +117,7 @@ export function MoyenneTabs({
           }
           timeRange={visualisationPeriode === "Heures" ? selectedDate : selectedRange}
           sensorData={filteredData}
-        />}
+        />
       </TabsContent>
     </Tabs>
   );

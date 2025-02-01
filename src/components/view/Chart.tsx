@@ -34,35 +34,46 @@ import { DateRange } from "react-day-picker";
 export const metrics = [
   {
     key: "Temperature",
+    code: "temperature",
     title: "Graphe de Température",
     unit: "°C",
     graphDomain: [10, 40],
   },
   {
     key: "Humidité",
+    code: "humidite",
     title: "Graphe d'Humidité",
     unit: "%",
     graphDomain: [30, 100],
   },
   {
     key: "Lumière",
+    code: "lumiere",
     title: "Graphe de la Lumière",
     unit: "lux",
     graphDomain: [0, 60000],
   },
   {
     key: "Pression atmosphérique",
+    code: "pressionatm",
     title: "Graphe de Pression Atmosphérique",
     unit: "bar",
     graphDomain: [950, 1050],
   },
   {
     key: "Humidite du sol",
+    code: "humditesol",
     title: "Graphe de l'Humidité du Sol",
     unit: "",
     graphDomain: [0, 0],
   },
-  { key: "Co2", title: "Graphe de CO2", unit: "ppm", graphDomain: [300, 2000] },
+  {
+    key: "Co2",
+    code: "co2",
+    title: "Graphe de CO2",
+    unit: "ppm",
+    graphDomain: [300, 2000],
+  },
 ];
 
 // Fonction pour transformer les données de `sensorData` en format graphique
@@ -174,9 +185,9 @@ const transformSensorData = (
       date: time,
       value: dataMap.get(time) || 0, // Valeur par défaut si absente
     }));
-  } 
+  }
 
-  if (visualPeriod === 'Jours') {
+  if (visualPeriod === "Jours") {
     const fullTimeRange = generateDaylyTimeRange(timeRange);
     const dataMap = new Map(
       formattedData.map((item) => [item.date, item.value])
@@ -184,8 +195,8 @@ const transformSensorData = (
 
     return fullTimeRange.map((time) => ({
       date: time,
-      value: dataMap.get(time) || 0
-    }))
+      value: dataMap.get(time) || 0,
+    }));
   }
 
   return formattedData;
@@ -265,9 +276,6 @@ const Chart = ({
     <Card className="my-2">
       <CardHeader className="space-y-0 pb-3">
         <CardTitle>{title}</CardTitle>
-        <CardDescription>
-          {title} enregistrée {displayDateRange} en {unit === "" ? "N/A" : unit}
-        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer
@@ -331,9 +339,7 @@ const Chart = ({
       </CardContent>
       <CardFooter>
         <div className="text-sm">
-          {data.length > 0
-            ? `Données du ${data[0].date} au ${data[data.length - 1].date}`
-            : "Aucune donnée disponible"}
+          {title} enregistrée {displayDateRange} en {unit === "" ? "N/A" : unit}
         </div>
       </CardFooter>
     </Card>
@@ -342,11 +348,13 @@ const Chart = ({
 
 // Composant principal
 export function ChartComponent({
+  type,
   visualisationPeriode,
   displayDateRange,
   timeRange,
   sensorData,
 }: {
+  type?: string;
   visualisationPeriode: string;
   displayDateRange: string;
   timeRange: Date | DateRange | undefined;
@@ -356,13 +364,16 @@ export function ChartComponent({
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-y-auto">
         <div className="flex flex-col px-5">
-          {metrics.map(({ key, title, graphDomain, unit }) => {
+          {metrics.map(({ key, code, title, graphDomain, unit }) => {
             const data = transformSensorData(
               sensorData,
               key,
               visualisationPeriode,
               timeRange
             );
+
+            if(type && type !== code) return null;
+            
             return (
               <Chart
                 key={key}

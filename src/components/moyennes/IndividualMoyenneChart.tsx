@@ -24,6 +24,7 @@ import { DatePickerWithRange } from "../view/DatePiker";
 import { DateRange } from "react-day-picker";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { ChartComponent } from "../view/Chart";
 
 const generateHourlyTimeRange = () => {
   const now = new Date();
@@ -264,10 +265,10 @@ const IndividualMoyenneChart = ({ data }: { data: ISensorStoredData[] }) => {
 
   return (
     <div className="flex-1 rounded-xl bg-muted/50 p-5 mb-10">
-      <div className="h-full overflow-y-auto">
-        <div className="flex justify-end gap-2 mb-3 items-center">
+      <div className="flex justify-end items-center py-2 rounded-lg bg-[#E5E7EB]">
+        <div className="flex items-center">
           <div>
-            <p>Visuliser les données en :</p>
+            <p className="mr-3">Visuliser les données en </p>
           </div>
           <div className="flex items-center gap-3 justify-between">
             <span
@@ -291,16 +292,24 @@ const IndividualMoyenneChart = ({ data }: { data: ISensorStoredData[] }) => {
             <DatePickerWithRange onDateRangeChange={setSelectedRange} />
           )}
         </div>
-        <Chart
-          title={`Graphe de ${thisItem.name}`}
-          dataKey={thisItem.name}
-          data={paramData}
-          visualisationPeriode={visualisationPeriode}
-          visualPeriod={
-            visualisationPeriode === "Heures" ? selectedDate : selectedRange
-          }
-        />
       </div>
+      <ChartComponent
+        type={decodedParam}
+        visualisationPeriode={visualisationPeriode}
+        displayDateRange={
+          visualisationPeriode === "Heures"
+            ? `le ${selectedDate?.toLocaleDateString("fr-FR") || ""}`
+            : selectedRange
+            ? `du ${selectedRange.from?.toLocaleDateString("fr-FR") || ""} au ${
+                selectedRange.to?.toLocaleDateString("fr-FR") || ""
+              }`
+            : ""
+        }
+        timeRange={
+          visualisationPeriode === "Heures" ? selectedDate : selectedRange
+        }
+        sensorData={filteredData}
+      />
     </div>
   );
 };
