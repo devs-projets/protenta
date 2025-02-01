@@ -9,12 +9,29 @@ export interface AuthState {
   error: string | null;
 }
 
+const isTokenExpired = (token: string): boolean => {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const exp = payload.exp;
+    console.log(exp)
+    if (!exp) return false;
+    console.log(exp * 1000)
+    return Date.now() >= exp * 1000;
+  } catch (error) {
+    console.error("Failed to decode token", error);
+    return true;
+  }
+};
 
 const storedUser: string | null =
   typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
+if (storedUser && isTokenExpired(storedUser)) {
+  localStorage.removeItem("access_token");
+}
+
 const initialState: AuthState = {
-  access_token: storedUser,
+  access_token: storedUser && !isTokenExpired(storedUser) ? storedUser : null,
   user: null,
   loading: false,
   error: null,
