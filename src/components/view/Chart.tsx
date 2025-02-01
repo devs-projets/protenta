@@ -28,6 +28,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useEffect, useState } from "react";
 import { ILatestData } from "@/types/latestDataState";
+import { DateRange } from "react-day-picker";
 
 // Configuration des métriques
 export const metrics = [
@@ -78,10 +79,59 @@ const generateHourlyTimeRange = () => {
   return hours;
 };
 
+// Fonction pour transformer les données de `sensorData` en format graphique
+const generateDaylyTimeRange = (timeRange: DateRange | undefined) => {
+  if (!timeRange || !timeRange.from || !timeRange.to) {
+    // Si aucun intervalle n'est fourni, générer les 30 derniers jours par défaut
+    const now = new Date();
+    const days = [];
+    for (let i = 29; i >= 0; i--) {
+      const day = new Date();
+      day.setDate(now.getDate() - i);
+      days.push(
+        day.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })
+      );
+    }
+    return days.reverse();
+  }
+
+  const from = new Date(timeRange.from);
+  const to = new Date(timeRange.to);
+  const days = [];
+
+  // Calculer le nombre de jours dans l'intervalle
+  const diffTime = Math.abs(to.getTime() - from.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  // Si l'intervalle est inférieur à 30 jours, compléter avec des jours supplémentaires
+  if (diffDays < 30) {
+    const extraDays = 30 - diffDays;
+    for (let i = extraDays; i > 0; i--) {
+      const day = new Date(from);
+      day.setDate(from.getDate() - i);
+      days.push(
+        day.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })
+      );
+    }
+  }
+
+  // Ajouter les jours de l'intervalle
+  for (let i = 0; i <= diffDays; i++) {
+    const day = new Date(from);
+    day.setDate(from.getDate() + i);
+    days.push(
+      day.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" })
+    );
+  }
+
+  return days;
+};
+
 const transformSensorData = (
   sensorData: ISensorStoredData[],
   key: string,
-  visualPeriod: string
+  visualPeriod: string,
+  timeRange: any
 ) => {
   const formattedData = sensorData.map((entry) => ({
     date:
@@ -124,6 +174,18 @@ const transformSensorData = (
       date: time,
       value: dataMap.get(time) || 0, // Valeur par défaut si absente
     }));
+  } 
+
+  if (visualPeriod === 'Jours') {
+    const fullTimeRange = generateDaylyTimeRange(timeRange);
+    const dataMap = new Map(
+      formattedData.map((item) => [item.date, item.value])
+    );
+
+    return fullTimeRange.map((time) => ({
+      date: time,
+      value: dataMap.get(time) || 0
+    }))
   }
 
   return formattedData;
@@ -162,8 +224,6 @@ const Chart = ({
           }
           return obj;
         }, {});
-
-      console.log("List des limites:", limitesList);
 
       switch (dataKey) {
         case "Temperature":
@@ -284,10 +344,12 @@ const Chart = ({
 export function ChartComponent({
   visualisationPeriode,
   displayDateRange,
+  timeRange,
   sensorData,
 }: {
   visualisationPeriode: string;
   displayDateRange: string;
+  timeRange: Date | DateRange | undefined;
   sensorData: ISensorStoredData[];
 }) {
   return (
@@ -298,7 +360,8 @@ export function ChartComponent({
             const data = transformSensorData(
               sensorData,
               key,
-              visualisationPeriode
+              visualisationPeriode,
+              timeRange
             );
             return (
               <Chart
