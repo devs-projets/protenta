@@ -11,26 +11,26 @@ import Spinner from "@/components/Spinner";
 
 const Login = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  // const { access_token } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
 
-  console.log(access_token)
+  // console.log(access_token)
 
-  useEffect(() => {
-    if (access_token) {
-      router.push('/dashboard');
-    } else {
-      setLoading(false);
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (access_token) {
+  //     router.push('/dashboard');
+  //   } else {
+  //     setLoading(false);
+  //   }
+  // }, [])
 
-  if (loading) {
-    return (
-      <div className="h-screen flex justify-center items-center">
-        <Spinner />
-      </div>
-    )
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="h-screen flex justify-center items-center">
+  //       <Spinner />
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="flex justify-center items-center h-screen">

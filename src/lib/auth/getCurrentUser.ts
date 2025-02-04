@@ -1,5 +1,6 @@
 import { User } from "@/types/user";
 import { defineCurrentSerre } from "../serre/currentSerre";
+import { EUserRole } from "@/types/userRole";
 
 export async function getCurrentUser(access_token: string): Promise<User> {
   try {
@@ -18,10 +19,12 @@ export async function getCurrentUser(access_token: string): Promise<User> {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data = await response.json();
-    const serreId = data.allSerre[0].id;
-    await defineCurrentSerre(access_token, serreId);
-    return data;
+    const user = await response.json();
+    if (user && user.role !== EUserRole.DEV) {
+      const serreId = user.allSerre[0].id;
+      await defineCurrentSerre(access_token, serreId);
+    }
+    return user;
   } catch (error) {
     console.error(error);
     throw Error("Error while fetching user data");

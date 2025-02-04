@@ -11,19 +11,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Leaf } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { authUserService, IUserCredentials } from "@/lib/auth/userAuth";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/store/reducers/auth/authSlice";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/store/store";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthProvider";
+import { EUserRole } from "@/types/userRole";
+import React from "react";
 
 export function LoginForm() {
-  const {access_token} = useSelector((state: RootState) => state.auth);
+  // const { access_token } = useSelector((state: RootState) => state.auth);
   const [userName, setUserName] = useState<string>("");
   const [passWord, setPassWord] = useState<string>("");
   const dispatch = useDispatch();
+  const { login, user } = useAuth();
   const router = useRouter();
 
   const submitLogin = async () => {
@@ -31,16 +35,28 @@ export function LoginForm() {
     const response = await authUserService(data);
     if (response) {
       toast.success("Connecté !");
-      dispatch(login(response));
+      login(response);
+      // dispatch(login(response));
     } else {
-      toast.error('Erreur lors de la connexion !')
+      toast.error("Erreur lors de la connexion !");
     }
   };
 
-  if(access_token) {
-    // router.push('/culture-config');
-    router.push('/subscription');
-  }
+  useEffect(() => {
+    if (user) {
+      console.log(user)
+      if (user.role === EUserRole.DEV) {
+        router.push("/dev-dashboard");
+      } else {
+        router.push("/dashboard");
+      }
+    }
+  }, [user]);
+
+  // if (access_token) {
+  //   // router.push('/culture-config');
+  //   router.push("/subscription");
+  // }
 
   return (
     <Card
@@ -59,19 +75,23 @@ export function LoginForm() {
       <CardContent>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="userName" className="text-lg">Nom d'utilisateur</Label>
+            <Label htmlFor="userName" className="text-lg">
+              Nom d'utilisateur
+            </Label>
             <Input
               id="userName"
               type="text"
               placeholder="Saisissez votre nom d'utilisateur"
               required
               onChange={(e) => setUserName(e.target.value)}
-               className="text-lg"
+              className="text-lg"
             />
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
-              <Label htmlFor="password" className="text-lg">Mot de passe</Label>
+              <Label htmlFor="password" className="text-lg">
+                Mot de passe
+              </Label>
             </div>
             <Input
               id="password"
@@ -79,7 +99,7 @@ export function LoginForm() {
               required
               placeholder="Saisissez votre mot de passe"
               onChange={(e) => setPassWord(e.target.value)}
-               className="text-lg"
+              className="text-lg"
             />
             <Link href="#" className="inline-block text-sm underline">
               Mot de passe oublié ?

@@ -6,6 +6,7 @@ import "./globals.css";
 import { Provider } from "react-redux";
 import store from "@/store/store";
 import { Toaster } from "sonner";
+import AuthProvider from "@/context/AuthProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,7 +35,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster richColors />
-        <Provider store={store}>{children}</Provider>
+        <AuthProvider>
+          <Provider store={store}>{children}</Provider>
+        </AuthProvider>
       </body>
     </html>
   );

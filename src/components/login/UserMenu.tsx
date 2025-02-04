@@ -18,7 +18,7 @@ const UserMenu = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    router.push("/login");
+    router.push("/auth");
   };
 
   return (
