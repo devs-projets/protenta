@@ -3,19 +3,31 @@
 import Spinner from "@/components/Spinner";
 import { fetchDayData } from "@/store/reducers/dayData/dayDataSlice";
 import { fetchHourData } from "@/store/reducers/hourDate/hourDataSlice";
+import { currentUser } from "@/store/reducers/auth/authSlice";
 import { fetchMinuteData } from "@/store/reducers/minutesData/minutesDataSlice";
 import { RootState, useAppDispatch } from "@/store/store";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { TriangleAlert } from "lucide-react";
 import { fetchLatestData } from "@/store/reducers/latestData/latestDataSlice";
+import { currentSerre as fetchCurrentSerre } from "@/store/reducers/serre/serreSlice";
 
 const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
+  const [serreLoaded, setSerreLoaded] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
-  // const { loading: minuteLoading, error: minuteError } = useSelector(
-  //   (state: RootState) => state.minuteData
-  // );
+  const {
+    user,
+    loading: userLoading,
+    error: userError,
+  } = useSelector((state: RootState) => state.auth);
+
+  const {
+    currentSerre,
+    activeCulture,
+    loading: serreLoading,
+    error: serreError,
+  } = useSelector((state: RootState) => state.serre);
 
   const { loading: hourLoading, error: hourError } = useSelector(
     (state: RootState) => state.hourData
@@ -26,8 +38,18 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const fetchLatestDataWithBackup = async () => {
+    if (!currentSerre) {
+      console.error("No serre found !");
+      return;
+    }
+
+    if (!activeCulture) {
+      console.error("No serre found !");
+      return;
+    }
+
     try {
-      const data = await dispatch(fetchLatestData()).unwrap();
+      const data = await dispatch(fetchLatestData({serreId: currentSerre.id, cultureId: activeCulture?.id})).unwrap();
       localStorage.setItem("latestData", JSON.stringify(data));
     } catch {
       const localData = localStorage.getItem("latestData");
@@ -39,30 +61,47 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const fetchDatas = () => {
-    // dispatch(fetchMinuteData());
-    dispatch(fetchHourData());
-    dispatch(fetchDayData());
+    dispatch(currentUser());
+    dispatch(fetchCurrentSerre());
   };
 
+  // Fetch serre and user information
+  useEffect(() => {
+    fetchDatas();
+  }, [dispatch]);
+
+  // Fetch hour and day data when serre is ready
+  useEffect(() => {
+    if (currentSerre && currentSerre.id && activeCulture && activeCulture.id) {
+      dispatch(
+        fetchHourData({ serreId: currentSerre.id, cultureId: activeCulture.id })
+      );
+      dispatch(
+        fetchDayData({ serreId: currentSerre.id, cultureId: activeCulture.id })
+      );
+    }
+  }, [currentSerre, dispatch]);
+
+  // Fetch latest data periodically
   useEffect(() => {
     fetchLatestDataWithBackup();
-    fetchDatas();
 
     const interval = setInterval(fetchLatestDataWithBackup, 1000);
     return () => clearInterval(interval);
-  }, [dispatch]);
+  }, [dispatch, currentSerre]);
 
-  if (hourLoading || dayLoading) {
+  if (hourLoading || dayLoading || userLoading || serreLoading) {
     return (
-      <div className="h-screen flex justify-center items-center">
+      <div className="h-screen flex flex-col gap-3 justify-center items-center">
         <Spinner />
+        <p>Chargement des données de la serre ...</p>
       </div>
     );
   }
 
   // Gestion des erreurs
   const errorMessage =
-    hourError || dayError
+    hourError || dayError || userError || serreError
       ? "Une erreur est survenue lors du chargement des données."
       : null;
 
@@ -79,6 +118,10 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
         </button>
       </div>
     );
+  }
+
+  if (!user || !currentSerre) {
+    return null;
   }
 
   return <div>{children}</div>;

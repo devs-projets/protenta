@@ -10,6 +10,8 @@ import { getLatestData } from "@/lib/fetchData/getLatestData";
 import { ILatestData } from "@/types/latestDataState";
 import Spinner from "@/components/Spinner";
 import { TriangleAlert } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const CapteurId = () => {
   const localName = useParams().capteurId as string;
@@ -17,12 +19,33 @@ const CapteurId = () => {
   const [data, setData] = useState<ILatestData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { currentSerre, activeCulture } = useSelector((state: RootState) => state.serre);
 
   const getThisCapteurLastData = async () => {
     setLoading(true);
     setError(null);
+    if (!access_token) {
+      throw Error("Token not found !");
+    }
+
+    if (!currentSerre) {
+      console.error('Serre not found !');
+      return;
+    }
+
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
+
     try {
-      const response = await getLatestData("capteur", localName);
+      const response = await getLatestData(
+        access_token,
+        currentSerre.id,
+        activeCulture.id,
+        "capteur",
+        localName
+      );
       setData(response);
     } catch (err) {
       console.error("An error occurred while fetching capteur data", err);
@@ -64,7 +87,7 @@ const CapteurId = () => {
     return (
       <div className="h-full flex flex-col justify-center items-center">
         <TriangleAlert size={40} />
-        <p className="text-lg font-semibold my-4">{error}</p>
+        <p className="text-lg text-center font-semibold my-4">{error}</p>
         <button
           className="bg-primary text-white px-4 py-2 rounded"
           onClick={getThisCapteurLastData}

@@ -1,4 +1,6 @@
-export async function restartMonitor() {
+import { toast } from "sonner";
+
+export async function restartMonitor(access_token: string) {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor-restart`,
@@ -6,6 +8,7 @@ export async function restartMonitor() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${access_token}`,
         },
         body: JSON.stringify({
           status: true,
@@ -14,18 +17,13 @@ export async function restartMonitor() {
     );
 
     if (response.ok) {
-      alert("Monitor restarted !");
+      return response.ok;
     } else {
-      const errorMessage = await response.json();
-      alert(
-        `Une erreur s'est produite : \nStatus Code = ${
-          errorMessage && errorMessage.statusCode
-        }\nVeuillez réessayer...`
-      );
+      throw new Error("Une erreur s'est produite, veuillez réessayer !")
     }
   } catch (error) {
     console.error("Erreur réseau ou serveur :", error);
-    alert(
+    toast.error(
       "Une erreur s'est produite lors de la communication avec le serveur. Vérifiez votre connexion."
     );
   }

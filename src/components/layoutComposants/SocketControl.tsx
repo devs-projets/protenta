@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Power } from "lucide-react";
 import { restartMonitor } from "@/lib/postData/restartMonitor";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 export default function SocketControl() {
   const {
@@ -15,14 +18,25 @@ export default function SocketControl() {
     disconnect,
   } = useSocket();
   const [isLoading, setIsLoading] = useState(false);
+  const { access_token } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     console.log("Statut de connexion :", isConnected);
   }, [isConnected]);
 
   const handleToggleConnection = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+    
     setIsLoading(true);
-    restartMonitor();
+    toast.promise(restartMonitor(access_token), {
+      loading: "Redémarré en cours...",
+      success: "Redémarré",
+      error: "Une erreur s'est produite, veuillez réessayer !"
+    })
+    restartMonitor(access_token);
     setIsLoading(false);
     // try {
     //   if (isConnected) {

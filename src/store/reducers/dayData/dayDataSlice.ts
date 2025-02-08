@@ -10,8 +10,9 @@ const initialState: IDayDataSate = {
 
 export const fetchDayData = createAsyncThunk(
   "dayData/fetchDayData",
-  async () => {
-    const data = await getStoredSensorData("day");
+  async ({ serreId, cultureId }: { serreId: string; cultureId: string }) => {
+    const token = localStorage.getItem("access_token");
+    const data = await getStoredSensorData("day", token as string, serreId, cultureId);
     return data || [];
   }
 );

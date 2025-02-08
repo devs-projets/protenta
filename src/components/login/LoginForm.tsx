@@ -11,8 +11,37 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Leaf } from "lucide-react";
+import { useState } from "react";
+import { authUserService, IUserCredentials } from "@/lib/auth/userAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "@/store/reducers/auth/authSlice";
+import { useRouter } from "next/navigation";
+import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 export function LoginForm() {
+  const {access_token} = useSelector((state: RootState) => state.auth);
+  const [userName, setUserName] = useState<string>("");
+  const [passWord, setPassWord] = useState<string>("");
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const submitLogin = async () => {
+    const data: IUserCredentials = { userName, passWord };
+    const response = await authUserService(data);
+    if (response) {
+      toast.success("Connecté !");
+      dispatch(login(response));
+    } else {
+      toast.error('Erreur lors de la connexion !')
+    }
+  };
+
+  if(access_token) {
+    // router.push('/culture-config');
+    router.push('/subscription');
+  }
+
   return (
     <Card
       className="mx-auto max-w-sm"
@@ -23,46 +52,43 @@ export function LoginForm() {
           <Leaf size={80} color="green" />
           Connexion
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-lg text-center">
           Entrez votre email ci-dessous pour vous connecter à votre compte
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="userName" className="text-lg">Nom d'utilisateur</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
+              id="userName"
+              type="text"
+              placeholder="Saisissez votre nom d'utilisateur"
               required
+              onChange={(e) => setUserName(e.target.value)}
+               className="text-lg"
             />
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password" className="text-lg">Mot de passe</Label>
             </div>
-            <Input id="password" type="password" required />
+            <Input
+              id="password"
+              type="password"
+              required
+              placeholder="Saisissez votre mot de passe"
+              onChange={(e) => setPassWord(e.target.value)}
+               className="text-lg"
+            />
             <Link href="#" className="inline-block text-sm underline">
               Mot de passe oublié ?
             </Link>
           </div>
-          <Link
-            onClick={() => localStorage.setItem("userRole", "expert")}
-            href={"/dashboard"}
-            className="text-center inline-block"
-          >
-            <Button type="button" className="w-full mb-5">
-              Connexion
-            </Button>
-          </Link>
+          <Button type="button" className="w-full mb-5" onClick={submitLogin}>
+            Connexion
+          </Button>
         </div>
-        {/* <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="#" className="underline">
-            Sign up
-          </Link>
-        </div> */}
       </CardContent>
     </Card>
   );

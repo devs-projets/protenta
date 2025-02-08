@@ -13,52 +13,101 @@ import {
 import { SocketProvider } from "@/context/SocketContext";
 import { SocketManager } from "@/context/SocketManager";
 import { Toaster } from "@/components/ui/sonner";
-import { Provider } from "react-redux";
-import store from "@/store/store";
 import SensorDataProvider from "@/context/SensorDataProvider";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { EUserRole } from "@/types/userRole";
+import { ICulture } from "@/types/culture";
+import NoActiveCultureAlert from "@/components/NoActiveCultureAlert";
+import { SerresComboBox } from "@/components/serre/Combobox";
+import { CultureComboBox } from "@/components/cultures/Combobox";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const {
+    user,
+    loading: userLoading,
+    access_token,
+  } = useSelector((state: RootState) => state.auth);
+  const {
+    activeCulture,
+    allCulture,
+    loading: serreLoading,
+  } = useSelector((state: RootState) => state.serre);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!access_token) {
+      router.push("/login");
+    }
+
+    if (
+      !userLoading &&
+      !serreLoading &&
+      user &&
+      allCulture &&
+      user.role === EUserRole.SUDO &&
+      allCulture.length === 0
+    ) {
+      console.log(user);
+      console.log(allCulture);
+      router.push("/culture-config");
+    } else if (activeCulture && !activeCulture.initialConfigId) {
+      router.push("/dashboard/cultures");
+    }
+  }, [userLoading, serreLoading]);
+
   return (
-    <Provider store={store}>
-      <SocketProvider>
-        <SocketManager>
-          <SensorDataProvider>
-            <SidebarProvider
-              style={
-                {
-                  "--sidebar-width": "19rem",
-                } as React.CSSProperties
-              }
-            >
-              <AppSidebar />
-              <Toaster />
-              <SidebarInset className="h-screen">
-                <header className="flex items-center justify-between gap-2 p-4 sticky top-0 bg-white z-100">
-                  <div className="flex items-center">
-                    <SidebarTrigger className="-ml-1" />
-                    <Separator orientation="vertical" className="mr-2 h-4" />
+    <SocketProvider>
+      <SocketManager>
+        <SensorDataProvider>
+          <SidebarProvider
+            style={
+              {
+                "--sidebar-width": "19rem",
+              } as React.CSSProperties
+            }
+          >
+            <AppSidebar />
+            {/* <Toaster /> */}
+            <SidebarInset className="h-screen">
+              <header className="flex items-center justify-between gap-2 p-4 sticky top-0 bg-white z-100">
+                <div className="flex items-center gap-3">
+                  <SidebarTrigger className="-ml-1" />
+                  <Separator orientation="vertical" className="mr-2 h-4" />
+                  <div className="flex items-center gap-3">
+                    <p className="block font-bold">Serre :</p>
+                    <SerresComboBox />
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <SocketControl />
-                    <CurrentDate />
-                    <Notifications />
+                  <div className="flex items-center gap-3">
+                    <p className="block font-bold">Culture :</p>
+                    <CultureComboBox />
                   </div>
-                </header>
-                <div
-                  className="flex-1"
-                  style={{ maxHeight: "calc(100vh - 4rem)" }}
-                >
-                  {children}
                 </div>
-              </SidebarInset>
-            </SidebarProvider>
-          </SensorDataProvider>
-        </SocketManager>
-      </SocketProvider>
-    </Provider>
+                <div className="flex items-center space-x-4">
+                  <SocketControl />
+                  <CurrentDate />
+                  <Notifications />
+                </div>
+              </header>
+              <div
+                className="flex-1 overflow-auto"
+                style={{ maxHeight: "calc(100vh - 4rem)" }}
+              >
+                <div className="sticky top-0">
+                  <NoActiveCultureAlert />
+                </div>
+                {children}
+              </div>
+            </SidebarInset>
+          </SidebarProvider>
+        </SensorDataProvider>
+      </SocketManager>
+    </SocketProvider>
   );
 }

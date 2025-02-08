@@ -13,6 +13,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useSocket } from "@/context/SocketContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 const codes = {
   S1: { active: "101", inactive: "100" },
@@ -51,17 +54,35 @@ const ActionnaireListItem = ({
   const [description, setDescription] = useState<string>("");
   // const { sensorData } = useSocket();
   const [S12Value, setS12Valuee] = useState<string | undefined>(s11andS12);
+  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { currentSerre, activeCulture } = useSelector(
+    (state: RootState) => state.serre
+  );
 
   useEffect(() => {
     const itemIndex = parseInt(title.slice(1));
     const desc = ActionnaireDefautlDesctiption[itemIndex - 1];
     setDescription(desc);
   }, []);
-  
-    // useEffect(() => {
-    // }, [sensorData])
+
+  // useEffect(() => {
+  // }, [sensorData])
 
   const submitAction = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+
+    if (!currentSerre) {
+      console.error("Serre is undefined");
+      return;
+    }
+
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
+
     // const thisActionCodes = codes[title as keyof typeof codes];
     let thisActionCodes = "";
     if (title != "S12") {
@@ -70,14 +91,37 @@ const ActionnaireListItem = ({
       const message = `L'actionnaire "${description}" été ${
         thisActionCodes === "active" ? "Activé" : "Désactivé"
       } avec succès !`;
-      sendCommand({ [title]: thisActionCodes }, message).then((result) => {
-        if (result?.success) {
-          setReload(true);
-          setSwitchStatus(!switchStatus);
-        } else {
-          setSwitchStatus(switchStatus);
-        }
-      });
+      toast.promise(
+        sendCommand(
+          currentSerre.id,
+          activeCulture.id,
+          { [title]: thisActionCodes },
+          message,
+          access_token
+        ).then((result) => {
+          if (result?.success) {
+            setReload(true);
+            setSwitchStatus(!switchStatus);
+          } else {
+            setSwitchStatus(switchStatus);
+          }
+        }),
+        {loading: "Envoi de la commande en cours..."}
+      )
+      // sendCommand(
+      //   currentSerre.id,
+      //   activeCulture.id,
+      //   { [title]: thisActionCodes },
+      //   message,
+      //   access_token
+      // ).then((result) => {
+      //   if (result?.success) {
+      //     setReload(true);
+      //     setSwitchStatus(!switchStatus);
+      //   } else {
+      //     setSwitchStatus(switchStatus);
+      //   }
+      // })
     }
   };
 
@@ -104,12 +148,46 @@ const ActionnaireListItem = ({
               disabled={modeAuto}
               onValueChange={(value) => {
                 const message = `L'actionnaire "${description}" été ${value} avec succès !`;
-                sendCommand({ [title]: value }, message).then((result) => {
-                  if (result?.success) {
-                    setReload(true);
-                    setS12Valuee(value);
-                  }
-                });
+                if (!access_token) {
+                  console.error("Access token is null");
+                  return;
+                }
+                if (!currentSerre) {
+                  console.error("Serre is undefined");
+                  return;
+                }
+
+                if (!activeCulture) {
+                  throw Error("Une culture active");
+                }
+
+                toast.promise(
+                  sendCommand(
+                    currentSerre.id,
+                    activeCulture.id,
+                    { [title]: value },
+                    message,
+                    access_token
+                  ).then((result) => {
+                    if (result?.success) {
+                      setReload(true);
+                      setS12Valuee(value);
+                    }
+                  }),
+                  {loading: "Envoi de la commande en cours..."}
+                )
+                // sendCommand(
+                //   currentSerre.id,
+                //   activeCulture.id,
+                //   { [title]: value },
+                //   message,
+                //   access_token
+                // ).then((result) => {
+                //   if (result?.success) {
+                //     setReload(true);
+                //     setS12Valuee(value);
+                //   }
+                // });
               }}
             >
               <SelectTrigger>

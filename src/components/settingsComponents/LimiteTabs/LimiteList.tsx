@@ -2,6 +2,9 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import LimiteListItem from "../LimiteTabs/LimiteListItem";
 import { Save, X } from "lucide-react";
 import { sendCommand } from "@/lib/postData/sendCommands";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 export interface Limite {
   code: string;
@@ -11,6 +14,44 @@ export interface Limite {
   maxValue: number;
 }
 
+export const initialLimites: Limite[] = [
+  {
+    code: "SeuilTemp_",
+    name: "Température",
+    unit: "°C",
+    minValue: 0,
+    maxValue: 0,
+  },
+  {
+    code: "SeuilHumidity_",
+    name: "Humidité",
+    unit: "%",
+    minValue: 0,
+    maxValue: 0,
+  },
+  {
+    code: "SeuilLum_",
+    name: "Lumière",
+    unit: "lux",
+    minValue: 0,
+    maxValue: 0,
+  },
+  {
+    code: "SeuilPression_",
+    name: "Pression Atmosphérique",
+    unit: "Bar",
+    minValue: 0,
+    maxValue: 0,
+  },
+  {
+    code: "SeuilCo2_",
+    name: "CO₂",
+    unit: "ppm",
+    minValue: 0,
+    maxValue: 0,
+  },
+];
+
 const LimiteList = ({
   newLimites,
   setReload,
@@ -18,46 +59,12 @@ const LimiteList = ({
   newLimites: any;
   setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const initialLimites: Limite[] = [
-    {
-      code: "SeuilTemp_",
-      name: "Température",
-      unit: "°C",
-      minValue: 0,
-      maxValue: 0,
-    },
-    {
-      code: "SeuilHumidity_",
-      name: "Humidité",
-      unit: "%",
-      minValue: 0,
-      maxValue: 0,
-    },
-    {
-      code: "SeuilLum_",
-      name: "Lumière",
-      unit: "lux",
-      minValue: 0,
-      maxValue: 0,
-    },
-    {
-      code: "SeuilPression_",
-      name: "Pression Atmosphérique",
-      unit: "Bar",
-      minValue: 0,
-      maxValue: 0,
-    },
-    {
-      code: "SeuilCo2_",
-      name: "CO₂",
-      unit: "ppm",
-      minValue: 0,
-      maxValue: 0,
-    },
-  ];
-
   const [limites, setLimites] = useState<Limite[]>(initialLimites);
   const [onLimitesChange, setOnLimitesChange] = useState<boolean>(false);
+  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { currentSerre, activeCulture } = useSelector(
+    (state: RootState) => state.serre
+  );
 
   useEffect(() => {
     if (newLimites) {
@@ -75,7 +82,7 @@ const LimiteList = ({
     }
   }, [newLimites]);
 
-  console.log(limites)
+  console.log(limites);
 
   const handleMinChange = (index: number, value: number) => {
     setLimites((prev) => {
@@ -96,6 +103,20 @@ const LimiteList = ({
   };
 
   const submitNewLimites = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+
+    if (!currentSerre) {
+      console.error("Serre is undefined");
+      return;
+    }
+
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
+
     const data: any = {};
     limites.map((x) => {
       if (x.code === "SeuilHumidity_") {
@@ -121,12 +142,26 @@ const LimiteList = ({
     });
     const message = "Les limites ont été mises à jour avec succès !";
 
-    sendCommand(data, message).then((result) => {
-      if (result?.success) {
-        setReload(true);
-        setOnLimitesChange(false);
-      }
-    });
+    toast.promise(
+      sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
+        (result) => {
+          if (result?.success) {
+            setReload(true);
+            setOnLimitesChange(false);
+          }
+        }
+      ),
+      {loading: "Envoie de la commande en cours..."}
+    )
+
+    // sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
+    //   (result) => {
+    //     if (result?.success) {
+    //       setReload(true);
+    //       setOnLimitesChange(false);
+    //     }
+    //   }
+    // );
   };
 
   return (

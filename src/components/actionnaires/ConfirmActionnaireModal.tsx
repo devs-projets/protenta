@@ -13,6 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { sendCommand } from "@/lib/postData/sendCommands";
 import { useSocket } from "@/context/SocketContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 const modeSwitchCodes = {
   300: "Désactiver manuelAuto S1",
@@ -46,22 +49,38 @@ export function ConfirmActionnaireModal({
 }) {
   const [modeState, setModeState] = useState<number>();
   const { sensorData } = useSocket();
+  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { currentSerre, activeCulture } = useSelector((state: RootState) => state.serre);
 
   useEffect(() => {
-  const mState = sensorData && Object.keys(sensorData)
-    .filter((key) => key.endsWith(title as string))
-    .reduce<{ [key: string]: number }>((obj, key) => {
-      const k = key.replace('ManuelAuto', "");
-      obj[k] = sensorData[key];
-      setModeState(sensorData[key])
-      return obj;
-    }, {});
+    const mState =
+      sensorData &&
+      Object.keys(sensorData)
+        .filter((key) => key.endsWith(title as string))
+        .reduce<{ [key: string]: number }>((obj, key) => {
+          const k = key.replace("ManuelAuto", "");
+          obj[k] = sensorData[key];
+          setModeState(sensorData[key]);
+          return obj;
+        }, {});
     // setModeState(mState[title as string])
-  }, [sensorData])
-
-
+  }, [sensorData]);
 
   const setAutoHandling = async () => {
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+
+    if (!currentSerre) {
+      console.error("Serre is undefined");
+      return;
+    }
+
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
+
     let code = "";
     Object.entries(modeSwitchCodes).forEach(([key, value]) => {
       const splitedValue = value.split(" ");
@@ -69,7 +88,11 @@ export function ConfirmActionnaireModal({
       if (actionnaire == title) code = key;
     });
     const message = `L'actionnaire "${description}" est passé en mode Automatique avec succès !`;
-    sendCommand({ [`param${code}`]: true }, message);
+    toast.promise(
+      sendCommand(currentSerre.id, activeCulture.id, { [`param${code}`]: true }, message, access_token),
+      {loading: "Envoie de la commande en cours..."}
+    )
+    // sendCommand(currentSerre.id, activeCulture.id, { [`param${code}`]: true }, message, access_token);
     setModeAuto(true);
   };
 

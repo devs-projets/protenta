@@ -16,7 +16,7 @@ import ConfigTabs from "./ConfigTabs";
 export function Config() {
   return (
     <AlertDialog>
-      <AlertDialogTrigger className="flex items-center bg-primary w-full rounded-lg p-2 text-white">
+      <AlertDialogTrigger className="flex gap-2 items-center bg-primary w-full rounded-lg p-2 text-white">
         <Settings />
         Configurations
       </AlertDialogTrigger>

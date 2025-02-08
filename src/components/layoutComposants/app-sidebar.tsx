@@ -8,7 +8,9 @@ import {
   ArrowDownUp,
   ChevronUp,
   ChevronDown,
+  Sprout
 } from "lucide-react";
+import serreIcon from "@/assets/icons/serre.svg";
 
 import {
   Sidebar,
@@ -27,6 +29,7 @@ import Link from "next/link";
 import { Config } from "@/components/settingsComponents/Config";
 import { usePathname } from "next/navigation";
 import {Users} from "lucide-react";
+import UserMenu from "../login/UserMenu";
 
 // This is sample data.
 const data = {
@@ -34,6 +37,16 @@ const data = {
     {
       title: "Dashboard",
       url: "/dashboard",
+      items: [],
+    },
+    {
+      title: "Serres",
+      url: "/dashboard/serres",
+      items: [],
+    },
+    {
+      title: "Cultures",
+      url: "/dashboard/cultures",
       items: [],
     },
     {
@@ -159,6 +172,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {item.title === "Utilisateurs" && <Users />}
                         {item.title === "Données" && <CircleGauge />}
                         {item.title === "Capteurs" && <Cable />}
+                        {item.title === "Cultures" && <Sprout />}
+                        {item.title === "Serres" && <img src={serreIcon.src} className="w-6 h-6" />}
                         {item.title}
                       </div>
 
@@ -244,6 +259,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <div>
               <SidebarMenuButton asChild className="hover:bg-primary">
                 <Config />
+              </SidebarMenuButton>
+            </div>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <div className=" mt-2">
+              <SidebarMenuButton asChild className="hover:bg-primary">
+                <UserMenu />
               </SidebarMenuButton>
             </div>
           </SidebarMenuItem>

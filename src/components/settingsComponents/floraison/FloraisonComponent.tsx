@@ -12,6 +12,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ILatestData } from "@/types/latestDataState";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { toast } from "sonner";
 
 const FloraisonComponent = ({
   floraisonFetched,
@@ -26,6 +29,10 @@ const FloraisonComponent = ({
   const [pollinisation, setPollinisation] = useState<string | null>(null);
   const [floraison, setFloraison] = useState<boolean | undefined>(false);
   const [error, setError] = useState<string | null>(null);
+  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { currentSerre, activeCulture } = useSelector(
+    (state: RootState) => state.serre
+  );
 
   useEffect(() => {
     setStart(floraisonFetched?.PolStartTime ?? null);
@@ -48,6 +55,19 @@ const FloraisonComponent = ({
   const handleChangeFloraison = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateTime()) return;
+    if (!access_token) {
+      console.error("Access token is null");
+      return;
+    }
+
+    if (!currentSerre) {
+      console.error("Serre is undefined");
+      return;
+    }
+
+    if (!activeCulture) {
+      throw Error("Une culture active");
+    }
 
     const data = {
       PolStartTime: start,
@@ -56,11 +76,23 @@ const FloraisonComponent = ({
       MomentFloraison: floraison ? 1 : 0,
     };
     const message = "La floraison a été mis à jour avec succès !";
-    sendCommand(data, message).then((result) => {
-      if (result?.success) {
-        setReload(true);
-      }
-    });
+    toast.promise(
+      sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
+        (result) => {
+          if (result?.success) {
+            setReload(true);
+          }
+        }
+      ),
+      {loading: "Envoi de la commande en cours..."}
+    )
+    // sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
+    //   (result) => {
+    //     if (result?.success) {
+    //       setReload(true);
+    //     }
+    //   }
+    // );
 
     setDisableEditMode(true);
   };

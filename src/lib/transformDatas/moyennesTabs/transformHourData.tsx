@@ -14,10 +14,10 @@ export const transformHourData = (sensorData: ISensorStoredData[]) => {
     }
 
     data[dateTime] = {
-      Température: (entry.averageTemp / 100).toFixed(2),
-      Humidité: (entry.averageHumidity / 100).toFixed(2),
-      Lumière: (entry.averageLightA * 1000).toFixed(2),
-      "Pression atmosphérique": (entry.averagePressure / 1000).toFixed(3),
+      Température: (entry.averageTemp).toFixed(2),
+      Humidité: (entry.averageHumidity).toFixed(2),
+      Lumière: (entry.averageLightA).toFixed(2),
+      "Pression atmosphérique": (entry.averagePressure).toFixed(3),
       "Humidite du sol": entry.averageSol.toFixed(2),
       Co2: entry.averageIaq.toFixed(2),
     };
