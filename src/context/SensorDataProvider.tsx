@@ -11,16 +11,13 @@ import { useSelector } from "react-redux";
 import { TriangleAlert } from "lucide-react";
 import { fetchLatestData } from "@/store/reducers/latestData/latestDataSlice";
 import { currentSerre as fetchCurrentSerre } from "@/store/reducers/serre/serreSlice";
+import { useAuth } from "./AuthProvider";
 
 const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   const [serreLoaded, setSerreLoaded] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
-  const {
-    user,
-    loading: userLoading,
-    error: userError,
-  } = useSelector((state: RootState) => state.auth);
+  const { user, loading: userLoading, error: userError } = useAuth();
 
   const {
     currentSerre,
@@ -49,7 +46,12 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     try {
-      const data = await dispatch(fetchLatestData({serreId: currentSerre.id, cultureId: activeCulture?.id})).unwrap();
+      const data = await dispatch(
+        fetchLatestData({
+          serreId: currentSerre.id,
+          cultureId: activeCulture?.id,
+        })
+      ).unwrap();
       localStorage.setItem("latestData", JSON.stringify(data));
     } catch {
       const localData = localStorage.getItem("latestData");

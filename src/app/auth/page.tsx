@@ -11,7 +11,6 @@ import Spinner from "@/components/Spinner";
 
 const Login = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  // const { access_token } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
 
   // console.log(access_token)

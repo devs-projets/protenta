@@ -16,6 +16,7 @@ import { deleteUser } from "@/lib/auth/deleteUser";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthProvider";
 
 const DeleteUser = ({
   user,
@@ -25,7 +26,7 @@ const DeleteUser = ({
   setDeleteUser: (deleteState: boolean) => void;
 }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { access_token } = useAuth();
 
   const deleteThisUser = async () => {
     if (!access_token) {

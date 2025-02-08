@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/context/AuthProvider";
 import { updateCulture } from "@/lib/culture/updateCulture";
 import { currentSerre } from "@/store/reducers/serre/serreSlice";
 import { RootState, useAppDispatch } from "@/store/store";
@@ -38,9 +39,11 @@ const Page = () => {
 
   const { cultureId } = useParams();
   const router = useRouter();
-  const dispatch = useAppDispatch()
-  const { access_token } = useSelector((state: RootState) => state.auth);
-  const { currentSerre: thisSerre, activeCulture } = useSelector((state: RootState) => state.serre);
+  const dispatch = useAppDispatch();
+  const { access_token } = useAuth();
+  const { currentSerre: thisSerre, activeCulture } = useSelector(
+    (state: RootState) => state.serre
+  );
 
   const initUpdateForm = (cultureData: ICulture) => {
     setCultureName(cultureData.name);
@@ -93,21 +96,17 @@ const Page = () => {
 
       // TODO: Passer le bon id de la serre
       toast.promise(
-        updateCulture(
-          access_token,
-          culture.id,
-          culture.serreId,
-          data
-        ),
+        updateCulture(access_token, culture.id, culture.serreId, data),
         {
           loading: "Modification de la culture en cours...",
           success: () => {
             dispatch(currentSerre());
             clearStates();
             setIsDialogOpen(false);
-            return "Culture mis à jour avec succès !"
+            return "Culture mis à jour avec succès !";
           },
-          error: "Erreur lors de la mise à jour de la culture.\nVeuillez réessayer !"
+          error:
+            "Erreur lors de la mise à jour de la culture.\nVeuillez réessayer !",
         }
       );
     } catch (error) {
@@ -129,23 +128,18 @@ const Page = () => {
       };
 
       toast.promise(
-        updateCulture(
-          access_token,
-          culture.id,
-          culture.serreId,
-          data
-        ),
+        updateCulture(access_token, culture.id, culture.serreId, data),
         {
           loading: "Cloture de la culture en cours...",
           success: () => {
             dispatch(currentSerre());
             clearStates();
             setIsDialogOpen(false);
-            return "Culture cloturée avec succès !"
+            return "Culture cloturée avec succès !";
           },
-          error: "Erreur lors de l'ajout de la culture."
+          error: "Erreur lors de l'ajout de la culture.",
         }
-      )
+      );
     } catch (error) {
       console.error("Erreur lors de la cloture de la culture :", error);
       toast.error("Erreur lors de l'ajout de la culture.");

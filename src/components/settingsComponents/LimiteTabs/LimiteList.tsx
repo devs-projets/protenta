@@ -5,6 +5,7 @@ import { sendCommand } from "@/lib/postData/sendCommands";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthProvider";
 
 export interface Limite {
   code: string;
@@ -61,7 +62,7 @@ const LimiteList = ({
 }) => {
   const [limites, setLimites] = useState<Limite[]>(initialLimites);
   const [onLimitesChange, setOnLimitesChange] = useState<boolean>(false);
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { access_token } = useAuth();
   const { currentSerre, activeCulture } = useSelector(
     (state: RootState) => state.serre
   );
@@ -143,16 +144,20 @@ const LimiteList = ({
     const message = "Les limites ont été mises à jour avec succès !";
 
     toast.promise(
-      sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
-        (result) => {
-          if (result?.success) {
-            setReload(true);
-            setOnLimitesChange(false);
-          }
+      sendCommand(
+        currentSerre.id,
+        activeCulture.id,
+        data,
+        message,
+        access_token
+      ).then((result) => {
+        if (result?.success) {
+          setReload(true);
+          setOnLimitesChange(false);
         }
-      ),
-      {loading: "Envoie de la commande en cours..."}
-    )
+      }),
+      { loading: "Envoie de la commande en cours..." }
+    );
 
     // sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
     //   (result) => {

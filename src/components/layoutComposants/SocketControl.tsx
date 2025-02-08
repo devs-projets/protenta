@@ -8,6 +8,7 @@ import { restartMonitor } from "@/lib/postData/restartMonitor";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function SocketControl() {
   const {
@@ -18,7 +19,7 @@ export default function SocketControl() {
     disconnect,
   } = useSocket();
   const [isLoading, setIsLoading] = useState(false);
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { access_token } = useAuth();
 
   useEffect(() => {
     console.log("Statut de connexion :", isConnected);
@@ -29,13 +30,13 @@ export default function SocketControl() {
       console.error("Access token is null");
       return;
     }
-    
+
     setIsLoading(true);
     toast.promise(restartMonitor(access_token), {
       loading: "Redémarré en cours...",
       success: "Redémarré",
-      error: "Une erreur s'est produite, veuillez réessayer !"
-    })
+      error: "Une erreur s'est produite, veuillez réessayer !",
+    });
     restartMonitor(access_token);
     setIsLoading(false);
     // try {

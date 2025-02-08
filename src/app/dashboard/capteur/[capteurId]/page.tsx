@@ -12,6 +12,7 @@ import Spinner from "@/components/Spinner";
 import { TriangleAlert } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { useAuth } from "@/context/AuthProvider";
 
 const CapteurId = () => {
   const localName = useParams().capteurId as string;
@@ -19,8 +20,10 @@ const CapteurId = () => {
   const [data, setData] = useState<ILatestData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { access_token } = useSelector((state: RootState) => state.auth);
-  const { currentSerre, activeCulture } = useSelector((state: RootState) => state.serre);
+  const { access_token } = useAuth();
+  const { currentSerre, activeCulture } = useSelector(
+    (state: RootState) => state.serre
+  );
 
   const getThisCapteurLastData = async () => {
     setLoading(true);
@@ -30,7 +33,7 @@ const CapteurId = () => {
     }
 
     if (!currentSerre) {
-      console.error('Serre not found !');
+      console.error("Serre not found !");
       return;
     }
 

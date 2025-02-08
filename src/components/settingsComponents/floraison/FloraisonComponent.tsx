@@ -15,6 +15,7 @@ import { ILatestData } from "@/types/latestDataState";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthProvider";
 
 const FloraisonComponent = ({
   floraisonFetched,
@@ -29,7 +30,7 @@ const FloraisonComponent = ({
   const [pollinisation, setPollinisation] = useState<string | null>(null);
   const [floraison, setFloraison] = useState<boolean | undefined>(false);
   const [error, setError] = useState<string | null>(null);
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { access_token } = useAuth();
   const { currentSerre, activeCulture } = useSelector(
     (state: RootState) => state.serre
   );
@@ -77,15 +78,19 @@ const FloraisonComponent = ({
     };
     const message = "La floraison a été mis à jour avec succès !";
     toast.promise(
-      sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
-        (result) => {
-          if (result?.success) {
-            setReload(true);
-          }
+      sendCommand(
+        currentSerre.id,
+        activeCulture.id,
+        data,
+        message,
+        access_token
+      ).then((result) => {
+        if (result?.success) {
+          setReload(true);
         }
-      ),
-      {loading: "Envoi de la commande en cours..."}
-    )
+      }),
+      { loading: "Envoi de la commande en cours..." }
+    );
     // sendCommand(currentSerre.id, activeCulture.id, data, message, access_token).then(
     //   (result) => {
     //     if (result?.success) {

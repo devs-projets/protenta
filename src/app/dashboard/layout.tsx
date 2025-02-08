@@ -23,17 +23,14 @@ import { ICulture } from "@/types/culture";
 import NoActiveCultureAlert from "@/components/NoActiveCultureAlert";
 import { SerresComboBox } from "@/components/serre/Combobox";
 import { CultureComboBox } from "@/components/cultures/Combobox";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const {
-    user,
-    loading: userLoading,
-    access_token,
-  } = useSelector((state: RootState) => state.auth);
+  const { user, access_token, loading: userLoading } = useAuth();
   const {
     activeCulture,
     allCulture,

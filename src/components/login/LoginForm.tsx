@@ -23,7 +23,6 @@ import { EUserRole } from "@/types/userRole";
 import React from "react";
 
 export function LoginForm() {
-  // const { access_token } = useSelector((state: RootState) => state.auth);
   const [userName, setUserName] = useState<string>("");
   const [passWord, setPassWord] = useState<string>("");
   const dispatch = useDispatch();

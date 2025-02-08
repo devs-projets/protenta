@@ -16,6 +16,7 @@ import { extractFloraison } from "@/lib/transformDatas/extractFloraison";
 import { ILatestData } from "@/types/latestDataState";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { useAuth } from "@/context/AuthProvider";
 
 const ConfigTabs = () => {
   const [actionnairesFetched, setActionnairesFetched] =
@@ -23,8 +24,10 @@ const ConfigTabs = () => {
   const [limitesFetched, setLimitesFetched] = useState<Partial<ILatestData>>();
   const [floraisonFetched, setFloraisonFetched] =
     useState<Partial<ILatestData>>();
-  const { access_token } = useSelector((state: RootState) => state.auth);
-  const { currentSerre, activeCulture } = useSelector((state: RootState) => state.serre);
+  const { access_token } = useAuth();
+  const { currentSerre, activeCulture } = useSelector(
+    (state: RootState) => state.serre
+  );
 
   const [loading, setLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false);
@@ -39,7 +42,7 @@ const ConfigTabs = () => {
       if (!activeCulture) {
         throw Error("Une culture active");
       }
-      
+
       try {
         if (!loading) setLoading(true);
         const data = await getLatestData(

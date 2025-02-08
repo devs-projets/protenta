@@ -28,6 +28,7 @@ import { createNewUser } from "@/lib/auth/createUser";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthProvider";
 
 const AddUser = ({ setNewUser }: { setNewUser: (param: boolean) => void }) => {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
@@ -39,7 +40,7 @@ const AddUser = ({ setNewUser }: { setNewUser: (param: boolean) => void }) => {
   );
   const [generatedPassWord, setGeneratedPassWord] = useState<string>("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { access_token } = useAuth();
 
   const handleValidation = (): boolean => {
     const validationErrors: Record<string, string> = {};
@@ -89,19 +90,16 @@ const AddUser = ({ setNewUser }: { setNewUser: (param: boolean) => void }) => {
         passWord: generatedPassWord,
       };
 
-      toast.promise(
-        createNewUser(access_token, data),
-        {
-          loading: "Ajout de l'utilisateur en cours...",
-          success: () => {
-            setNewUser(true);
-            clearStates();
-            setIsDialogOpen(false);
-            return "Utilisateur ajouté avec succès !"
-          },
-          error: "Erreur lors de l'ajout de l'utilisateur."
-        }
-      )
+      toast.promise(createNewUser(access_token, data), {
+        loading: "Ajout de l'utilisateur en cours...",
+        success: () => {
+          setNewUser(true);
+          clearStates();
+          setIsDialogOpen(false);
+          return "Utilisateur ajouté avec succès !";
+        },
+        error: "Erreur lors de l'ajout de l'utilisateur.",
+      });
     } catch (error) {
       console.error("Erreur lors de l'ajout de l'utilisateur :", error);
       toast.error("Erreur lors de l'ajout de l'utilisateur.");
