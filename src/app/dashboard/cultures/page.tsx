@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SimpleDatePiker } from "@/components/view/SimpleDatePicker";
+import { useAuth } from "@/context/AuthProvider";
 import { addCulture } from "@/lib/culture/newCulture";
 import { currentSerre } from "@/store/reducers/serre/serreSlice";
 import { RootState, useAppDispatch } from "@/store/store";
@@ -37,10 +38,12 @@ const Page = () => {
   const [allCulture, setAllCulture] = useState<ICulture[]>([]);
   const [hasInitConfig, setHasInitConfig] = useState<boolean | null>(null);
 
-  const { access_token } = useSelector((state: RootState) => state.auth);
-  const { currentSerre: thisSerre, allCulture: thisSerreAllCulture, activeCulture } = useSelector(
-    (state: RootState) => state.serre
-  );
+  const { access_token } = useAuth();
+  const {
+    currentSerre: thisSerre,
+    allCulture: thisSerreAllCulture,
+    activeCulture,
+  } = useSelector((state: RootState) => state.serre);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -84,19 +87,16 @@ const Page = () => {
       const serreId = serres.id;
 
       // TODO: Passer le bon id de la serre
-      toast.promise(
-        addCulture(access_token, serreId, data),
-        {
-          loading: "Ajout de la culture en cours...",
-          success: () => {
-            dispatch(currentSerre());
-            clearStates();
-            setIsDialogOpen(false);
-            return "Culture ajoutée avec succès !"
-          },
-          error: "Erreur lors de l'ajout de la culture."
-        }
-      )
+      toast.promise(addCulture(access_token, serreId, data), {
+        loading: "Ajout de la culture en cours...",
+        success: () => {
+          dispatch(currentSerre());
+          clearStates();
+          setIsDialogOpen(false);
+          return "Culture ajoutée avec succès !";
+        },
+        error: "Erreur lors de l'ajout de la culture.",
+      });
     } catch (error) {
       console.error("Erreur lors de l'ajout de la culture :", error);
       toast.error("Erreur lors de l'ajout de la culture.");

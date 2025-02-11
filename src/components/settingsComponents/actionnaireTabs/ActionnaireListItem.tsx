@@ -16,6 +16,7 @@ import { useSocket } from "@/context/SocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthProvider";
 
 const codes = {
   S1: { active: "101", inactive: "100" },
@@ -54,7 +55,7 @@ const ActionnaireListItem = ({
   const [description, setDescription] = useState<string>("");
   // const { sensorData } = useSocket();
   const [S12Value, setS12Valuee] = useState<string | undefined>(s11andS12);
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { access_token } = useAuth();
   const { currentSerre, activeCulture } = useSelector(
     (state: RootState) => state.serre
   );
@@ -106,8 +107,8 @@ const ActionnaireListItem = ({
             setSwitchStatus(switchStatus);
           }
         }),
-        {loading: "Envoi de la commande en cours..."}
-      )
+        { loading: "Envoi de la commande en cours..." }
+      );
       // sendCommand(
       //   currentSerre.id,
       //   activeCulture.id,
@@ -174,8 +175,8 @@ const ActionnaireListItem = ({
                       setS12Valuee(value);
                     }
                   }),
-                  {loading: "Envoi de la commande en cours..."}
-                )
+                  { loading: "Envoi de la commande en cours..." }
+                );
                 // sendCommand(
                 //   currentSerre.id,
                 //   activeCulture.id,

@@ -48,6 +48,7 @@ import {
 import { EUserRole } from "@/types/userRole";
 import { generateStrongPassword } from "@/lib/auth/generateRandomPassWord";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthProvider";
 
 const users = [
   {
@@ -99,7 +100,7 @@ const TableRow = ({
     user.role as EUserRole
   );
 
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { access_token } = useAuth();
 
   const reinitUserInfo = () => {
     setNewLastName(user.lastName);
@@ -120,20 +121,16 @@ const TableRow = ({
         phoneNumber: newPhone,
       };
 
-      toast.promise(
-        updateUser(access_token, data, user.id),
-        {
-
-          loading: "Mise à jour de l'utilisateur en cours...",
-          success: () => {
-            reinitUserInfo();
-            setOnUpdateUser(true);
-            setUpdateInfos(false);
-            return "Utilisateur mis à jour avec succès !"
-          },
-          error: "Erreur lors de la mise à jour de l'utilisateur."
-        }
-      )
+      toast.promise(updateUser(access_token, data, user.id), {
+        loading: "Mise à jour de l'utilisateur en cours...",
+        success: () => {
+          reinitUserInfo();
+          setOnUpdateUser(true);
+          setUpdateInfos(false);
+          return "Utilisateur mis à jour avec succès !";
+        },
+        error: "Erreur lors de la mise à jour de l'utilisateur.",
+      });
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'utilisateur :", error);
       toast.error("Erreur lors de la mise à jour de l'utilisateur.");
@@ -151,19 +148,16 @@ const TableRow = ({
         role: newRoleSelected,
       };
 
-      toast.promise(
-        updateUser(access_token, data, user.id),
-        {
-          loading: "Mise à jour de l'utilisateur en cours...",
-          success: () => {
-            reinitUserInfo();
-            setOnUpdateUserRole(true);
-            setUpdateRole(false);
-            return "Rôle de l'utilisateur mis à jour avec succès !"
-          },
-          error: "Erreur lors de la mise à jour du Rôle."
-        }
-      )
+      toast.promise(updateUser(access_token, data, user.id), {
+        loading: "Mise à jour de l'utilisateur en cours...",
+        success: () => {
+          reinitUserInfo();
+          setOnUpdateUserRole(true);
+          setUpdateRole(false);
+          return "Rôle de l'utilisateur mis à jour avec succès !";
+        },
+        error: "Erreur lors de la mise à jour du Rôle.",
+      });
     } catch (error) {
       console.error("Erreur lors de la mise à jour du Rôle :", error);
       toast.error("Erreur lors de la mise à jour du Rôle.");
@@ -186,17 +180,14 @@ const TableRow = ({
         passWord: newPassWordGenerated,
       };
 
-      toast.promise(
-        updateUser(access_token, data, user.id),
-        {
-          loading: "Mise à jour de l'utilisateur en cours...",
-          success: () => {
-            setUpdatePassWord(false);
-            return "Mode de passe de l'utilisateur mis à jour avec succès"
-          },
-          error: "Erreur lors de la mise à jour du mot de passe."
-        }
-      )
+      toast.promise(updateUser(access_token, data, user.id), {
+        loading: "Mise à jour de l'utilisateur en cours...",
+        success: () => {
+          setUpdatePassWord(false);
+          return "Mode de passe de l'utilisateur mis à jour avec succès";
+        },
+        error: "Erreur lors de la mise à jour du mot de passe.",
+      });
     } catch (error) {
       console.error("Erreur lors de la mise à jour du mot de passe :", error);
       toast.error("Erreur lors de la mise à jour du mot de passe.");
@@ -564,8 +555,8 @@ const Page = () => {
   const [deleteUser, setDeleteUser] = useState<boolean>(false);
   const [onUpdateUser, setOnUpdateUser] = useState<boolean>(false);
   const [onUpdateUserRole, setOnUpdateUserRole] = useState<boolean>(false);
-
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  
+  const { access_token } = useAuth();
   const router = useRouter();
 
   const getUsers = async () => {
@@ -573,7 +564,7 @@ const Page = () => {
       console.error("Access token is null");
       return;
     }
-    
+
     try {
       const response = await getAllUsers(access_token);
       setUsers(response);

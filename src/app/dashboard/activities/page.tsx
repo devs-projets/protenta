@@ -43,6 +43,7 @@ import FieldsModal from "./components/fields.modal";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { RotateCcw } from "lucide-react";
+import { useAuth } from "@/context/AuthProvider";
 
 const getRowColor = (etat: string) => {
   switch (etat) {
@@ -89,8 +90,10 @@ const ActivitiesPage = () => {
     string[]
   >([]);
   const [reinit, setReinit] = useState<number>(0);
-  const { access_token } = useSelector((state: RootState) => state.auth);
-  const { currentSerre, activeCulture } = useSelector((state: RootState) => state.serre);
+  const { access_token } = useAuth();
+  const { currentSerre, activeCulture } = useSelector(
+    (state: RootState) => state.serre
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -103,11 +106,14 @@ const ActivitiesPage = () => {
     if (!activeCulture) {
       throw Error("Une culture active");
     }
-    fetchLogs({ page: currentPage }, access_token, currentSerre.id, activeCulture.id).then(
-      (data: ILogsData[] | []) => {
-        setLog(data);
-      }
-    );
+    fetchLogs(
+      { page: currentPage },
+      access_token,
+      currentSerre.id,
+      activeCulture.id
+    ).then((data: ILogsData[] | []) => {
+      setLog(data);
+    });
     fetchUsers(access_token).then((data) => {
       // console.log('data', data);
       setUsers(data);
@@ -163,12 +169,8 @@ const ActivitiesPage = () => {
       if (log[key]) {
         actions.push(
           <Fragment key={log.id}>
-            <TableCell className="text-gray-500">
-              {String(key)}
-            </TableCell>
-            <TableCell className="text-gray-500">
-              {String(log[key])}
-            </TableCell>
+            <TableCell className="text-gray-500">{String(key)}</TableCell>
+            <TableCell className="text-gray-500">{String(log[key])}</TableCell>
           </Fragment>
         );
       }
@@ -424,7 +426,8 @@ const ActivitiesPage = () => {
     setReinit(reinit + 1);
   };
 
-  const shouldDisplayReset = userSelect !== "" || actionaire !== "" || fieldsSelect;
+  const shouldDisplayReset =
+    userSelect !== "" || actionaire !== "" || fieldsSelect;
 
   return (
     <div className="p-4">
@@ -474,14 +477,14 @@ const ActivitiesPage = () => {
             onSelectionChange={handleSelectionChange}
           />
         </div>
-        {shouldDisplayReset &&
-            <div>
-              <RotateCcw
-                 onClick={handleResetFilterParams}
-                className="cursor-pointer"
-              />
-            </div>
-          }
+        {shouldDisplayReset && (
+          <div>
+            <RotateCcw
+              onClick={handleResetFilterParams}
+              className="cursor-pointer"
+            />
+          </div>
+        )}
       </div>
 
       <div className="border rounded-lg overflow-hidden mt-5 overflow-x-auto">

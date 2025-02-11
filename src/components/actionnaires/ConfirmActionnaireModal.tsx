@@ -16,6 +16,7 @@ import { useSocket } from "@/context/SocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthProvider";
 
 const modeSwitchCodes = {
   300: "Désactiver manuelAuto S1",
@@ -49,8 +50,10 @@ export function ConfirmActionnaireModal({
 }) {
   const [modeState, setModeState] = useState<number>();
   const { sensorData } = useSocket();
-  const { access_token } = useSelector((state: RootState) => state.auth);
-  const { currentSerre, activeCulture } = useSelector((state: RootState) => state.serre);
+  const { access_token } = useAuth();
+  const { currentSerre, activeCulture } = useSelector(
+    (state: RootState) => state.serre
+  );
 
   useEffect(() => {
     const mState =
@@ -89,9 +92,15 @@ export function ConfirmActionnaireModal({
     });
     const message = `L'actionnaire "${description}" est passé en mode Automatique avec succès !`;
     toast.promise(
-      sendCommand(currentSerre.id, activeCulture.id, { [`param${code}`]: true }, message, access_token),
-      {loading: "Envoie de la commande en cours..."}
-    )
+      sendCommand(
+        currentSerre.id,
+        activeCulture.id,
+        { [`param${code}`]: true },
+        message,
+        access_token
+      ),
+      { loading: "Envoie de la commande en cours..." }
+    );
     // sendCommand(currentSerre.id, activeCulture.id, { [`param${code}`]: true }, message, access_token);
     setModeAuto(true);
   };

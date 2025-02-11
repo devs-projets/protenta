@@ -23,17 +23,14 @@ import { ICulture } from "@/types/culture";
 import NoActiveCultureAlert from "@/components/NoActiveCultureAlert";
 import { SerresComboBox } from "@/components/serre/Combobox";
 import { CultureComboBox } from "@/components/cultures/Combobox";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const {
-    user,
-    loading: userLoading,
-    access_token,
-  } = useSelector((state: RootState) => state.auth);
+  const { user, access_token, loading: userLoading } = useAuth();
   const {
     activeCulture,
     allCulture,
@@ -43,7 +40,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (!access_token) {
-      router.push("/login");
+      router.push("/auth");
     }
 
     if (
@@ -54,8 +51,6 @@ export default function DashboardLayout({
       user.role === EUserRole.SUDO &&
       allCulture.length === 0
     ) {
-      console.log(user);
-      console.log(allCulture);
       router.push("/culture-config");
     } else if (activeCulture && !activeCulture.initialConfigId) {
       router.push("/dashboard/cultures");

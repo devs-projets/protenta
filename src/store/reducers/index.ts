@@ -7,7 +7,7 @@ import hourDataReducer from "./hourDate/hourDataSlice";
 import dayDataReducer from "./dayData/dayDataSlice";
 
 const rootReducer = combineReducers({
-  auth: authReducer,
+  // auth: authReducer,
   serre: serreReducer,
   latestData: latestDataReducer,
   minuteData: minuteDataReducer,

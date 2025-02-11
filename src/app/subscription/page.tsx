@@ -4,19 +4,22 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { TriangleAlert } from "lucide-react";
+import { activateSouscription } from "@/lib/souscription/activateSouscription";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { toast } from "sonner";
+import { useAuth } from "@/context/AuthProvider";
 
-const LICENSE_LENGTH = 18; // 5 groupes de 5 caractères
+const LICENSE_LENGTH = 18;
 const GROUP_SIZE = 6;
-
-async function validateLicense(licenseKey: string) {
-  if (licenseKey === "ABCDEFGHIJKLMNOPQR") {
-    return { success: true };
-  } else {
-    return { success: false, message: "Clé de licence invalide" };
-  }
-}
 
 export default function SubscriptionPage() {
   const [licenseKey, setLicenseKey] = useState(Array(LICENSE_LENGTH).fill(""));
@@ -25,9 +28,10 @@ export default function SubscriptionPage() {
   const router = useRouter();
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+  const { access_token } = useAuth();
+
   useEffect(() => {
     inputRefs.current = inputRefs.current.slice(0, LICENSE_LENGTH);
-    // Place le focus sur le premier input au chargement de la page
     inputRefs.current[0]?.focus();
   }, []);
 
@@ -79,18 +83,33 @@ export default function SubscriptionPage() {
     setIsLoading(true);
     setError("");
 
-    const fullLicenseKey = licenseKey.join("");
+    const fullLicenseKey = licenseKey
+      .join("")
+      .replace(/(.{6})/g, "$1-")
+      .replace(/-$/, "");
 
     try {
-      const result = await validateLicense(fullLicenseKey);
-      if (result.success) {
-        router.push("/dashboard");
-      } else {
-        setError(
-          result.message ||
-            "Une erreur est survenue lors de la validation de la clé de licence."
-        );
+      if (!access_token) {
+        throw new Error("Access Token invalid !");
       }
+
+      toast.promise(
+        activateSouscription(access_token, fullLicenseKey).then((result) => {
+          if (result) {
+            router.push("/dashboard");
+          } else {
+            throw new Error(
+              "Une erreur s'est produite lors de l'activation de la souscription."
+            );
+          }
+        }),
+        {
+          loading: "Activation en cours ...",
+          success: "Souscription activée avec succès !",
+          error: (err) =>
+            err.message || "Une erreur est survenue. Veuillez réessayer.",
+        }
+      );
     } catch (err) {
       setError("Une erreur est survenue. Veuillez réessayer.");
     } finally {
@@ -104,8 +123,10 @@ export default function SubscriptionPage() {
         <CardHeader>
           <CardTitle>Activation de votre licence</CardTitle>
           <CardDescription>
-            Veuillez entrer votre clé de licence pour activer votre abonnement. <br />
-            La clé se compose de 20 caractères, répartis en 5 groupes de 5 caractères chacun. <br />
+            Veuillez entrer votre clé de licence pour activer votre abonnement.{" "}
+            <br />
+            La clé se compose de 20 caractères, répartis en 5 groupes de 5
+            caractères chacun. <br />
             Assurez-vous de saisir tous les caractères, sans les tirets (-).
           </CardDescription>
         </CardHeader>
@@ -113,31 +134,34 @@ export default function SubscriptionPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="mx-auto">
               <div className="flex flex-wrap gap-1 justify-center">
-                {Array.from({ length: LICENSE_LENGTH / GROUP_SIZE }, (_, groupIndex) => (
-                  <div key={groupIndex} className="flex gap-1">
-                    {Array.from({ length: GROUP_SIZE }, (_, index) => {
-                      const actualIndex = groupIndex * GROUP_SIZE + index;
-                      return (
-                        <Input
-                          key={actualIndex}
-                          type="text"
-                          maxLength={1}
-                          value={licenseKey[actualIndex]}
-                          onKeyDown={(e) => handleKeyDown(actualIndex, e)}
-                          onFocus={handleFocus}
-                          ref={setInputRef(actualIndex)}
-                          className="w-10 border-slate-500 text-center caret-transparent"
-                          required
-                        />
-                      );
-                    })}
-                    {groupIndex < 2 && (
-                      <div className="flex items-center justify-center">
-                        <span className="block">-</span>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                {Array.from(
+                  { length: LICENSE_LENGTH / GROUP_SIZE },
+                  (_, groupIndex) => (
+                    <div key={groupIndex} className="flex gap-1">
+                      {Array.from({ length: GROUP_SIZE }, (_, index) => {
+                        const actualIndex = groupIndex * GROUP_SIZE + index;
+                        return (
+                          <Input
+                            key={actualIndex}
+                            type="text"
+                            maxLength={1}
+                            value={licenseKey[actualIndex]}
+                            onKeyDown={(e) => handleKeyDown(actualIndex, e)}
+                            onFocus={handleFocus}
+                            ref={setInputRef(actualIndex)}
+                            className="w-10 border-slate-500 text-center caret-transparent"
+                            required
+                          />
+                        );
+                      })}
+                      {groupIndex < 2 && (
+                        <div className="flex items-center justify-center">
+                          <span className="block">-</span>
+                        </div>
+                      )}
+                    </div>
+                  )
+                )}
               </div>
             </div>
             {error && (
@@ -147,7 +171,10 @@ export default function SubscriptionPage() {
               </div>
             )}
             <div className="flex justify-end">
-              <Button type="submit" disabled={isLoading || licenseKey.some((char) => !char)}>
+              <Button
+                type="submit"
+                disabled={isLoading || licenseKey.some((char) => !char)}
+              >
                 {isLoading ? "Validation..." : "Valider la licence"}
               </Button>
             </div>

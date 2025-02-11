@@ -4,6 +4,7 @@ import { INotification } from "@/types/notification";
 import { useSocket } from "@/context/SocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { useAuth } from "@/context/AuthProvider";
 
 export const useNotifications = (open: boolean) => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
@@ -11,7 +12,7 @@ export const useNotifications = (open: boolean) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const { sensorNotification } = useSocket();
-  const {access_token} = useSelector((state: RootState) => state.auth);
+  const { access_token } = useAuth();
 
   const fetchNotifications = useCallback(async (pageToFetch: number) => {
     if (isLoading || !hasMore) return;

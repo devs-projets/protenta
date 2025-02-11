@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SimpleDatePiker } from "@/components/view/SimpleDatePicker";
+import { useAuth } from "@/context/AuthProvider";
 import { addCulture } from "@/lib/culture/newCulture";
 import { currentSerre } from "@/store/reducers/serre/serreSlice";
 import { RootState, useAppDispatch } from "@/store/store";
@@ -21,7 +22,7 @@ const Page = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [serres, setSerres] = useState<any>();
 
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { access_token } = useAuth();
   const { currentSerre: thisSerre, activeCulture } = useSelector(
     (state: RootState) => state.serre
   );
@@ -65,13 +66,10 @@ const Page = () => {
       const serreId = serres.id;
 
       // TODO: Passer le bon id de la serre
-      const response = toast.promise(
-        addCulture(access_token, serreId, data),
-        {
-          loading: "Ajout de la culture en cours...",
-          success: "La culture a été ajoutée avec succès !",
-        }
-      );
+      const response = toast.promise(addCulture(access_token, serreId, data), {
+        loading: "Ajout de la culture en cours...",
+        success: "La culture a été ajoutée avec succès !",
+      });
 
       await response.unwrap();
 
@@ -80,7 +78,9 @@ const Page = () => {
       router.push("/dashboard");
     } catch (error) {
       console.error("Erreur lors de l'ajout de la culture :", error);
-      toast.error("Une erreur est survenue lors de l'ajout de la culture. Veuillez réessayer.")
+      toast.error(
+        "Une erreur est survenue lors de l'ajout de la culture. Veuillez réessayer."
+      );
     }
 
     clearStates();

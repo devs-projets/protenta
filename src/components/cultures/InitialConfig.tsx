@@ -32,6 +32,7 @@ import {
 } from "../ui/alert-dialog";
 import { currentSerre } from "@/store/reducers/serre/serreSlice";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthProvider";
 
 interface StepProps {
   step: number;
@@ -275,7 +276,7 @@ const StepFour = ({
   setFloraison: React.Dispatch<React.SetStateAction<IFloraison>>;
   handleDialogClose: () => void;
 }) => {
-  const { access_token } = useSelector((state: RootState) => state.auth);
+  const { access_token } = useAuth();
 
   const submitInitialConfig = async () => {
     if (!access_token) {
@@ -283,22 +284,19 @@ const StepFour = ({
     }
 
     try {
-      const response = toast.promise(
-        initialConfiguration(
-          access_token,
-          serreId,
-          cultureId,
-          initialConfig
-        ),
-        {
-          loading: "Configuration en cours...",
-          success: "Configuration enregistrée avec succès !",
-          error: "Erreur lors de de la configuration"
-        }
-      ).unwrap();
+      const response = toast
+        .promise(
+          initialConfiguration(access_token, serreId, cultureId, initialConfig),
+          {
+            loading: "Configuration en cours...",
+            success: "Configuration enregistrée avec succès !",
+            error: "Erreur lors de de la configuration",
+          }
+        )
+        .unwrap();
 
       const result = await response;
-      
+
       // TODO : A corriger !!!!!!!
       if (result.status === 200) handleDialogClose();
     } catch (error) {
