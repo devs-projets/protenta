@@ -39,7 +39,7 @@ export default function DashboardLayout({
   const router = useRouter();
 
   useEffect(() => {
-    if (!access_token) {
+    if (!access_token && !userLoading) {
       router.push("/auth");
     }
 

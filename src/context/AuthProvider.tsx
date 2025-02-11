@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { getCurrentUser } from '@/lib/auth/getCurrentUser';
-import { User } from '@/types/user';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
+import { User } from "@/types/user";
+import { toast } from "sonner";
 
 interface AuthContextType {
   access_token: string | null;
@@ -24,7 +25,7 @@ export const useAuth = () => useContext(AuthContext);
 
 const isTokenExpired = (token: string): boolean => {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = JSON.parse(atob(token.split(".")[1]));
     return Date.now() >= payload.exp * 1000;
   } catch {
     return true;
@@ -32,9 +33,7 @@ const isTokenExpired = (token: string): boolean => {
 };
 
 const getStoredToken = (): string | null => {
-  // if (typeof window === 'undefined') return null;
-  const token = localStorage.getItem('access_token');
-  console.log(token)
+  const token = localStorage.getItem("access_token");
   return token && !isTokenExpired(token) ? token : null;
 };
 
@@ -45,51 +44,57 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [access_token, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
-    setAccessToken(getStoredToken())
-    console.log("hehe")
-  }, [])
+    const token = getStoredToken();
 
-  useEffect(() => {
-    const loadUser = async () => {
-      if (!access_token) {
-        setLoading(false);
-        return;
-      }
+    if (token) {
+      setAccessToken(token);
+      loadUser(token);
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
-      try {
-        setLoading(true);
-        const userData = await getCurrentUser(access_token);
-        setUser(userData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erreur inconnue');
-        logout();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadUser();
-  }, [access_token]);
+  const loadUser = async (token: string): Promise<User | null> => {
+    try {
+      setLoading(true);
+      const userData = await getCurrentUser(token);
+      setUser(userData);
+      return userData;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur inconnue");
+      logout();
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = (newToken: string) => {
     if (isTokenExpired(newToken)) {
-      setError('Token expiré');
+      setError("Token expiré");
       return;
     }
 
-    localStorage.setItem('access_token', newToken);
+    localStorage.setItem("access_token", newToken);
     setAccessToken(newToken);
+    toast.promise(loadUser(newToken), {
+      loading: "Chargement des données de l'utilisateur ...",
+      success: "Utilisateur chargé avec succès !",
+      error: "Erreur lors de la récupération des données de l'utilisateur !",
+    });
   };
 
   const logout = () => {
-    localStorage.removeItem('access_token');
+    localStorage.removeItem("access_token");
     setAccessToken(null);
     setUser(null);
     setError(null);
   };
 
   return (
-    <AuthContext.Provider value={{ access_token, user, loading, error, login, logout }}>
+    <AuthContext.Provider
+      value={{ access_token, user, loading, error, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

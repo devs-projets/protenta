@@ -101,6 +101,14 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
+  if (!serreLoaded && !activeCulture) {
+    return (
+      <div className="h-screen flex flex-col gap-3 justify-center items-center">
+        <Spinner />
+      </div>
+    );
+  }
+
   // Gestion des erreurs
   const errorMessage =
     hourError || dayError || userError || serreError
@@ -114,7 +122,7 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
         <p className="text-lg font-semibold my-4">{errorMessage}</p>
         <button
           className="bg-primary text-white px-4 py-2 rounded"
-          onClick={fetchDatas}
+          onClick={() => location.reload()}
         >
           Réessayer
         </button>
