@@ -9,22 +9,18 @@ import { EUserRole } from "@/types/userRole";
 
 const HomePageLoading = () => {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    setTimeout(() => {
-      if (user) {
-        console.log(user);
-        if (user.role === EUserRole.DEV) {
-          router.push("/dev-dashboard");
-        } else {
-          router.push("/dashboard");
-        }
-      } else {
-        router.push("/auth")
-      }
-    }, 1500);
-  }, [router]);
+    if (!loading && user) {
+      user.role === EUserRole.DEV && router.push("/dev-dashboard");
+      user.role !== EUserRole.DEV && router.push("/dashboard");
+    }
+
+    if (!loading && !user) {
+      router.push("/auth");
+    }
+  }, [router, loading, user]);
 
   return (
     <section>

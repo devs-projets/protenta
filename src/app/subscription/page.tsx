@@ -147,6 +147,7 @@ export default function SubscriptionPage() {
                             maxLength={1}
                             value={licenseKey[actualIndex]}
                             onKeyDown={(e) => handleKeyDown(actualIndex, e)}
+                            onChange={(e) => console.log(e.target.value)}
                             onFocus={handleFocus}
                             ref={setInputRef(actualIndex)}
                             className="w-10 border-slate-500 text-center caret-transparent"
