@@ -13,8 +13,6 @@ import {
 } from "@/components/ui/card";
 import { TriangleAlert } from "lucide-react";
 import { activateSouscription } from "@/lib/souscription/activateSouscription";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
 
@@ -111,6 +109,7 @@ export default function SubscriptionPage() {
         }
       );
     } catch (err) {
+      console.error(err);
       setError("Une erreur est survenue. Veuillez réessayer.");
     } finally {
       setIsLoading(false);

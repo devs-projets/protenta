@@ -1,5 +1,3 @@
-import { ISensorStoredData } from "./storedData";
-
 export interface ILatestData {
   id: string;
   timestamp: string;

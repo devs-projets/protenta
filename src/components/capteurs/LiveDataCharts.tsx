@@ -5,8 +5,17 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { ILatestData } from "@/types/latestDataState";
 
-function generateRandomData(min: number, max: number): number {
-  return Math.floor(min + Math.random() * (max - min));
+// function generateRandomData(min: number, max: number): number {
+//   return Math.floor(min + Math.random() * (max - min));
+// }
+
+export interface IMetrics {
+  key: string;
+  code: string;
+  title: string;
+  unit: string;
+  graphDomain: number[];
+  thresholdKey: string;
 }
 
 const metrics = [
@@ -105,15 +114,15 @@ const LiveDataCharts = () => {
           >
             <RealTimeChart
               code={metric.code}
-              label={metric.title}
+              // label={metric.title}
               unit={metric.unit}
               color="#16A34A"
               minThreshold={minThreshold}
               maxThreshold={maxThreshold}
               graphDomain={metric.graphDomain}
-              generateRandomData={() =>
-                generateRandomData(metric.graphDomain[0], metric.graphDomain[1])
-              }
+              // generateRandomData={() =>
+              //   generateRandomData(metric.graphDomain[0], metric.graphDomain[1])
+              // }
             />
           </TabsContent>
         );

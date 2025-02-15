@@ -103,7 +103,7 @@ const actions: { [key: string]: string } = {
   
   
  export function handleParamsAction(param: string, value: boolean): string {
-    const number = param.replace('param', '');
+    // const number = param.replace('param', '');
     
     if (value) {
       if (actions.hasOwnProperty(param)) {

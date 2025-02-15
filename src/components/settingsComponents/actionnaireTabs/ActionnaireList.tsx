@@ -1,7 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import ActionnaireListItem from "./ActionnaireListItem";
-import { ISensorStoredData } from "@/types/storedData";
-import { ILatestData } from "@/types/latestDataState";
 
 export interface Actionnaire {
   name: string;

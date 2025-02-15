@@ -15,7 +15,6 @@ import { Label } from "@/components/ui/label";
 import { Leaf } from "lucide-react";
 import { useEffect, useState } from "react";
 import { authUserService, IUserCredentials } from "@/lib/auth/userAuth";
-import { login } from "@/store/reducers/auth/authSlice";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
@@ -71,7 +70,7 @@ const AuthPage = () => {
           <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="userName" className="text-lg">
-                Nom d'utilisateur
+                Nom d’utilisateur
               </Label>
               <Input
                 id="userName"

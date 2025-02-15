@@ -13,8 +13,6 @@ import {
 import { Button } from "../ui/button";
 import { User } from "@/types/user";
 import { deleteUser } from "@/lib/auth/deleteUser";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
 

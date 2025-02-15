@@ -59,7 +59,7 @@ export function DatePickerWithPresets({
               <SelectValue placeholder="Choisissez un jour" />
             </SelectTrigger>
             <SelectContent position="popper">
-              <SelectItem value="0">Ajourd'hui</SelectItem>
+              <SelectItem value="0">Ajourd’hui</SelectItem>
               <SelectItem value="-1">Hier</SelectItem>
               <SelectItem value="-3">Dans 3 plutôt</SelectItem>
               <SelectItem value="-6">Une semaine plutôt</SelectItem>

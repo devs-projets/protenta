@@ -13,11 +13,12 @@ import { TriangleAlert } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useAuth } from "@/context/AuthProvider";
+import { ISensorData } from "@/types/monitor";
 
 const CapteurId = () => {
   const localName = useParams().capteurId as string;
   const { sensorData, disconnect } = useSocket();
-  const [data, setData] = useState<ILatestData | null>(null);
+  const [data, setData] = useState<ILatestData | ISensorData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { access_token } = useAuth();

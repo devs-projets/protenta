@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthProvider";
 import { addCulture } from "@/lib/culture/newCulture";
 import { currentSerre } from "@/store/reducers/serre/serreSlice";
 import { RootState, useAppDispatch } from "@/store/store";
+import { ISerre } from "@/types/serre";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -20,24 +21,24 @@ const Page = () => {
   const [cultureVariety, setCultureVariety] = useState<string>("");
   const [cultureDescription, setCultureDescription] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [serres, setSerres] = useState<any>();
+  const [serre, setSerre] = useState<ISerre | null>(null);
 
   const { access_token } = useAuth();
-  const { currentSerre: thisSerre, activeCulture } = useSelector(
+  const { currentSerre: thisSerre } = useSelector(
     (state: RootState) => state.serre
   );
   const router = useRouter();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    setSerres(thisSerre);
+    setSerre(thisSerre);
   }, [thisSerre]);
 
   useEffect(() => {
-    if (serres && serres.allCulture.length > 0) {
+    if (serre && serre.allCulture.length > 0) {
       router.push("/dashboard");
     }
-  }, [serres]);
+  }, [serre]);
 
   const clearStates = () => {
     setCultureName("");
@@ -49,7 +50,7 @@ const Page = () => {
 
   const handleNewCulture = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!serres || !access_token) {
+    if (!serre || !access_token) {
       throw Error("Information  sur la serre ou l'utilisateur manquant !");
     }
 
@@ -59,11 +60,11 @@ const Page = () => {
         variety: cultureVariety,
         type: cultureType,
         description: cultureDescription,
-        startProduction: selectedDate?.toString(),
+        startProduction: selectedDate?.toString() as string,
         estimationDate: 90,
       };
 
-      const serreId = serres.id;
+      const serreId = serre.id;
 
       // TODO: Passer le bon id de la serre
       const response = toast.promise(addCulture(access_token, serreId, data), {
@@ -86,7 +87,7 @@ const Page = () => {
     clearStates();
   };
 
-  if (!serres || !access_token) {
+  if (!serre || !access_token) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spinner />

@@ -18,13 +18,21 @@ import { toast } from "sonner";
 import useSound from "use-sound";
 
 import alertSoundFile from "@/assets/audio/alertSound.mp3";
+import { INotification } from "@/types/notification";
+
+// type NotificationType = "Moniteur" | "SAS" | "Chateau" | "Bipeure" | "Ombriere";
+
+// type NotificationItem = {
+//   type: NotificationType;
+//   value: string;
+// };
 
 const Notifications = () => {
   const [open, setOpen] = useState(false);
-  const { notifications, loadMore, isLoading, hasMore, reset } = useNotifications(open);
+  const { notifications, loadMore, isLoading, hasMore, reset } = useNotifications();
   const { sensorNotification } = useSocket();
 
-  const notificationQueue = useRef<Array<any>>([]);
+  const notificationQueue = useRef<INotification[]>([]);
   const [isDisplaying, setIsDisplaying] = useState(false);
   const [play] = useSound(alertSoundFile);
 

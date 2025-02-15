@@ -15,24 +15,35 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { initialConfiguration } from "@/lib/configuration/initialConfig";
 import { defaulActionnairesData } from "@/mockData/defaultActionnairesData";
-import { RootState, useAppDispatch } from "@/store/store";
+import { useAppDispatch } from "@/store/store";
 import { IActionnaire } from "@/types/actionnaire";
-import { InitialConfigData } from "@/types/initialConfigData";
-import { cp } from "fs";
 import React, { SetStateAction, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import {
   AlertDialog,
-  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
 } from "../ui/alert-dialog";
 import { currentSerre } from "@/store/reducers/serre/serreSlice";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
+
+export type InitialConfigType = {
+  TemMin: number;
+  TemMax: number;
+  HumMin: number;
+  HumMax: number;
+  LumMin: number;
+  LumMax: number;
+  PressMin: number;
+  PressMax: number;
+  Co2Min: number;
+  Co2Max: number;
+  PolStartTime: number;
+  PolEndTime: number;
+  Periode: number;
+  MomentFloraison: boolean;
+  initialActionaire: Record<string, boolean>;
+  capteurNombres: number | null;
+};
 
 interface StepProps {
   step: number;
@@ -208,6 +219,7 @@ const StepTree = ({
       return newLimites;
     });
   };
+
   return (
     <div className="flex flex-col justify-between p-2">
       <div>
@@ -219,7 +231,7 @@ const StepTree = ({
       </div>
       <div className="px-5">
         {limites.map((limite, index) => (
-          <div className="grid grid-cols-4 gap-4 p-2 my-3 items-center rounded-lg border-[1px] shadow-sm">
+          <div key={`limit_item_${index}`} className="grid grid-cols-4 gap-4 p-2 my-3 items-center rounded-lg border-[1px] shadow-sm">
             <h3>{limite.name}</h3>
             <p>{limite.unit}</p>
             <input
@@ -269,7 +281,7 @@ const StepFour = ({
   setFloraison,
   handleDialogClose,
 }: StepProps & {
-  initialConfig: any;
+  initialConfig: InitialConfigType;
   floraison: IFloraison;
   serreId: string;
   cultureId: string;
@@ -312,7 +324,7 @@ const StepFour = ({
       <div>
         <h1 className="text-xl mt-2 ml-2 font-bold">Floraison</h1>
         <p className="text-center px-5 my-2">
-          Si vous disposez de suffisamment d'informations, vous pouvez définir
+          Si vous disposez de suffisamment d’informations, vous pouvez définir
           les données relatives à la floraison.
         </p>
       </div>
@@ -321,10 +333,10 @@ const StepFour = ({
           <div className="flex justify-between items-center border-[1px] rounded-lg shadow-lg p-3">
             <label>Début :</label>
             <Select
-              value={floraison.start ?? ""}
+              value={floraison.start?.toString() ?? ""}
               onValueChange={(value) => {
                 const copy = { ...floraison };
-                copy.start = value;
+                copy.start = value ? parseInt(value, 10) : null;
                 setFloraison(copy);
               }}
             >
@@ -349,10 +361,10 @@ const StepFour = ({
           <div className="flex justify-between items-center border-[1px] rounded-lg shadow-lg p-3">
             <label>Fin :</label>
             <Select
-              value={floraison.end ?? ""}
+              value={floraison.end?.toString() ?? ""}
               onValueChange={(value) => {
                 const copy = { ...floraison };
-                copy.end = value;
+                copy.end = value ? parseInt(value, 10) : null;
                 setFloraison(copy);
               }}
             >
@@ -386,7 +398,7 @@ const StepFour = ({
               onChange={(e) => {
                 const value = e.target.value;
                 const copy = { ...floraison };
-                copy.pollinisation = value;
+                copy.pollinisation = value ? parseInt(value, 10) : null;
                 setFloraison(copy);
               }}
             />
@@ -423,9 +435,9 @@ const StepFour = ({
 };
 
 interface IFloraison {
-  start: string | null;
-  end: string | null;
-  pollinisation: string | null;
+  start: number | null;
+  end: number | null;
+  pollinisation: number | null;
   floraison: boolean | null;
 }
 
@@ -438,16 +450,33 @@ const InitialConfig = ({
 }) => {
   const [step, setStep] = useState<number>(0);
 
-  const [capteursNumber, setCapteursNumber] = useState<any>(null);
-  const [actionnairesList, setActionnairesList] = useState<any>([]);
-  const [limites, setLimites] = useState<any>(initialLimites);
-  const [floraison, setFloraison] = useState<any>({
+  const [capteursNumber, setCapteursNumber] = useState<number | null>(null);
+  const [actionnairesList, setActionnairesList] = useState<Partial<IActionnaire>[]>([]);
+  const [limites, setLimites] = useState<Limite[]>(initialLimites);
+  const [floraison, setFloraison] = useState<IFloraison>({
     start: null,
     end: null,
     pollinisation: null,
     floraison: null,
   });
-  const [initialConfig, setInitialConfig] = useState<any>();
+  const [initialConfig, setInitialConfig] = useState<InitialConfigType>({
+    TemMin: 0,
+    TemMax: 0,
+    HumMin: 0,
+    HumMax: 0,
+    LumMin: 0,
+    LumMax: 0,
+    PressMin: 0,
+    PressMax: 0,
+    Co2Min: 0,
+    Co2Max: 0,
+    PolStartTime: 0,
+    PolEndTime: 0,
+    Periode: 0,
+    MomentFloraison: false,
+    initialActionaire: {},
+    capteurNombres: null,
+  });
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(true);
 
   const dispatch = useAppDispatch();
@@ -463,36 +492,24 @@ const InitialConfig = ({
   }, []);
 
   useEffect(() => {
-    const extractedValues = initialLimites.reduce((result, limite) => {
-      const prefix = limite.name.split(" ")[0].slice(0, 3);
-      if (prefix === "CO₂") {
-        return {
-          ...result,
-          [`Co2Min`]: limite.minValue,
-          [`Co2Max`]: limite.maxValue,
-        };
-      }
-      if (prefix === "Pre") {
-        return {
-          ...result,
-          [`PressMin`]: limite.minValue,
-          [`PressMax`]: limite.maxValue,
-        };
-      }
-      return {
-        ...result,
-        [`${prefix === "CO₂" ? "Co2" : prefix}Min`]: limite.minValue,
-        [`${prefix === "CO₂" ? "Co2" : prefix}Max`]: limite.maxValue,
-      };
-    }, {});
+  const extractedValues = initialLimites.reduce((result, limite) => {
+    const prefix = limite.name.split(" ")[0].slice(0, 3);
+    const keyPrefix = prefix === "CO₂" ? "Co2" : prefix.replace("Pre", "Press");
+
+    return {
+      ...result,
+      [`${keyPrefix}Min`]: limite.minValue,
+      [`${keyPrefix}Max`]: limite.maxValue,
+    };
+  }, {} as Pick<InitialConfigType, "TemMin" | "TemMax" | "HumMin" | "HumMax" | "LumMin" | "LumMax" | "PressMin" | "PressMax" | "Co2Min" | "Co2Max">);
     const pol = {
-      PolStartTime: parseInt(floraison.start) || 0,
-      PolEndTime: parseInt(floraison.end) || 0,
-      Periode: parseInt(floraison.pollinisation) || 0,
+      PolStartTime: floraison.start || 0,
+      PolEndTime: floraison.end || 0,
+      Periode: floraison.pollinisation || 0,
       MomentFloraison: floraison.floraison || false,
     };
     const actionnaireStates = actionnairesList.reduce(
-      (acc: any, actionnaire: any) => {
+      (acc, actionnaire) => {
         if (actionnaire.name && actionnaire.state !== undefined) {
           acc[actionnaire.name] = actionnaire.state;
         }
@@ -506,6 +523,16 @@ const InitialConfig = ({
       ...pol,
       initialActionaire: { ...actionnaireStates },
       capteurNombres: capteursNumber,
+      TemMin: extractedValues.TemMin || 0,
+      TemMax: extractedValues.TemMax || 0,
+      HumMin: extractedValues.HumMin || 0,
+      HumMax: extractedValues.HumMax || 0,
+      LumMin: extractedValues.LumMin || 0,
+      LumMax: extractedValues.LumMax || 0,
+      PressMin: extractedValues.PressMin || 0,
+      PressMax: extractedValues.PressMax || 0,
+      Co2Min: extractedValues.Co2Min || 0,
+      Co2Max: extractedValues.Co2Max || 0,
     };
     setInitialConfig(data);
   }, [capteursNumber, actionnairesList, limites, floraison]);

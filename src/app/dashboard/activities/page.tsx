@@ -45,18 +45,18 @@ import { RootState } from "@/store/store";
 import { RotateCcw } from "lucide-react";
 import { useAuth } from "@/context/AuthProvider";
 
-const getRowColor = (etat: string) => {
-  switch (etat) {
-    case "Normal":
-      return "bg-green-100 text-green-700";
-    case "Alerte":
-      return "bg-red-100 text-red-700";
-    case "Attention":
-      return "bg-yellow-100 text-yellow-700";
-    default:
-      return "";
-  }
-};
+// const getRowColor = (etat: string) => {
+//   switch (etat) {
+//     case "Normal":
+//       return "bg-green-100 text-green-700";
+//     case "Alerte":
+//       return "bg-red-100 text-red-700";
+//     case "Attention":
+//       return "bg-yellow-100 text-yellow-700";
+//     default:
+//       return "";
+//   }
+// };
 
 const ActivitiesPage = () => {
   const [logs, setLog] = useState<ILogsData[]>([]);
@@ -64,7 +64,7 @@ const ActivitiesPage = () => {
   const [actionaire, setActionaire] = useState<string>("");
   const [userSelect, setUserSelect] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [rowsPerPage] = useState<number>(10);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fieldsSelect, setFieldsSelect] = useState<string | null>(null);
   const [capteur, setCapteur] = useState<ICapteurs>({

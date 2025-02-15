@@ -20,12 +20,23 @@ import { addCulture } from "@/lib/culture/newCulture";
 import { currentSerre } from "@/store/reducers/serre/serreSlice";
 import { RootState, useAppDispatch } from "@/store/store";
 import { ICulture } from "@/types/culture";
+import { ISerre } from "@/types/serre";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+
+export interface ICultureData {
+  name: string;
+  variety: string;
+  type: string;
+  description: string;
+  startProduction: string | null;
+  estimationDate: number;
+}
+
 
 const Page = () => {
   const [cultureName, setCultureName] = useState<string>("");
@@ -34,7 +45,7 @@ const Page = () => {
   const [cultureDescription, setCultureDescription] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [serres, setSerres] = useState<any>();
+  const [serre, setSerre] = useState<ISerre | null>(null);
   const [allCulture, setAllCulture] = useState<ICulture[]>([]);
   const [hasInitConfig, setHasInitConfig] = useState<boolean | null>(null);
 
@@ -47,10 +58,10 @@ const Page = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    setSerres(thisSerre);
+    setSerre(thisSerre);
     if (thisSerreAllCulture && thisSerreAllCulture.length > 0) {
       setAllCulture(thisSerreAllCulture);
-      const active = thisSerreAllCulture.find((c: any) => !c.productionIsEnded);
+      const active = thisSerreAllCulture.find((c: ICulture) => !c.productionIsEnded);
       if (active) {
         setHasInitConfig(activeCulture?.initialConfigId === null);
       } else {
@@ -70,21 +81,22 @@ const Page = () => {
   };
 
   const handleNewCulture = async () => {
-    if (!serres || !access_token) {
+    if (!serre || !access_token || !selectedDate) {
       throw Error("Information  sur la serre ou l'utilisateur manquant !");
     }
 
     try {
+      // TODO: check ça
       const data = {
         name: cultureName,
         variety: cultureVariety,
         type: cultureType,
         description: cultureDescription,
-        startProduction: selectedDate?.toString(),
+        startProduction: selectedDate.toString(),
         estimationDate: 90,
       };
 
-      const serreId = serres.id;
+      const serreId = serre.id;
 
       // TODO: Passer le bon id de la serre
       toast.promise(addCulture(access_token, serreId, data), {
@@ -105,7 +117,7 @@ const Page = () => {
     clearStates();
   };
 
-  if (!serres || !access_token) {
+  if (!serre || !access_token) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spinner />
@@ -257,7 +269,7 @@ const Page = () => {
         </div>
       ) : (
         <InitialConfig
-          serreId={serres.id}
+          serreId={serre.id}
           cultureId={activeCulture?.id as string}
         />
       )}

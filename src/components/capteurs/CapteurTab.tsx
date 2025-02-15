@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Logs, ChartNetwork } from "lucide-react";
 import { useSocket } from "@/context/SocketContext";

@@ -1,5 +1,5 @@
 export interface INotification {
-  type: string;
+  type: "Moniteur" | "SAS" | "Chateau" | "Bipeure" | "Ombriere";
   value: string;
   timestamp: string;
   id: string;

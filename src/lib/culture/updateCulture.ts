@@ -1,8 +1,10 @@
+import { ICulture } from "@/types/culture";
+
 export const updateCulture = async (
   access_token: string,
   cultureId: string,
   serreId: string,
-  data: any
+  data: Partial<ICulture>
 ) => {
   try {
     const response = await fetch(

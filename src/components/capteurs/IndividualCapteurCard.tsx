@@ -9,7 +9,7 @@ const IndividualCapteurCard = ({
   sensorData: Partial<ILatestData> | null;
   localName: string;
 }) => {
-  const [formattedTime, setFormattedTime] = useState<any>();
+  const [formattedTime, setFormattedTime] = useState<string>("");
 
   useEffect(() => {
     if (sensorData?.localName === localName) {

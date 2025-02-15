@@ -12,8 +12,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { SimpleDatePiker } from "@/components/view/SimpleDatePicker";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -120,7 +118,7 @@ const Serres = () => {
             className="flex flex-col max-w-xs rounded-lg items-center border shadow-xl bg-secondary hover:shadow-2xl"
           >
             <div className="flex justify-center bg-white p-5 rounded-tl-lg rounded-tr-lg">
-              <img src={serreIcon.src} className="w-1/2" />
+              <img src={serreIcon.src} className="w-1/2" alt="Serre icon"/>
             </div>
             <div className="w-full p-3">
               <h2 className="text-2xl font-bold">Serre 1</h2>

@@ -1,8 +1,7 @@
 import { UserPlus } from "lucide-react";
-import React, { Dispatch, useState } from "react";
+import React, { useState } from "react";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -25,8 +24,6 @@ import { EUserRole } from "@/types/userRole";
 import { generateStrongPassword } from "@/lib/auth/generateRandomPassWord";
 import { ICreateUser } from "@/types/user";
 import { createNewUser } from "@/lib/auth/createUser";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
 
@@ -123,9 +120,9 @@ const AddUser = ({ setNewUser }: { setNewUser: (param: boolean) => void }) => {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Détails de l'utilisateur</AlertDialogTitle>
+          <AlertDialogTitle>Détails de l’utilisateur</AlertDialogTitle>
           <AlertDialogDescription>
-            Consulter et modifier les informations de l'utilisateur
+            Consulter et modifier les informations de l’utilisateur
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div>

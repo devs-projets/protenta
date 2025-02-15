@@ -13,8 +13,8 @@ const HomePageLoading = () => {
 
   useEffect(() => {
     if (!loading && user) {
-      user.role === EUserRole.DEV && router.push("/dev-dashboard");
-      user.role !== EUserRole.DEV && router.push("/dashboard");
+      if (user.role === EUserRole.DEV) router.push("/dev-dashboard");
+      else router.push("/dashboard");
     }
 
     if (!loading && !user) {

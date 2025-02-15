@@ -5,18 +5,12 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Power } from "lucide-react";
 import { restartMonitor } from "@/lib/postData/restartMonitor";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
 
-export default function SocketControl() {
+export default function MonitorControl() {
   const {
-    sensorNotification,
     isConnected,
-    setWantStopSocket,
-    connect,
-    disconnect,
   } = useSocket();
   const [isLoading, setIsLoading] = useState(false);
   const { access_token } = useAuth();
@@ -39,19 +33,6 @@ export default function SocketControl() {
     });
     restartMonitor(access_token);
     setIsLoading(false);
-    // try {
-    //   if (isConnected) {
-    //     // await disconnect();
-    //     setWantStopSocket(true);
-    //   } else {
-    //     // await connect();
-    //     setWantStopSocket(false);
-    //   }
-    // } catch (error) {
-    //   console.error("Erreur lors de la (dé)connexion :", error);
-    // } finally {
-    //   setIsLoading(false);
-    // }
   };
 
   return (
@@ -62,13 +43,6 @@ export default function SocketControl() {
         }`}
       ></span>
       <span>{isConnected ? "Connecté" : "Déconnecté"}</span>
-      {/* <Button
-        className={`${isConnected ? "bg-red-500 hover:bg-red-600" : ""}`}
-        onClick={handleToggleConnection}
-        disabled={isLoading}
-      >
-        {isLoading ? "En cours..." : isConnected ? "Déconnecter" : "Connecter"}
-      </Button> */}
       <Button
         className={`bg-primary`}
         onClick={handleToggleConnection}

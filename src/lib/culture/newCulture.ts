@@ -1,4 +1,6 @@
-export async function addCulture(access_token: string, serreId: string, data: any) {
+import { ICulture } from "@/types/culture";
+
+export async function addCulture(access_token: string, serreId: string, data: Partial<ICulture>) {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor/add-cultures/${serreId}`,

@@ -19,7 +19,7 @@ import { updateCulture } from "@/lib/culture/updateCulture";
 import { currentSerre } from "@/store/reducers/serre/serreSlice";
 import { RootState, useAppDispatch } from "@/store/store";
 import { ICulture } from "@/types/culture";
-import { FilePenLine, TriangleAlert, ArrowLeft } from "lucide-react";
+import { FilePenLine, ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";

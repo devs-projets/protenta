@@ -8,34 +8,34 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useSocket } from "@/context/SocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
 
-const codes = {
-  S1: { active: "101", inactive: "100" },
-  S2: { active: "111", inactive: "110" },
-  S3: { active: "121", inactive: "120" },
-  S4: { active: "131", inactive: "130" },
-  S5: { active: "141", inactive: "140" },
-  S6: { active: "151", inactive: "150" },
-  S7: { active: "161", inactive: "160" },
-  S8: { active: "171", inactive: "170" },
-  S9: { active: "181", inactive: "180" },
-  S10: { active: "191", inactive: "190" },
-  S11: { active: "201", inactive: "200" },
-  S13: { active: "231", inactive: "230" },
-  S14: { active: "241", inactive: "240" },
-  S15: { active: "251", inactive: "250" },
-};
+// TODO: clean this component
 
-const ombriere = { deploy: "220", inactive: "222", reactor: "221" };
+// const codes = {
+//   S1: { active: "101", inactive: "100" },
+//   S2: { active: "111", inactive: "110" },
+//   S3: { active: "121", inactive: "120" },
+//   S4: { active: "131", inactive: "130" },
+//   S5: { active: "141", inactive: "140" },
+//   S6: { active: "151", inactive: "150" },
+//   S7: { active: "161", inactive: "160" },
+//   S8: { active: "171", inactive: "170" },
+//   S9: { active: "181", inactive: "180" },
+//   S10: { active: "191", inactive: "190" },
+//   S11: { active: "201", inactive: "200" },
+//   S13: { active: "231", inactive: "230" },
+//   S14: { active: "241", inactive: "240" },
+//   S15: { active: "251", inactive: "250" },
+// };
+
+// const ombriere = { deploy: "220", inactive: "222", reactor: "221" };
 
 const ActionnaireListItem = ({
   title,

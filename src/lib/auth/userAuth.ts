@@ -20,6 +20,7 @@ export const authUserService = async (
 
     if (!res.ok) {
       const errorResponse = await res.json();
+      console.error(errorResponse);
       throw new Error("Auth error");
     }
 
