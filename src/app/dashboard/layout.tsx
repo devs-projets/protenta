@@ -68,9 +68,9 @@ export default function DashboardLayout({
           >
             <AppSidebar />
             {/* <Toaster /> */}
-            <SidebarInset className="h-screen">
+            <SidebarInset className="h-screen w-auto overflow-auto">
               <header className="flex items-center justify-between gap-2 p-4 sticky top-0 bg-white z-100">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 overflow-hidden">
                   <SidebarTrigger className="-ml-1" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <div className="hidden md:flex items-center gap-3">

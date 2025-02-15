@@ -48,7 +48,7 @@ export default function MonitorControl() {
         onClick={handleToggleConnection}
         disabled={isLoading}
       >
-        <Power /> Restart
+        <Power /> <span className="hidden xxs:block">Restart</span>
       </Button>
     </div>
   );

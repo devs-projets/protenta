@@ -12,7 +12,7 @@ const CurrentDate = () => {
   }, []);
 
   return (
-    <div className="text-right font-bold">
+    <div className="hidden lg:block text-right font-bold">
       {dateTime ? (
         <>
           {dateTime.toLocaleDateString()} {dateTime.toLocaleTimeString()}
