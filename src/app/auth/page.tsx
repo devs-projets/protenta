@@ -28,7 +28,11 @@ const AuthPage = () => {
 
   const submitLogin = async () => {
     const data: IUserCredentials = { userName, passWord };
-    toast.promise(authUserService(data), {
+    toast.promise(authUserService(data).then((result) => {
+      return result
+    }).catch((err) => {
+      throw new Error(err);
+    }), {
       loading: "Authentification en cours ...",
       success: (response) => {
         if (response) {

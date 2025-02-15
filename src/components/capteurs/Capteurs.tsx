@@ -7,19 +7,6 @@ import { useSocket } from "@/context/SocketContext";
 import { defaultSensorData } from "@/mockData/defaultMonitor";
 import { ISensorData } from "@/types/monitor";
 
-export interface CapteurItem {
-  id: string;
-  name: string;
-  temperature: number | undefined;
-  humidite: number | undefined;
-  sol: number | undefined;
-  pressAtm: number | undefined;
-  air: undefined; // TODO : Correct type
-  lumiere: number | undefined;
-  acc: undefined; // TODO : Correct type
-  gyro: undefined; // TODO : Correct type
-}
-
 const Capteurs = () => {
   const { sensorData } = useSocket();
 

@@ -12,7 +12,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TriangleAlert } from "lucide-react";
-import { activateSouscription } from "@/lib/souscription/activateSouscription";
+// import { activateSouscription } from "@/lib/souscription/activateSouscription";
+import { validateLicense } from "@/lib/souscription/activateSouscription";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
 
@@ -81,10 +82,11 @@ export default function SubscriptionPage() {
     setIsLoading(true);
     setError("");
 
-    const fullLicenseKey = licenseKey
-      .join("")
-      .replace(/(.{6})/g, "$1-")
-      .replace(/-$/, "");
+    // const fullLicenseKey = licenseKey
+    //   .join("")
+    //   .replace(/(.{6})/g, "$1-")
+    //   .replace(/-$/, "");
+    const fullLicenseKey = licenseKey.join("");
 
     try {
       if (!access_token) {
@@ -92,7 +94,8 @@ export default function SubscriptionPage() {
       }
 
       toast.promise(
-        activateSouscription(access_token, fullLicenseKey).then((result) => {
+        // activateSouscription(access_token, fullLicenseKey).then((result) => {
+        validateLicense(fullLicenseKey).then((result) => {
           if (result) {
             router.push("/dashboard");
           } else {
