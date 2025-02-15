@@ -7,7 +7,6 @@ import ActionnaireList, {
   Actionnaire,
 } from "./actionnaireTabs/ActionnaireList";
 import FloraisonComponent from "./floraison/FloraisonComponent";
-import { ISensorStoredData } from "@/types/storedData";
 import Spinner from "../Spinner";
 import { getLatestData } from "@/lib/fetchData/getLatestData";
 import { extractActionnaires } from "@/lib/transformDatas/extractActionnaires";
@@ -31,8 +30,9 @@ const ConfigTabs = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [reload, setReload] = useState<boolean>(false);
-  const [storedData, setStoredData] = useState<any>();
+  // const [storedData, setStoredData] = useState<any>();
 
+  // TODO: A checker
   useEffect(() => {
     const fetchSensorData = async () => {
       if (!access_token) {
@@ -51,7 +51,7 @@ const ConfigTabs = () => {
           activeCulture.id,
           "monitor"
         );
-        setStoredData(data);
+        // setStoredData(data);
         setActionnairesFetched(extractActionnaires(data));
         // setActionnairesFetched(data);
         setLimitesFetched(extractLimites(data));
@@ -65,7 +65,8 @@ const ConfigTabs = () => {
     };
 
     fetchSensorData();
-  }, [reload, setStoredData]);
+  }, [reload]);
+  // }, [reload, setStoredData]);
 
   return (
     <div>
@@ -82,7 +83,8 @@ const ConfigTabs = () => {
         </TabsList>
 
         <TabsContent value="limites">
-          <LimiteList newLimites={limitesFetched} setReload={setReload} />
+          {/* TODO: Check ça */}
+          {limitesFetched && <LimiteList newLimites={limitesFetched} setReload={setReload} />}
         </TabsContent>
 
         <TabsContent value="actionnaires">

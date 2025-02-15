@@ -8,16 +8,28 @@ const CardCapteur = ({
 }: {
   item: ISensorData;
   capteurIndex: number;
-  sensorData: ISensorData;
+  sensorData: ISensorData | null;
 }) => {
   const [currentSensorData, setCurrentSensorData] =
     useState<ISensorData | null>(null);
   const [indicator, setIndicator] = useState<boolean>(false);
+  const [formattedTime, setFormattedTime] = useState<string>("");
 
   useEffect(() => {
     if (sensorData?.localName === item.id) {
       setIndicator(true);
       setCurrentSensorData(sensorData);
+      const sensorDataTime = sensorData.timestamp
+        ? sensorData.timestamp
+        : sensorData.latest
+        ? sensorData.latest
+        : null;
+      const formatted = sensorDataTime
+        ? `${new Date(sensorDataTime).toLocaleDateString()} à ${new Date(
+            sensorDataTime
+          ).toLocaleTimeString()}`
+        : "--/--/--";
+      setFormattedTime(formatted);
     } else {
       setIndicator(false);
     }
@@ -32,10 +44,7 @@ const CardCapteur = ({
       >
         <h2 className={`${currentSensorData && "flex justify-around"}`}>
           <span className="block">Capteur l{capteurIndex} </span>
-          <span className="block">
-            {currentSensorData &&
-              new Date(currentSensorData.timestamp).toLocaleTimeString()}
-          </span>
+          <span className="block">{currentSensorData && formattedTime}</span>
         </h2>
       </div>
       <div>

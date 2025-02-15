@@ -63,7 +63,7 @@ const AddSerre = ({
         }
       );
     } catch (error) {
-      console.error("Une erreur est survenu !");
+      console.error("Une erreur est survenu !", error);
     }
   };
   return (

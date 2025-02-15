@@ -11,7 +11,6 @@ import {
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -26,9 +25,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ICreateUser, IUpdateUser, User } from "@/types/user";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { IUpdateUser, User } from "@/types/user";
 import { getAllUsers } from "@/lib/auth/allUser";
 import Spinner from "@/components/Spinner";
 import { useRouter } from "next/navigation";
@@ -49,29 +46,6 @@ import { EUserRole } from "@/types/userRole";
 import { generateStrongPassword } from "@/lib/auth/generateRandomPassWord";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
-
-const users = [
-  {
-    id: 1,
-    name: "Jane Cooper",
-    title: "Regional Paradigm Technician",
-    department: "Optimization",
-    status: "Active",
-    role: "Expert",
-    email: "jane.cooper@example.com",
-    image: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    id: 2,
-    name: "John Doe",
-    title: "Software Engineer",
-    department: "Development",
-    status: "Inactive",
-    role: "User",
-    email: "john.doe@example.com",
-    image: "https://i.pravatar.cc/150?img=2",
-  },
-];
 
 const TableRow = ({
   user,
@@ -247,9 +221,9 @@ const TableRow = ({
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Détails de l'utilisateur</AlertDialogTitle>
+              <AlertDialogTitle>Détails de l’utilisateur</AlertDialogTitle>
               <AlertDialogDescription>
-                Consulter et modifier les information de l'utilisateur
+                Consulter et modifier les information de l’utilisateur
               </AlertDialogDescription>
             </AlertDialogHeader>
             <Tabs defaultValue="Profil" className="w-full">
@@ -409,7 +383,7 @@ const TableRow = ({
                   <AccordionItem value="item-2">
                     <AccordionTrigger>Rôle</AccordionTrigger>
                     <AccordionContent>
-                      {user.userName} porte le rôle d'un {user.role}. <br />
+                      {user.userName} porte le rôle d’un {user.role}. <br />
                       Voulez vous changer son rôle ? <br />
                       {!updateRole && (
                         <span

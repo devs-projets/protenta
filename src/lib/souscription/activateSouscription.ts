@@ -24,3 +24,13 @@ export async function activateSouscription(
     console.error("Erreur réseau ou serveur :", error);
   }
 }
+
+
+// Mock validation 
+export async function validateLicense(licenseKey: string) {
+  if (licenseKey === "ABCDEFGHIJKLMNOPQRST") {
+    return { success: true };
+  } else {
+    return { success: false, message: "Clé de licence invalide" };
+  }
+}

@@ -11,29 +11,19 @@ import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
 export interface IMoyenneTabsProps {
-  type?: string;
   visualisationPeriode: string;
+  type?: string;
 }
 
 export function MoyenneTabs({
-  type,
   visualisationPeriode,
 }: IMoyenneTabsProps) {
-  const [data, setData] = useState<any>();
-  const [filteredData, setFilteredData] = useState<any>([]);
+  const [filteredData, setFilteredData] = useState<ISensorStoredData[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
 
   const { data: hourData } = useSelector((state: RootState) => state.hourData);
   const { data: dayData } = useSelector((state: RootState) => state.dayData);
-
-  useEffect(() => {
-    if (visualisationPeriode === "Heures") {
-      setData(hourData);
-    } else if (visualisationPeriode === "Jours") {
-      setData(dayData);
-    }
-  }, [visualisationPeriode]);
 
   useEffect(() => {
     if (visualisationPeriode === "Heures" && selectedDate) {

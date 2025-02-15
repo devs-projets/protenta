@@ -11,19 +11,16 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { ISensorStoredData } from "@/types/storedData";
-import { units } from "./Table";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useEffect, useState } from "react";
@@ -78,7 +75,6 @@ export const metrics = [
 
 // Fonction pour transformer les données de `sensorData` en format graphique
 const generateHourlyTimeRange = () => {
-  const now = new Date();
   const hours = [];
   for (let i = 0; i < 24; i++) {
     const hour = new Date();
@@ -91,7 +87,7 @@ const generateHourlyTimeRange = () => {
 };
 
 // Fonction pour transformer les données de `sensorData` en format graphique
-const generateDaylyTimeRange = (timeRange: DateRange | undefined) => {
+const generateDaylyTimeRange = (timeRange: DateRange) => {
   if (!timeRange || !timeRange.from || !timeRange.to) {
     // Si aucun intervalle n'est fourni, générer les 30 derniers jours par défaut
     const now = new Date();
@@ -142,7 +138,7 @@ const transformSensorData = (
   sensorData: ISensorStoredData[],
   key: string,
   visualPeriod: string,
-  timeRange: any
+  timeRange: Date | DateRange | undefined
 ) => {
   const formattedData = sensorData.map((entry) => ({
     date:
@@ -188,7 +184,7 @@ const transformSensorData = (
   }
 
   if (visualPeriod === "Jours") {
-    const fullTimeRange = generateDaylyTimeRange(timeRange);
+    const fullTimeRange = generateDaylyTimeRange(timeRange as DateRange);
     const dataMap = new Map(
       formattedData.map((item) => [item.date, item.value])
     );

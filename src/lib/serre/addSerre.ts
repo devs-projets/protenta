@@ -1,4 +1,6 @@
-export async function addSerre(access_token: string, data: any) {
+import { INewSerre } from "@/types/serre";
+
+export async function addSerre(access_token: string, data: INewSerre) {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/systeme-config/add-serre`,
@@ -21,7 +23,8 @@ export async function addSerre(access_token: string, data: any) {
     }
   } catch (error) {
     console.error(
-      "Une erreur s'est produite lors de la communication avec le serveur. Vérifiez votre connexion."
+      "Une erreur s'est produite lors de la communication avec le serveur. Vérifiez votre connexion.",
+      error
     );
   }
 }

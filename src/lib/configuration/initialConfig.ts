@@ -1,8 +1,10 @@
+import { InitialConfigType } from "@/components/cultures/InitialConfig";
+
 export async function initialConfiguration(
   access_token: string,
   serreId: string,
   cultureId: string,
-  data: any
+  data: InitialConfigType
 ) {
   try {
     const response = await fetch(
@@ -19,7 +21,7 @@ export async function initialConfiguration(
 
     if (!response) {
       const errorResponse = response;
-      throw new Error(errorResponse)
+      throw new Error(errorResponse);
     }
 
     return response;

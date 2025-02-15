@@ -173,7 +173,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {item.title === "Données" && <CircleGauge />}
                         {item.title === "Capteurs" && <Cable />}
                         {item.title === "Cultures" && <Sprout />}
-                        {item.title === "Serres" && <img src={serreIcon.src} className="w-6 h-6" />}
+                        {item.title === "Serres" && <img src={serreIcon.src} className="w-6 h-6" alt="Serre icon" />}
                         {item.title}
                       </div>
 

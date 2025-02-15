@@ -7,7 +7,6 @@ export async function getStoredSensorData(
   cultureId: string
 ): Promise<ISensorStoredData[]> {
   try {
-    console.log(serreId);
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/monitor/aggregation-data/${serreId}/cultures/${cultureId}?period=${period}`,
       {

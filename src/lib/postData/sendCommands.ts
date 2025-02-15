@@ -1,9 +1,13 @@
 import { toast } from "sonner";
 
+export interface ICommandData {
+  [x: string]: string | number | boolean | null;
+}
+
 export async function sendCommand(
   serreId: string,
   cultureId: string,
-  data: any,
+  data: ICommandData,
   message: string,
   access_token: string
 ) {

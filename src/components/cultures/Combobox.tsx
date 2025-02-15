@@ -21,29 +21,6 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
-
 export function CultureComboBox() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");

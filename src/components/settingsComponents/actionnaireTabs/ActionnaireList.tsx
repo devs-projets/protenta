@@ -1,7 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import ActionnaireListItem from "./ActionnaireListItem";
-import { ISensorStoredData } from "@/types/storedData";
-import { ILatestData } from "@/types/latestDataState";
 
 export interface Actionnaire {
   name: string;
@@ -18,7 +16,6 @@ const ActionnaireList = ({
 }) => {
   const [actionnaires, setActionnaires] = useState<Actionnaire[]>([]);
   const [s11andS12, setS11andS12] = useState<string>("");
-  console.log(actionnairesFetched);
 
   useEffect(() => {
     if (actionnairesFetched) {
@@ -41,7 +38,6 @@ const ActionnaireList = ({
     }
   }, [actionnairesFetched]);
 
-  console.log(actionnaires);
 
   return (
     <ul className="max-h-[300px] overflow-y-auto">

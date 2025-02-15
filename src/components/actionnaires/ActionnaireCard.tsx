@@ -10,7 +10,7 @@ interface IActionnaireCardProps {
 }
 
 const ActionnaireCard = ({ item, data, index }: IActionnaireCardProps) => {
-  const [thisActionnaire, setThisActionnaire] = useState<any>();
+  const [thisActionnaire, setThisActionnaire] = useState<Partial<ILatestData>>();
 
   useEffect(() => {
     if (data) {

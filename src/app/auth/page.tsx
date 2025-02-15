@@ -15,7 +15,6 @@ import { Label } from "@/components/ui/label";
 import { Leaf } from "lucide-react";
 import { useEffect, useState } from "react";
 import { authUserService, IUserCredentials } from "@/lib/auth/userAuth";
-import { login } from "@/store/reducers/auth/authSlice";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
@@ -29,7 +28,11 @@ const AuthPage = () => {
 
   const submitLogin = async () => {
     const data: IUserCredentials = { userName, passWord };
-    toast.promise(authUserService(data), {
+    toast.promise(authUserService(data).then((result) => {
+      return result
+    }).catch((err) => {
+      throw new Error(err);
+    }), {
       loading: "Authentification en cours ...",
       success: (response) => {
         if (response) {
@@ -43,7 +46,6 @@ const AuthPage = () => {
 
   useEffect(() => {
     if (user) {
-      console.log(user);
       if (user.role === EUserRole.DEV) {
         router.push("/dev-dashboard");
       } else {
@@ -71,7 +73,7 @@ const AuthPage = () => {
           <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="userName" className="text-lg">
-                Nom d'utilisateur
+                Nom d’utilisateur
               </Label>
               <Input
                 id="userName"

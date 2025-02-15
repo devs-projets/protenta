@@ -1,15 +1,8 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import React, { useState } from "react";
-import Co2Icon from "@/assets/icons/co2.png";
-import HumiditeIcon from "@/assets/icons/humidite.png";
-import SolHumiditeIcon from "@/assets/icons/solHumidite.png";
-import LumiereIcon from "@/assets/icons/lumiere.png";
-import PressionAtmoIcon from "@/assets/icons/pressionAtmo.png";
-import TemperatureIcon from "@/assets/icons/temperature.png";
+import React from "react";
 import Image from "next/image";
-import { MoyenneItem } from "@/types/moyenneItem";
 import { defaulMoyenneCardData } from "@/mockData/defaultMoyenneCardData";
 import { ISensorStoredData } from "@/types/storedData";
 

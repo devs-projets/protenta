@@ -1,11 +1,13 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import LimiteListItem from "../LimiteTabs/LimiteListItem";
 import { Save, X } from "lucide-react";
-import { sendCommand } from "@/lib/postData/sendCommands";
+import { ICommandData, sendCommand } from "@/lib/postData/sendCommands";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
+import { ILatestData } from "@/types/latestDataState";
+import { InitialConfigData } from "@/types/initialConfigData";
 
 export interface Limite {
   code: string;
@@ -57,7 +59,7 @@ const LimiteList = ({
   newLimites,
   setReload,
 }: {
-  newLimites: any;
+  newLimites: Partial<ILatestData>;
   setReload: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [limites, setLimites] = useState<Limite[]>(initialLimites);
@@ -71,19 +73,17 @@ const LimiteList = ({
     if (newLimites) {
       const updatedLimites = limites.map((limite) => {
         const code = limite.code;
-        const minKey = `${code}min`;
-        const maxKey = `${code}max`;
+        const minKey = `${code}min` as keyof ILatestData;
+        const maxKey = `${code}max` as keyof ILatestData;
         return {
           ...limite,
-          minValue: newLimites[minKey],
-          maxValue: newLimites[maxKey],
+          minValue: newLimites[minKey] as number,
+          maxValue: newLimites[maxKey] as number,
         };
       });
       setLimites(updatedLimites);
     }
   }, [newLimites]);
-
-  console.log(limites);
 
   const handleMinChange = (index: number, value: number) => {
     setLimites((prev) => {
@@ -118,7 +118,7 @@ const LimiteList = ({
       throw Error("Une culture active");
     }
 
-    const data: any = {};
+    const data: Partial<InitialConfigData> = {};
     limites.map((x) => {
       if (x.code === "SeuilHumidity_") {
         data["HumMin"] = x.minValue ?? 0;
@@ -147,7 +147,7 @@ const LimiteList = ({
       sendCommand(
         currentSerre.id,
         activeCulture.id,
-        data,
+        data as ICommandData,
         message,
         access_token
       ).then((result) => {
@@ -185,8 +185,8 @@ const LimiteList = ({
               key={limite.code}
               title={limite.name}
               unit={limite.unit}
-              minValue={limite.minValue}
-              maxValue={limite.maxValue}
+              minValue={limite.minValue || 0}
+              maxValue={limite.maxValue || 0}
               onMinChange={(e) => handleMinChange(index, +e.target.value)}
               onMaxChange={(e) => handleMaxChange(index, +e.target.value)}
             />

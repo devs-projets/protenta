@@ -3,10 +3,8 @@
 import Spinner from "@/components/Spinner";
 import { fetchDayData } from "@/store/reducers/dayData/dayDataSlice";
 import { fetchHourData } from "@/store/reducers/hourDate/hourDataSlice";
-import { currentUser } from "@/store/reducers/auth/authSlice";
-import { fetchMinuteData } from "@/store/reducers/minutesData/minutesDataSlice";
 import { RootState, useAppDispatch } from "@/store/store";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { TriangleAlert } from "lucide-react";
 import { fetchLatestData } from "@/store/reducers/latestData/latestDataSlice";
@@ -14,7 +12,6 @@ import { currentSerre as fetchCurrentSerre } from "@/store/reducers/serre/serreS
 import { useAuth } from "./AuthProvider";
 
 const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
-  const [serreLoaded, setSerreLoaded] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
   const { user, loading: userLoading, error: userError } = useAuth();
@@ -63,7 +60,6 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const fetchDatas = () => {
-    dispatch(currentUser());
     dispatch(fetchCurrentSerre());
   };
 
@@ -101,7 +97,8 @@ const SensorDataProvider = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!serreLoaded && !activeCulture) {
+  // TODO: Check cette condition
+  if (!serreLoading && !activeCulture) {
     return (
       <div className="h-screen flex flex-col gap-3 justify-center items-center">
         <Spinner />

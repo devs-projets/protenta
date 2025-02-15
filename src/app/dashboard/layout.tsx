@@ -3,7 +3,6 @@
 import { AppSidebar } from "@/components/layoutComposants/app-sidebar";
 import CurrentDate from "@/components/layoutComposants/CurrentDate";
 import Notifications from "@/components/notifications/Notifications";
-import SocketControl from "@/components/layoutComposants/SocketControl";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -12,18 +11,17 @@ import {
 } from "@/components/ui/sidebar";
 import { SocketProvider } from "@/context/SocketContext";
 import { SocketManager } from "@/context/SocketManager";
-import { Toaster } from "@/components/ui/sonner";
 import SensorDataProvider from "@/context/SensorDataProvider";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { EUserRole } from "@/types/userRole";
-import { ICulture } from "@/types/culture";
 import NoActiveCultureAlert from "@/components/NoActiveCultureAlert";
 import { SerresComboBox } from "@/components/serre/Combobox";
 import { CultureComboBox } from "@/components/cultures/Combobox";
 import { useAuth } from "@/context/AuthProvider";
+import MonitorControl from "@/components/layoutComposants/MinotorControl";
 
 export default function DashboardLayout({
   children,
@@ -85,7 +83,7 @@ export default function DashboardLayout({
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <SocketControl />
+                  <MonitorControl />
                   <CurrentDate />
                   <Notifications />
                 </div>

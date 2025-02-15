@@ -3,7 +3,7 @@ export const defineCurrentSerre = async (
   serreId: string
 ) => {
   try {
-    const response = await fetch(
+    await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/current-serre?serre=${serreId}`,
       {
         method: "POST",

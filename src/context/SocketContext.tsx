@@ -1,3 +1,5 @@
+import { ISensorData } from "@/types/monitor";
+import { INotification } from "@/types/notification";
 import React, {
   createContext,
   useContext,
@@ -11,8 +13,8 @@ import { io, Socket } from "socket.io-client";
 
 interface SocketContextType {
   socket: Socket | null;
-  sensorData: any;
-  sensorNotification: any;
+  sensorData: ISensorData | null;
+  sensorNotification: INotification | null;
   isConnected: boolean;
   wantStopSocket: boolean;
   connect: () => void;
@@ -28,8 +30,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [sensorData, setSensorData] = useState<any>(null);
-  const [sensorNotification, setSensorNotification] = useState<any>(null)
+  const [sensorData, setSensorData] = useState<ISensorData | null>(null);
+  const [sensorNotification, setSensorNotification] = useState<INotification | null>(null)
   const [isConnected, setIsConnected] = useState(false);
   const [wantStopSocket, setWantStopSocket] = useState<boolean>(false);
 
@@ -42,11 +44,9 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       newSocket.on("disconnect", () => setIsConnected(false));
       newSocket.on("monitorDataOnLive", (data) => {
         setSensorData(data);
-        // console.log(data)
       });
       newSocket.on("notifications", (data) => {
         setSensorNotification(data)
-        // console.log(data)
       });
     }
   }, [socket]);

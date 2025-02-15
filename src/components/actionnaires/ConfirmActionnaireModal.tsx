@@ -10,13 +10,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { sendCommand } from "@/lib/postData/sendCommands";
-import { useSocket } from "@/context/SocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthProvider";
+
+// TODO: Clean this component 
 
 const modeSwitchCodes = {
   300: "Désactiver manuelAuto S1",
@@ -48,26 +49,26 @@ export function ConfirmActionnaireModal({
   description: string;
   setModeAuto: Dispatch<SetStateAction<boolean>>;
 }) {
-  const [modeState, setModeState] = useState<number>();
-  const { sensorData } = useSocket();
+  // const [modeState, setModeState] = useState<number>();
+  // const { sensorData } = useSocket();
   const { access_token } = useAuth();
   const { currentSerre, activeCulture } = useSelector(
     (state: RootState) => state.serre
   );
 
-  useEffect(() => {
-    const mState =
-      sensorData &&
-      Object.keys(sensorData)
-        .filter((key) => key.endsWith(title as string))
-        .reduce<{ [key: string]: number }>((obj, key) => {
-          const k = key.replace("ManuelAuto", "");
-          obj[k] = sensorData[key];
-          setModeState(sensorData[key]);
-          return obj;
-        }, {});
-    // setModeState(mState[title as string])
-  }, [sensorData]);
+  // useEffect(() => {
+  //   const mState =
+  //     sensorData &&
+  //     Object.keys(sensorData)
+  //       .filter((key) => key.endsWith(title as string))
+  //       .reduce<{ [key: string]: number }>((obj, key) => {
+  //         const k = key.replace("ManuelAuto", "");
+  //         obj[k] = sensorData[key];
+  //         setModeState(sensorData[key]);
+  //         return obj;
+  //       }, {});
+  //   // setModeState(mState[title as string])
+  // }, [sensorData]);
 
   const setAutoHandling = async () => {
     if (!access_token) {

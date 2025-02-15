@@ -2,15 +2,16 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { ISensorStoredData } from "@/types/storedData";
 import { MoyenneItem } from "@/types/moyenneItem";
 import { defaulMoyenneCardData } from "@/mockData/defaultMoyenneCardData";
+import { ILatestData } from "@/types/latestDataState";
+import { ISensorData } from "@/types/monitor";
 
 const CapteurDataCardList = ({
   sensorData,
   localName,
 }: {
-  sensorData: any;
+  sensorData: ILatestData | ISensorData;
   localName: string;
 }) => {
   const [moyennes, setMoyennes] = useState<MoyenneItem[]>(
@@ -48,7 +49,7 @@ const CapteurDataCardList = ({
 
   return (
     <>
-      {moyennes.map((item, index) => (
+      {moyennes.map((item) => (
         <div key={item.name} className="shadow-lg rounded-lg border">
           <article className="text-center rounded-xl bg-muted/50">
             <h2 className="">{item.name}</h2>

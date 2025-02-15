@@ -1,3 +1,5 @@
+import { InitialConfigType } from "@/components/cultures/InitialConfig";
+
 export interface ICulture {
   id: string;
   name: string;
@@ -11,5 +13,5 @@ export interface ICulture {
   updatedAt: string;
   initialConfigId: string | null;
   serreId: string;
-  initialConfig: any; // TODO : Dois être ajusté si j'ai plus d'informations sur ce champ
+  initialConfig: InitialConfigType;
 }

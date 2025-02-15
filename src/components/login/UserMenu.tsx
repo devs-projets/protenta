@@ -6,19 +6,15 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { useAuth } from "@/context/AuthProvider";
-import { logout } from "@/store/reducers/auth/authSlice";
-import { RootState } from "@/store/store";
 import { CircleUserRound, Settings, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
 
 const UserMenu = () => {
-  const { user } = useAuth();
-  const dispatch = useDispatch();
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
-    dispatch(logout());
+    logout();
     router.push("/auth");
   };
 

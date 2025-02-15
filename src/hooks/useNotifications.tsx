@@ -2,11 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { getNotifications } from "@/lib/fetchData/getNotifications";
 import { INotification } from "@/types/notification";
 import { useSocket } from "@/context/SocketContext";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 import { useAuth } from "@/context/AuthProvider";
 
-export const useNotifications = (open: boolean) => {
+export const useNotifications = () => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);

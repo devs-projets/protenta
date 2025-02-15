@@ -18,6 +18,7 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
+import { ISensorData } from "@/types/monitor";
 
 import { useEffect, useState } from "react";
 
@@ -54,7 +55,7 @@ const IndividualCapteurLogs = ({
   sensorData,
   capteurID,
 }: {
-  sensorData: SensorLog;
+  sensorData: ISensorData | null;
   capteurID: string;
 }) => {
   const [logs, setLogs] = useState<SensorLog[]>([]);

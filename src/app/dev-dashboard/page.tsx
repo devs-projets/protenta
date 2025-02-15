@@ -17,7 +17,7 @@ const DevDashboard = () => {
         setSerres(data);
       }
     } catch (err) {
-      console.error("Erreur lors du chargement des serres !");
+      console.error("Erreur lors du chargement des serres !", err);
     }
   };
 

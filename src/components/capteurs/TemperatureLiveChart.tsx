@@ -14,18 +14,19 @@ import {
 } from "@/components/ui/chart";
 import { useSocket } from "@/context/SocketContext";
 import { useParams } from "next/navigation";
+import { ISensorData } from "@/types/monitor";
 
 const MAX_DATA_POINTS = 60;
 
 interface RealTimeChartProps {
   code: string;
-  label: string; // Nom de la mesure (ex: Température, Humidité)
-  unit: string; // Unité de mesure (ex: °C, %, lx)
-  color: string; // Couleur de la ligne
-  minThreshold: number; // Seuil minimum
-  maxThreshold: number; // Seuil maximum
-  graphDomain: number[]; // Limites des axes Y
-  generateRandomData: () => number; // Fonction pour générer des données
+  // label: string;
+  unit: string;
+  color: string;
+  minThreshold: number;
+  maxThreshold: number;
+  graphDomain: number[];
+  // generateRandomData: () => number;
 }
 
 const chartConfig = {
@@ -42,19 +43,19 @@ const chartConfig = {
   },
 };
 
+interface IChartData { date: string; value: number }
+
 const RealTimeChart: React.FC<RealTimeChartProps> = ({
   code,
-  label,
+  // label,
   unit,
   color,
   minThreshold,
   maxThreshold,
   graphDomain,
-  generateRandomData,
+  // generateRandomData,
 }) => {
-  const [chartData, setChartData] = React.useState<
-    { date: string; value: number }[]
-  >(
+  const [chartData, setChartData] = React.useState<IChartData[]>(
     Array.from({ length: MAX_DATA_POINTS }, (_, index) => ({
       date: `-${MAX_DATA_POINTS - index}`,
       value: 0,
@@ -67,9 +68,11 @@ const RealTimeChart: React.FC<RealTimeChartProps> = ({
   React.useEffect(() => {
     if (sensorData && sensorData.localName === localName) {
       setChartData((prevData) => {
+        const val = sensorData[code as keyof ISensorData];
+        const v = typeof val === "number" ? val : 0;
         const newData = {
           date: new Date().toISOString(),
-          value: sensorData[code],
+          value: v
         };
         return [...prevData.slice(1), newData];
       });
