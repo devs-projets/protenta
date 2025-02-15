@@ -42,7 +42,6 @@ const AuthPage = () => {
 
   useEffect(() => {
     if (user) {
-      console.log(user);
       if (user.role === EUserRole.DEV) {
         router.push("/dev-dashboard");
       } else {

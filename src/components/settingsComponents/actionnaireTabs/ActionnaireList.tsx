@@ -16,7 +16,6 @@ const ActionnaireList = ({
 }) => {
   const [actionnaires, setActionnaires] = useState<Actionnaire[]>([]);
   const [s11andS12, setS11andS12] = useState<string>("");
-  console.log(actionnairesFetched);
 
   useEffect(() => {
     if (actionnairesFetched) {
@@ -39,7 +38,6 @@ const ActionnaireList = ({
     }
   }, [actionnairesFetched]);
 
-  console.log(actionnaires);
 
   return (
     <ul className="max-h-[300px] overflow-y-auto">

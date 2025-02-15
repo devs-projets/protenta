@@ -115,7 +115,6 @@ const ActivitiesPage = () => {
       setLog(data);
     });
     fetchUsers(access_token).then((data) => {
-      // console.log('data', data);
       setUsers(data);
     });
     // if (!localStorage.getItem('capteur')) {
@@ -164,7 +163,6 @@ const ActivitiesPage = () => {
     }
     for (let i = 1; i <= 16; i++) {
       const key = `S${i}` as keyof ILogsData;
-      // console.log('log[key]:::', log[key]);
 
       if (log[key]) {
         actions.push(

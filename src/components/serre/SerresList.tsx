@@ -6,8 +6,6 @@ import serreIcon from "@/assets/icons/serre.svg";
 import { ISerre } from "@/types/serre";
 
 const SerresList = ({ serres }: { serres: ISerre[] }) => {
-  console.log(serres);
-
   return (
     <div className="p-5 flex flex-wrap gap-8">
       {serres &&

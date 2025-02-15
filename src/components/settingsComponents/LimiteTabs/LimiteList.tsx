@@ -85,8 +85,6 @@ const LimiteList = ({
     }
   }, [newLimites]);
 
-  console.log(limites);
-
   const handleMinChange = (index: number, value: number) => {
     setLimites((prev) => {
       const newLimites = [...prev];

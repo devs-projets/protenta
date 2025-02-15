@@ -1,6 +1,5 @@
 export const fetchLogs = async (params = {}, access_token: string, serreId: string, cultureId: string) => {
   const queryString = new URLSearchParams(params).toString();
-  console.log("From Journal", access_token);
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL }/logs/${serreId}/cultures/${cultureId}?${queryString}`, {
     method: "GET",
     headers: {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import CardCapteur from "./CardCapteur";
 import Link from "next/link";
 import { useSocket } from "@/context/SocketContext";
@@ -21,16 +21,7 @@ export interface CapteurItem {
 }
 
 const Capteurs = () => {
-  const { sensorData, disconnect } = useSocket();
-
-  // console.log("From capteur : ", sensorData)
-
-  useEffect(() => {
-    return () => {
-      // Déconnecter le socket lors du démontage
-      disconnect();
-    };
-  }, []);
+  const { sensorData } = useSocket();
 
   const capteurs: ISensorData[] = Array.from({ length: 15 }, (_, index) => ({
     ...defaultSensorData,

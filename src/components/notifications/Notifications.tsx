@@ -88,7 +88,7 @@ const Notifications = () => {
               )}
             </div>
           ),
-          onClick: () => console.log("Action clicked"),
+          onClick: () => console.log("Notif toas hidded"),
         },
       });
 

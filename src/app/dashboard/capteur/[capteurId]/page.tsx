@@ -17,7 +17,7 @@ import { ISensorData } from "@/types/monitor";
 
 const CapteurId = () => {
   const localName = useParams().capteurId as string;
-  const { sensorData, disconnect } = useSocket();
+  const { sensorData } = useSocket();
   const [data, setData] = useState<ILatestData | ISensorData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,14 +70,6 @@ const CapteurId = () => {
       setData(sensorData);
     }
   }, [sensorData]);
-
-  // TODO : A supprimer si nous devons avoir l'écoute de la
-  // socket en continue. => Actuellement la connexion est perdu si l'on switch de page
-  useEffect(() => {
-    return () => {
-      disconnect();
-    };
-  }, [disconnect]);
 
   if (loading) {
     return (
