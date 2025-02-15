@@ -73,12 +73,12 @@ export default function DashboardLayout({
                 <div className="flex items-center gap-3">
                   <SidebarTrigger className="-ml-1" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
-                  <div className="flex items-center gap-3">
-                    <p className="block font-bold">Serre :</p>
+                  <div className="hidden md:flex items-center gap-3">
+                    <p className="hidden lg:block font-bold">Serre</p>
                     <SerresComboBox />
                   </div>
-                  <div className="flex items-center gap-3">
-                    <p className="block font-bold">Culture :</p>
+                  <div className="hidden md:flex items-center gap-3">
+                    <p className="hidden lg:block font-bold">Culture</p>
                     <CultureComboBox />
                   </div>
                 </div>

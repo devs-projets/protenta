@@ -8,7 +8,7 @@ import {
   ArrowDownUp,
   ChevronUp,
   ChevronDown,
-  Sprout
+  Sprout,
 } from "lucide-react";
 import serreIcon from "@/assets/icons/serre.svg";
 
@@ -28,8 +28,10 @@ import {
 import Link from "next/link";
 import { Config } from "@/components/settingsComponents/Config";
 import { usePathname } from "next/navigation";
-import {Users} from "lucide-react";
+import { Users } from "lucide-react";
 import UserMenu from "../login/UserMenu";
+import { CultureComboBox } from "../cultures/Combobox";
+import { SerresComboBox } from "../serre/Combobox";
 
 // This is sample data.
 const data = {
@@ -57,7 +59,7 @@ const data = {
     {
       title: "Utilisateurs",
       url: "/dashboard/user-management",
-      items: []
+      items: [],
     },
     {
       title: "Données",
@@ -173,7 +175,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {item.title === "Données" && <CircleGauge />}
                         {item.title === "Capteurs" && <Cable />}
                         {item.title === "Cultures" && <Sprout />}
-                        {item.title === "Serres" && <img src={serreIcon.src} className="w-6 h-6" alt="Serre icon" />}
+                        {item.title === "Serres" && (
+                          <img
+                            src={serreIcon.src}
+                            className="w-6 h-6"
+                            alt="Serre icon"
+                          />
+                        )}
                         {item.title}
                       </div>
 
@@ -254,6 +262,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       <SidebarFooter>
+        <div className="flex flex-col gap-3 md:hidden">
+          <div className="flex justify-between items-center gap-3">
+            <span className="block w-1/5">Serre</span>
+            <SerresComboBox />
+          </div>
+          <div className="flex justify-between items-center gap-3">
+            <span className="block w-1/5">Culture</span>
+            <CultureComboBox />
+          </div>
+        </div>
         <SidebarMenu>
           <SidebarMenuItem>
             <div>
