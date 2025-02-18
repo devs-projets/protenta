@@ -432,7 +432,7 @@ const ActivitiesPage = () => {
       <h1 className="text-4xl font-bold shadow-lg text-center rounded-lg py-5">
         Journal
       </h1>
-      <div className="flex items-center justify-end gap-3 mt-5">
+      <div className="flex flex-wrap items-center justify-end gap-3 mt-5">
         <div>
           <Select value={userSelect} onValueChange={handleUserChange}>
             <SelectTrigger className="w-[280px]">

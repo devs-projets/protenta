@@ -72,8 +72,8 @@ const IndividualMoyenneChart = () => {
 
   return (
     <div className="flex-1 rounded-xl bg-muted/50 p-5 mb-10">
-      <div className="flex justify-end items-center py-2 rounded-lg bg-[#E5E7EB]">
-        <div className="flex items-center">
+      <div className="flex flex-wrap gap-3 justify-end items-center py-2 rounded-lg bg-[#E5E7EB]">
+        <div className="flex items-center flex-wrap justify-end mr-3">
           <div>
             <p className="mr-3">Visuliser les données en </p>
           </div>

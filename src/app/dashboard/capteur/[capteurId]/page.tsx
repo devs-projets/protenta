@@ -104,6 +104,9 @@ const CapteurId = () => {
 
   return (
     <div>
+      <h1 className="text-2xl font-bold text-center my-5">
+        Capteur
+      </h1>
       <IndividualCapteurCard sensorData={data} localName={localName} />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6 px-3">
         <CapteurDataCardList sensorData={data} localName={localName} />

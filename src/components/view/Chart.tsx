@@ -273,7 +273,7 @@ const Chart = ({
       <CardHeader className="space-y-0 pb-3">
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-2 xxs:px-5">
         <ChartContainer
           config={chartConfig}
           className="aspect-auto h-[250px] w-full"
@@ -359,7 +359,7 @@ export function ChartComponent({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="flex flex-col px-5">
+        <div className="flex flex-col xxs:px-5">
           {metrics.map(({ key, code, title, graphDomain, unit }) => {
             const data = transformSensorData(
               sensorData,

@@ -19,17 +19,17 @@ const Experts = () => {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0 h-screen">
       <h1 className="text-center text-2xl font-bold">Moyennes</h1>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
+      <div className="grid grid-cols-1 gap-4 xxs:grid-cols-2 lg:grid-cols-6">
         <MoyennesCardList />
       </div>
 
       <ActionnaireTemoin />
 
-      <div className="flex-1 rounded-xl bg-muted/50 p-5 mb-10">
+      <div className="flex-1 rounded-xl bg-muted/50 p-5 mb-10 px-0">
         <div className="h-full overflow-y-auto">
-          <div className="flex justify-end gap-2 mb-3 items-center">
+          <div className="flex flex-col xxs:flex-row items-end xxs:items-center justify-end gap-2 mb-3">
             <div>
-              <p>Visuliser les données en :</p>
+              <p>Visuliser les données en</p>
             </div>
             <div className="flex items-center gap-3 justify-between">
               <span

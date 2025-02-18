@@ -22,6 +22,7 @@ import { SerresComboBox } from "@/components/serre/Combobox";
 import { CultureComboBox } from "@/components/cultures/Combobox";
 import { useAuth } from "@/context/AuthProvider";
 import MonitorControl from "@/components/layoutComposants/MinotorControl";
+import AppHeader from "@/components/layoutComposants/app-header";
 
 export default function DashboardLayout({
   children,
@@ -68,26 +69,8 @@ export default function DashboardLayout({
           >
             <AppSidebar />
             {/* <Toaster /> */}
-            <SidebarInset className="h-screen">
-              <header className="flex items-center justify-between gap-2 p-4 sticky top-0 bg-white z-100">
-                <div className="flex items-center gap-3">
-                  <SidebarTrigger className="-ml-1" />
-                  <Separator orientation="vertical" className="mr-2 h-4" />
-                  <div className="flex items-center gap-3">
-                    <p className="block font-bold">Serre :</p>
-                    <SerresComboBox />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <p className="block font-bold">Culture :</p>
-                    <CultureComboBox />
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <MonitorControl />
-                  <CurrentDate />
-                  <Notifications />
-                </div>
-              </header>
+            <SidebarInset className="h-screen w-auto overflow-auto">
+              <AppHeader />
               <div
                 className="flex-1 overflow-auto"
                 style={{ maxHeight: "calc(100vh - 4rem)" }}

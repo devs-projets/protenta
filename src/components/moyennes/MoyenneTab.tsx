@@ -72,15 +72,17 @@ export function MoyenneTabs({
 
   return (
     <Tabs defaultValue="Tableau">
-      <TabsList className="flex justify-end w-full sticky top-0 bg-gray-300 z-10 py-6">
-        <TabsTrigger value="Tableau">
-          <TableProperties />
-          Tableau
-        </TabsTrigger>
-        <TabsTrigger value="Graphique">
-          <ChartArea />
-          Graphique
-        </TabsTrigger>
+      <TabsList className="block xxs:flex flex-wrap gap-2 justify-end w-full h-auto sticky top-0 bg-gray-300 z-10 p-2">
+        <div className="flex justify-end mb-2 xxs:mb-0">
+          <TabsTrigger value="Tableau">
+            <TableProperties />
+            Tableau
+          </TabsTrigger>
+          <TabsTrigger value="Graphique">
+            <ChartArea />
+            Graphique
+          </TabsTrigger>
+        </div>
         {visualisationPeriode === "Heures" ? (
           <DatePickerWithPresets onDateChange={setSelectedDate} />
         ) : (

@@ -21,9 +21,9 @@ const ActionnaireCard = ({ item, data, index }: IActionnaireCardProps) => {
 
   return (
     <div className="flex justify-center items-center gap-5 flex-wrap">
-      <div className="bg-slate-200 w-60 h-32 shadow-lg rounded-lg flex flex-col justify-center items-center py-2 px-4">
+      <div className="bg-slate-200 xxs:w-[190px] xxs:px-0 shadow-lg rounded-lg flex flex-col justify-center items-center py-2 px-4">
         <h2 className="font-bold">{item.name}</h2>
-        <p>{item.description}</p>
+        <p className="hidden xxs:block">{item.description}</p>
         <div>
           {thisActionnaire ? (
             <div
