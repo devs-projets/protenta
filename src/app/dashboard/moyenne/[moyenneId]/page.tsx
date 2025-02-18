@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 const MoyenneId = () => {
   const {data: hourData} = useSelector((state: RootState) => state.hourData);
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0 h-screen">
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <IndividualMoyenneCard data={hourData} />
       <IndividualMoyenneChart />
     </div>

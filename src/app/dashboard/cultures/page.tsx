@@ -231,7 +231,7 @@ const Page = () => {
 
       {/* Cards Container */}
       {!hasInitConfig ? (
-        <div className="flex flex-wrap gap-5 p-5">
+        <div className="flex justify-center xxs:justify-start flex-wrap gap-5 p-5">
           {allCulture.map((culture: ICulture) => {
             // const cultureStartDate = new Date(culture);
             return (

@@ -583,7 +583,7 @@ const Page = () => {
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div>
       <div className="flex justify-between">
         <div>
           <h1 className="font-bold text-2xl p-5">Liste des utilisateurs</h1>
@@ -593,45 +593,47 @@ const Page = () => {
           <AddUser setNewUser={setNewUser} />
         </div>
       </div>
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            {[
-              "Nom & Prenom",
-              "Titre",
-              "Statut",
-              "R$ole",
-              "Mail | Téléphone",
-              "Actions",
-            ].map((header) => (
-              <th
-                key={header}
-                scope="col"
-                className={`px-6 py-3 ${
-                  header === "Actions" ? "text-center" : "text-left"
-                } text-xs font-medium text-gray-500 uppercase tracking-wider`}
-              >
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {users && users.length > 0 ? (
-            users.map((user) => (
-              <TableRow
-                key={user.id}
-                user={user}
-                setDeleteUser={setDeleteUser}
-                setOnUpdateUser={setOnUpdateUser}
-                setOnUpdateUserRole={setOnUpdateUserRole}
-              />
-            ))
-          ) : (
-            <p>Aucun utilisateur à afficher </p>
-          )}
-        </tbody>
-      </table>
+      <div className="overflow-auto">
+        <table className="divide-y divide-gray-200 overflow-x-auto">
+          <thead className="bg-gray-50">
+            <tr>
+              {[
+                "Nom & Prenom",
+                "Titre",
+                "Statut",
+                "R$ole",
+                "Mail | Téléphone",
+                "Actions",
+              ].map((header) => (
+                <th
+                  key={header}
+                  scope="col"
+                  className={`px-6 py-3 ${
+                    header === "Actions" ? "text-center" : "text-left"
+                  } text-xs font-medium text-gray-500 uppercase tracking-wider`}
+                >
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {users && users.length > 0 ? (
+              users.map((user) => (
+                <TableRow
+                  key={user.id}
+                  user={user}
+                  setDeleteUser={setDeleteUser}
+                  setOnUpdateUser={setOnUpdateUser}
+                  setOnUpdateUserRole={setOnUpdateUserRole}
+                />
+              ))
+            ) : (
+              <p>Aucun utilisateur à afficher </p>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

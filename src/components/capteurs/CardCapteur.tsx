@@ -25,10 +25,10 @@ const CardCapteur = ({
         ? sensorData.latest
         : null;
       const formatted = sensorDataTime
-        ? `${new Date(sensorDataTime).toLocaleDateString()} à ${new Date(
+        ? `${new Date(
             sensorDataTime
           ).toLocaleTimeString()}`
-        : "--/--/--";
+        : "--:--:--";
       setFormattedTime(formatted);
     } else {
       setIndicator(false);

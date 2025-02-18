@@ -22,8 +22,8 @@ const IndividualMoyenneCard = ({ data }: { data: ISensorStoredData[] }) => {
       <h1 className="text-2xl font-bold text-center my-5">
         Moyenne | {item?.name}
       </h1>
-      <div className="flex flex-wrap xxs:flex-nowrap gap-5 md:mx-5">
-        <div className="w-full xxs:w-1/2 sm:w-1/3 text-center rounded-xl bg-gray-200 shadow">
+      <div className="grid md:grid-cols-3 gap-5 md:mx-auto mb-5 max-w-2xl">
+        <div className="text-center rounded-xl bg-gray-300 shadow">
           <div className="rounded-full flex justify-center items-center">
             <Image
               src={item?.icon}
@@ -34,17 +34,15 @@ const IndividualMoyenneCard = ({ data }: { data: ISensorStoredData[] }) => {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row w-full gap-3">
-          <div className="flex flex-col justify-center w-full lg:w-1/2 bg-gray-100 p-2 rounded-lg shadow">
-            <h2 className="font-bold">Donnée :</h2>
-            <p>{item?.name}</p>
-          </div>
-          <div className="flex flex-col justify-center w-full lg:w-1/2 bg-gray-100 p-2 rounded-lg shadow">
-            <h2 className="font-bold">Calculé le :</h2>
-            <p>
-              {currentDate} à {currentHeure}
-            </p>
-          </div>
+        <div className="flex flex-col justify-center bg-gray-100 px-5 rounded-lg shadow">
+          <h2 className="font-bold">Donnée :</h2>
+          <p>{item?.name}</p>
+        </div>
+        <div className="flex flex-col justify-center bg-gray-100 px-5 rounded-lg shadow">
+          <h2 className="font-bold">Calculé le :</h2>
+          <p>
+            {currentDate} à {currentHeure}
+          </p>
         </div>
       </div>
     </div>

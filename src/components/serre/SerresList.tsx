@@ -8,7 +8,7 @@ import { ICulture } from "@/types/culture";
 
 const SerresList = ({ serres }: { serres: ISerre[] }) => {
   return (
-    <div className="p-5 flex flex-wrap gap-8">
+    <div className="p-5 flex justify-center md:justify-start flex-wrap gap-8">
       {serres &&
         serres.map((serre, index) => {
           const allCulture = serre.allCulture

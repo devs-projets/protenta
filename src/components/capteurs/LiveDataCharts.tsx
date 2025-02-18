@@ -85,7 +85,7 @@ const LiveDataCharts = () => {
 
   return (
     <Tabs defaultValue="Temperature">
-      <TabsList className="flex justify-end w-full sticky top-0 bg-gray-300 z-10 py-6 px-5 rounded-bl-none rounded-br-none">
+      <TabsList className="flex flex-wrap h-auto justify-end w-full sticky top-0 bg-gray-300 z-10 py-2 px-5 rounded-bl-none rounded-br-none">
         {metrics.map((metric) => (
           <TabsTrigger key={metric.key} value={metric.key}>
             {metric.key}

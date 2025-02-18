@@ -72,7 +72,7 @@ export function MoyenneTabs({
 
   return (
     <Tabs defaultValue="Tableau">
-      <TabsList className="block xxs:flex justify-end w-full h-auto sticky top-0 bg-gray-300 z-10 p-2">
+      <TabsList className="block xxs:flex flex-wrap gap-2 justify-end w-full h-auto sticky top-0 bg-gray-300 z-10 p-2">
         <div className="flex justify-end mb-2 xxs:mb-0">
           <TabsTrigger value="Tableau">
             <TableProperties />
